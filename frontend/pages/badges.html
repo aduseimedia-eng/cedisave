@@ -363,7 +363,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      padding-bottom: 100px;
+      padding: 0 2px 100px 2px;
     }
 
     .recent-item {
@@ -430,30 +430,35 @@
     /* Empty State */
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 60px 20px;
       color: var(--text-muted);
+      grid-column: 1 / -1;
     }
 
     .empty-state i {
-      opacity: 0.3;
+      opacity: 0.4;
       margin-bottom: 16px;
+      display: inline-block;
     }
 
     .empty-state p {
       font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
     }
 
     /* Tab Navigation */
     .tab-nav {
       display: flex;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 8px;
+      padding: 0 2px 8px 2px;
     }
 
     .tab-btn {
-      padding: 12px 22px;
+      padding: 12px 24px;
       border: none;
       background: var(--card-bg);
       border-radius: 20px;
@@ -462,12 +467,20 @@
       color: var(--text-secondary);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
     }
 
     .tab-btn.active {
       background: var(--primary-color);
       color: var(--text-light);
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(0, 107, 63, 0.2);
     }
   </style>
 </head>
