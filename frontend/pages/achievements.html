@@ -273,14 +273,25 @@
 </head>
 <body>
   <!-- Header -->
-  <header class="app-header">
-    <button class="back-btn" onclick="history.back()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-    </button>
-    <h1>Achievements</h1>
-    <div style="width: 24px;"></div>
+  <header class="header">
+    <div class="header-content">
+      <a class="logo" href="dashboard.html" style="text-decoration:none;">
+        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
+        <span>KudiPal</span>
+      </a>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="expenses.html" class="nav-link">Expenses</a>
+        <a href="goals.html" class="nav-link">Goals</a>
+        <a href="achievements.html" class="nav-link active">Achievements</a>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </nav>
+      <button class="hamburger" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </header>
 
   <!-- Main Content -->
