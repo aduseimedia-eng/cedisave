@@ -143,7 +143,7 @@ body {
   min-height: 100vh;
   min-height: -webkit-fill-available;
   padding-top: var(--header-total-height);
-  padding-bottom: calc(100px + var(--safe-area-bottom));
+  padding-bottom: calc(20px + var(--safe-area-bottom));
   padding-left: var(--safe-area-left);
   padding-right: var(--safe-area-right);
   overflow-x: hidden;
@@ -448,23 +448,9 @@ body {
   margin-top: 20px;
 }
 
-/* Bottom Navigation - Modern Floating Style with iPhone Safe Area Support */
+/* Bottom Navigation - HIDDEN */
 .bottom-nav {
-  position: fixed;
-  /* Proper bottom positioning accounting for home indicator on iPhone X+ */
-  bottom: calc(16px + var(--safe-area-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  height: 68px;
-  /* Account for landscape safe areas */
-  width: calc(100% - 32px - var(--safe-area-left) - var(--safe-area-right));
-  max-width: 420px;
-  padding: 10px 16px;
-  /* Modern Glass Effect */
-  background: rgba(255, 255, 255, 0.08);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  display: none !important;
   /* Glass shadow with glow */
   box-shadow: 
     0 8px 32px rgba(0, 107, 63, 0.15),
