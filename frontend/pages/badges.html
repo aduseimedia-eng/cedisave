@@ -24,14 +24,14 @@
 
     /* Badges Page Styles */
     .badges-header-card {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--ghana-gold) 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 50%, var(--primary-light) 100%);
       border-radius: var(--border-radius);
-      padding: 28px 20px;
-      margin-bottom: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
       position: relative;
       overflow: hidden;
       text-align: center;
-      box-shadow: 0 8px 24px rgba(0, 107, 63, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -65,47 +65,43 @@
 
     .badges-title {
       color: #ffffff;
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .badges-subtitle {
-      color: rgba(255,255,255,0.95);
-      font-size: 15px;
-      margin-bottom: 18px;
-      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      margin-bottom: 16px;
     }
 
     .level-display {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      background: rgba(255,255,255,0.18);
-      padding: 20px 24px;
-      border-radius: 32px;
-      margin: 0 auto 20px;
-      backdrop-filter: blur(10px);
-      max-width: 100%;
-      width: fit-content;
+      gap: 12px;
+      background: rgba(255,255,255,0.1);
+      padding: 12px 24px;
+      border-radius: 24px;
+      margin: 0 auto 16px;
+      min-width: fit-content;
     }
 
     .level-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, var(--ghana-gold), #FFA000);
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #FCD116, #E6B800);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
-      box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
       flex-shrink: 0;
     }
 
@@ -114,38 +110,36 @@
     }
 
     .level-label {
-      font-size: 13px;
-      color: rgba(255,255,255,0.9);
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-weight: 600;
     }
 
     .level-value {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
-      color: var(--text-light);
+      color: white;
     }
 
     .level-title {
-      font-size: 15px;
-      color: rgba(255,255,255,0.95);
-      font-weight: 500;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
     }
 
     .xp-progress-section {
-      margin-top: 18px;
+      margin-top: 12px;
       width: 100%;
-      max-width: 320px;
+      max-width: 280px;
     }
 
     .xp-progress-header {
       display: flex;
       justify-content: space-between;
-      color: rgba(255,255,255,0.9);
-      font-size: 14px;
-      margin-bottom: 10px;
-      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      margin-bottom: 8px;
+      font-weight: 500;
       width: 100%;
     }
 
@@ -160,12 +154,10 @@
 
     .xp-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--ghana-gold) 0%, #FFA500 50%, var(--success) 100%);
-      background-size: 200% 100%;
-      animation: xpShine 2s ease infinite;
+      background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
       border-radius: 8px;
       transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      box-shadow: 0 2px 8px rgba(0, 107, 63, 0.2);
       position: relative;
       overflow: hidden;
     }
@@ -177,13 +169,8 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes xpShine {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmer 2s infinite;
     }
 
     @keyframes shimmer {
@@ -336,11 +323,11 @@
     }
 
     .badge-icon-wrapper.savings { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); }
-    .badge-icon-wrapper.streak { background: linear-gradient(135deg, var(--ghana-gold), #E6B800); }
+    .badge-icon-wrapper.streak { background: linear-gradient(135deg, var(--primary-light), #00a060); }
     .badge-icon-wrapper.goals { background: linear-gradient(135deg, var(--primary-light), var(--primary-color)); }
     .badge-icon-wrapper.challenges { background: linear-gradient(135deg, var(--primary-dark), #003322); }
     .badge-icon-wrapper.social { background: linear-gradient(135deg, var(--primary-light), #00804A); }
-    .badge-icon-wrapper.special { background: linear-gradient(135deg, var(--ghana-gold), #E6B800); }
+    .badge-icon-wrapper.special { background: linear-gradient(135deg, var(--primary-color), #009956); }
 
     .badge-name {
       font-size: 15px;
