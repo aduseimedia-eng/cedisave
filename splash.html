@@ -7,6 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
   <title>KudiPal</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,6 +22,7 @@
     }
 
     body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
       min-height: 100vh;
       display: flex;
@@ -37,14 +42,14 @@
     }
 
     .splash-logo {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       animation: bounce 1s ease infinite;
       color: var(--primary-light, #00a05e);
     }
 
     .splash-logo i {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       stroke-width: 1.5;
     }
 
@@ -54,14 +59,15 @@
     }
 
     .splash-title {
-      font-size: 22px;
+      font-size: 28px;
       font-weight: 700;
       color: white;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
 
     .splash-subtitle {
-      font-size: 12px;
+      font-size: 14px;
       color: rgba(255,255,255,0.7);
       margin-bottom: 30px;
     }

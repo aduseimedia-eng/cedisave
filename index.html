@@ -7,6 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
   <title>KudiPal - Login</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -406,6 +410,19 @@
   <script src="assets/js/api.js"></script>
   <script src="assets/js/utils.js"></script>
   <script>
+    // Redirect first-time visitors to splash screen
+    (function() {
+      const hasVisited = localStorage.getItem('kudipal_visited');
+      const isLoggedIn = localStorage.getItem('token');
+      
+      // If never visited before and not logged in, show splash first
+      if (!hasVisited && !isLoggedIn) {
+        localStorage.setItem('kudipal_visited', 'true');
+        window.location.href = 'splash.html';
+        return;
+      }
+    })();
+    
     // Show demo mode indicator if enabled
     document.addEventListener('DOMContentLoaded', () => {
       if (window.KUDIPAL_DEMO_MODE) {
