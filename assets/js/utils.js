@@ -13,19 +13,23 @@ function showDemoModeIndicator() {
   }
 }
 
-// Theme Management - Uses API preferences (falls back to dark if not loaded)
+// Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
-  // Check if userPreferences is available from api.js
-  const savedTheme = (typeof getUserPreference === 'function') 
-    ? getUserPreference('theme') 
-    : 'dark';
-  document.documentElement.setAttribute('data-theme', savedTheme || 'dark');
-  updateThemeIcon(savedTheme || 'dark');
+  // Always read from localStorage first for instant persistence
+  const savedTheme = localStorage.getItem('kudipal_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeIcon(savedTheme);
 }
 
-// Called by api.js after preferences are loaded
+// Called by api.js after preferences are loaded (syncs localStorage)
 function initThemeFromPreferences() {
-  const theme = getUserPreference('theme') || 'dark';
+  // If user has a API preference but localStorage differs, sync it
+  const apiTheme = (typeof getUserPreference === 'function') ? getUserPreference('theme') : null;
+  const localTheme = localStorage.getItem('kudipal_theme');
+  
+  // API takes priority if user logged in, otherwise use localStorage
+  const theme = apiTheme || localTheme || 'dark';
+  localStorage.setItem('kudipal_theme', theme);
   document.documentElement.setAttribute('data-theme', theme);
   updateThemeIcon(theme);
 }
@@ -33,10 +37,13 @@ function initThemeFromPreferences() {
 async function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  // Save to localStorage FIRST for instant persistence
+  localStorage.setItem('kudipal_theme', newTheme);
   document.documentElement.setAttribute('data-theme', newTheme);
   updateThemeIcon(newTheme);
   
-  // Save to API if available
+  // Sync to API if available
   if (typeof setUserPreference === 'function') {
     await setUserPreference('theme', newTheme);
   }

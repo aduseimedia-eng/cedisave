@@ -19,11 +19,11 @@
     .greeting-banner {
       background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 50%, var(--primary-light) 100%);
       border-radius: var(--border-radius);
-      padding: 16px;
+      padding: 20px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       position: relative;
       overflow: hidden;
       animation: slideUp 0.5s ease-out;
@@ -51,14 +51,14 @@
     }
 
     .greeting-avatar {
-      width: 42px;
-      height: 42px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 20px;
       font-weight: bold;
       color: var(--primary-color);
       border: 2px solid rgba(255,255,255,0.3);
@@ -78,22 +78,22 @@
     }
 
     .greeting-time {
-      font-size: 9px;
-      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .greeting-name {
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
       color: white;
       margin-top: 2px;
     }
 
     .greeting-quote {
-      font-size: 9px;
-      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      color: rgba(255,255,255,0.85);
       margin-top: 4px;
       font-style: italic;
     }
@@ -1048,10 +1048,10 @@
   <!-- Header -->
   <header class="header">
     <div class="header-content">
-      <div class="logo">
+      <a class="logo" href="dashboard.html" style="text-decoration:none;">
         <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
         <span>KudiPal</span>
-      </div>
+      </a>
       <nav class="nav">
         <a href="dashboard.html" class="nav-link">Dashboard</a>
         <a href="expenses.html" class="nav-link">Expenses</a>
