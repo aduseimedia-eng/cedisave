@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#006B3F">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Achievements - KudiPal</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .achievements-header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+      margin: -1rem -1rem 1.5rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .achievements-header::before {
+      content: '⭐';
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+
+    .achievements-header::after {
+      content: '✨';
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 20px;
+      animation: sparkle 2s ease-in-out infinite 0.5s;
+    }
+
+    .level-badge {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 2.5rem;
+      animation: float 3s ease-in-out infinite, rainbowGlow 3s ease infinite;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .level-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    .xp-info {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      animation: slideUp 0.5s ease-out 0.1s both;
+    }
+
+    .xp-progress {
+      max-width: 220px;
+      margin: 1rem auto 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      height: 14px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(255,255,255,0.1);
+    }
+
+    .xp-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #ffffff 100%);
+      background-size: 200% 100%;
+      animation: xpGlow 2s ease infinite;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.5);
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .xp-progress-fill::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes xpGlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      animation: zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      transition: all 0.3s ease;
+    }
+
+    .stat-item:nth-child(1) { animation-delay: 0.1s; }
+    .stat-item:nth-child(2) { animation-delay: 0.2s; }
+    .stat-item:nth-child(3) { animation-delay: 0.3s; }
+
+    .stat-item:active {
+      transform: scale(0.95) rotate(-2deg);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-green);
+      transition: all 0.3s ease;
+    }
+
+    .stat-item:active .stat-value {
+      transform: scale(1.2);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .category-tab {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .category-tab:active {
+      transform: scale(0.95);
+    }
+
+    .category-tab.active {
+      background: var(--primary-green);
+      color: white;
+      animation: pop 0.3s ease;
+    }
+
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 6rem;
+    }
+
+    .achievement-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: slideUp 0.4s ease-out both;
+    }
+
+    .achievement-card:nth-child(1) { animation-delay: 0.1s; }
+    .achievement-card:nth-child(2) { animation-delay: 0.15s; }
+    .achievement-card:nth-child(3) { animation-delay: 0.2s; }
+    .achievement-card:nth-child(4) { animation-delay: 0.25s; }
+    .achievement-card:nth-child(5) { animation-delay: 0.3s; }
+    .achievement-card:nth-child(6) { animation-delay: 0.35s; }
+
+    .achievement-card:active {
+      transform: scale(0.95) rotate(-2deg);
+    }
+
+    .achievement-card.locked {
+      opacity: 0.6;
+      filter: grayscale(50%);
+    }
+
+    .achievement-card.earned {
+      background: linear-gradient(135deg, #f8fff8, white);
+      border: 2px solid var(--primary-green);
+      animation: slideUp 0.4s ease-out both, rainbowGlow 3s ease infinite;
+    }
+
+    .achievement-card.earned::before {
+      content: '✨';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-size: 20px;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+
+    .achievement-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.75rem;
+      font-size: 1.75rem;
+    }
+
+    .achievement-card.earned .achievement-icon {
+      background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+    }
+
+    .achievement-card.locked .achievement-icon {
+      filter: grayscale(100%);
+    }
+
+    .achievement-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .achievement-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    .achievement-xp {
+      display: inline-block;
+      background: rgba(0, 160, 94, 0.15);
+      color: var(--primary-color);
+      padding: 0.25rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .achievement-card.earned .achievement-xp {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    .earned-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      width: 24px;
+      height: 24px;
+      background: var(--primary-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .progress-ring {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.75rem;
+      font-size: 0.65rem;
+      color: var(--primary-green);
+      font-weight: 600;
+    }
+
+    .secret-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .empty-state {
+      grid-column: span 2;
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    /* Level up animation */
+    @keyframes shine {
+      0% { background-position: -100% 0; }
+      100% { background-position: 100% 0; }
+    }
+
+    .achievement-card.earned::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.4),
+        transparent
+      );
+      background-size: 200% 100%;
+      animation: shine 3s infinite;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <button class="back-btn" onclick="history.back()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <h1>Achievements</h1>
+    <div style="width: 24px;"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Level Header -->
+    <div class="achievements-header">
+      <div class="level-badge" id="levelBadge">🏆</div>
+      <div class="level-title" id="levelTitle">Money Master</div>
+      <div class="xp-info">
+        <span id="currentXP">0</span> / <span id="nextLevelXP">1000</span> XP
+      </div>
+      <div class="xp-progress">
+        <div class="xp-progress-fill" id="xpProgressFill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value" id="earnedCount">0</div>
+        <div class="stat-label">Earned</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="totalCount">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="completionRate">0%</div>
+        <div class="stat-label">Complete</div>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button class="category-tab active" onclick="filterCategory('all')">All</button>
+      <button class="category-tab" onclick="filterCategory('milestone')">Milestones</button>
+      <button class="category-tab" onclick="filterCategory('savings')">Savings</button>
+      <button class="category-tab" onclick="filterCategory('spending')">Spending</button>
+      <button class="category-tab" onclick="filterCategory('streak')">Streaks</button>
+      <button class="category-tab" onclick="filterCategory('challenge')">Challenges</button>
+    </div>
+
+    <!-- Achievements Grid -->
+    <div class="achievement-grid" id="achievementsGrid">
+      <!-- Achievements loaded here -->
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      </svg>
+      <span>Home</span>
+    </a>
+    <a href="expenses.html" class="nav-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="1" x2="12" y2="23"></line>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+      <span>Expenses</span>
+    </a>
+    <a href="achievements.html" class="nav-item active">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="8" r="7"></circle>
+        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+      </svg>
+      <span>Badges</span>
+    </a>
+    <a href="goals.html" class="nav-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="6"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+      </svg>
+      <span>Goals</span>
+    </a>
+    <a href="settings.html" class="nav-item">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.requireAuth();
+    
+    let allAchievements = [];
+    let currentCategory = 'all';
+
+    // Achievement icons mapping
+    const achievementIcons = {
+      'first_expense': '📝',
+      'expense_master': '💵',
+      'budget_keeper': '📊',
+      'savings_starter': '🌱',
+      'savings_champion': '💰',
+      'goal_setter': '🎯',
+      'goal_crusher': '🏆',
+      'streak_starter': '🔥',
+      'streak_master': '⚡',
+      'challenge_winner': '🥇',
+      'early_bird': '🌅',
+      'night_owl': '🦉',
+      'consistent': '📅',
+      'frugal': '🪙',
+      'investor': '📈',
+      'default': '⭐'
+    };
+
+    // Level definitions
+    const levels = [
+      { name: 'Beginner', icon: '🌱', minXP: 0 },
+      { name: 'Saver', icon: '💰', minXP: 100 },
+      { name: 'Budgeter', icon: '📊', minXP: 500 },
+      { name: 'Investor', icon: '📈', minXP: 1000 },
+      { name: 'Expert', icon: '🎓', minXP: 2500 },
+      { name: 'Master', icon: '👑', minXP: 5000 },
+      { name: 'Legend', icon: '🏆', minXP: 10000 }
+    ];
+
+    document.addEventListener('DOMContentLoaded', loadAchievements);
+
+    async function loadAchievements() {
+      try {
+        const [achievementsRes, statsRes] = await Promise.all([
+          api.get('/achievements'),
+          api.get('/achievements/stats')
+        ]);
+
+        if (achievementsRes.success) {
+          allAchievements = achievementsRes.data;
+          renderAchievements();
+        }
+
+        if (statsRes.success) {
+          updateStats(statsRes.data);
+          updateLevel(statsRes.data.total_xp || 0);
+        }
+      } catch (error) {
+        console.error('Error loading achievements:', error);
+      }
+    }
+
+    function updateStats(stats) {
+      const earned = stats.earned_achievements || 0;
+      const total = stats.total_achievements || 0;
+      
+      document.getElementById('earnedCount').textContent = earned;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('completionRate').textContent = 
+        total > 0 ? Math.round((earned / total) * 100) + '%' : '0%';
+    }
+
+    function updateLevel(totalXP) {
+      let currentLevel = levels[0];
+      let nextLevel = levels[1];
+
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (totalXP >= levels[i].minXP) {
+          currentLevel = levels[i];
+          nextLevel = levels[i + 1] || levels[i];
+          break;
+        }
+      }
+
+      document.getElementById('levelBadge').textContent = currentLevel.icon;
+      document.getElementById('levelTitle').textContent = currentLevel.name;
+      document.getElementById('currentXP').textContent = totalXP;
+      document.getElementById('nextLevelXP').textContent = nextLevel.minXP;
+
+      const progress = nextLevel.minXP > currentLevel.minXP
+        ? ((totalXP - currentLevel.minXP) / (nextLevel.minXP - currentLevel.minXP)) * 100
+        : 100;
+      document.getElementById('xpProgressFill').style.width = `${Math.min(100, progress)}%`;
+    }
+
+    function filterCategory(category) {
+      currentCategory = category;
+      
+      // Update tab buttons
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.textContent.toLowerCase().includes(category) || 
+            (category === 'all' && tab.textContent === 'All')) {
+          tab.classList.add('active');
+        }
+      });
+      
+      renderAchievements();
+    }
+
+    function renderAchievements() {
+      const container = document.getElementById('achievementsGrid');
+      
+      let filtered = allAchievements;
+      if (currentCategory !== 'all') {
+        filtered = allAchievements.filter(a => a.category === currentCategory);
+      }
+
+      // Sort: earned first, then by XP reward
+      filtered.sort((a, b) => {
+        if (a.earned && !b.earned) return -1;
+        if (!a.earned && b.earned) return 1;
+        return b.xp_reward - a.xp_reward;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No achievements in this category yet</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(achievement => `
+        <div class="achievement-card ${achievement.earned ? 'earned' : 'locked'}">
+          ${achievement.is_secret && !achievement.earned ? 
+            '<span class="secret-badge" title="Secret Achievement">🔒</span>' : ''}
+          ${achievement.earned ? `
+            <span class="earned-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+          ` : ''}
+          <div class="achievement-icon">${getIcon(achievement)}</div>
+          <div class="achievement-name">${achievement.is_secret && !achievement.earned ? '???' : escapeHtml(achievement.name)}</div>
+          <div class="achievement-desc">${achievement.is_secret && !achievement.earned ? 'Secret achievement' : escapeHtml(achievement.description)}</div>
+          <span class="achievement-xp">+${achievement.xp_reward} XP</span>
+          ${!achievement.earned && achievement.progress !== undefined ? `
+            <span class="progress-ring">${achievement.progress}%</span>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function getIcon(achievement) {
+      if (achievement.is_secret && !achievement.earned) return '❓';
+      if (achievement.icon) return achievement.icon;
+      return achievementIcons[achievement.achievement_key] || achievementIcons.default;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+
+    // Check for new achievements periodically
+    async function checkNewAchievements() {
+      try {
+        const response = await api.post('/achievements/check');
+        if (response.success && response.data.newly_earned && response.data.newly_earned.length > 0) {
+          response.data.newly_earned.forEach(achievement => {
+            showAchievementUnlock(achievement);
+          });
+          loadAchievements(); // Reload to update UI
+        }
+      } catch (error) {
+        console.error('Error checking achievements:', error);
+      }
+    }
+
+    function showAchievementUnlock(achievement) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        animation: fadeIn 0.3s;
+      `;
+      overlay.innerHTML = `
+        <div style="
+          background: white;
+          border-radius: 20px;
+          padding: 2rem;
+          text-align: center;
+          max-width: 300px;
+          animation: bounceIn 0.5s;
+        ">
+          <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+          <h2 style="color: var(--primary-green); margin-bottom: 0.5rem;">Achievement Unlocked!</h2>
+          <div style="font-size: 3rem; margin: 1rem 0;">${achievement.icon || '⭐'}</div>
+          <h3 style="margin-bottom: 0.5rem;">${achievement.name}</h3>
+          <p style=\"color: var(--text-secondary); font-size: 0.9rem;\">${achievement.description}</p>
+          <div style="
+            background: var(--primary-green);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 1rem;
+          ">+${achievement.xp_reward} XP</div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      
+      overlay.addEventListener('click', () => overlay.remove());
+      setTimeout(() => overlay.remove(), 5000);
+    }
+
+    // Check achievements on load
+    setTimeout(checkNewAchievements, 1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+// ============================================
+// NOTIFICATION ROUTES
+// Email notification settings and delivery
+// ============================================
+
+const express = require('express');
+const router = express.Router();
+const { query } = require('../config/database');
+const { authenticateToken } = require('../middleware/auth');
+const emailService = require('../services/emailService');
+
+// Get notification settings
+router.get('/settings', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const result = await query(
+      'SELECT notification_settings FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    const settings = result.rows[0]?.notification_settings || {
+      weekly: true,
+      bills: true,
+      goals: true,
+      challenges: true,
+      budget: true,
+      tips: false
+    };
+    
+    res.json({ success: true, data: settings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch notification settings' });
+  }
+});
+
+// Update notification settings
+router.put('/settings', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const settings = req.body;
+    
+    await query(
+      'UPDATE users SET notification_settings = $1 WHERE id = $2',
+      [JSON.stringify(settings), userId]
+    );
+    
+    res.json({ success: true, message: 'Notification settings updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to update notification settings' });
+  }
+});
+
+// Send test email
+router.post('/test-email', authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.body;
+    const userEmail = email || req.user.email;
+    
+    await emailService.sendTestEmail(userEmail);
+    
+    res.json({ success: true, message: 'Test email sent successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to send test email' });
+  }
+});
+
+// Send bill reminder email
+router.post('/bill-reminder', authenticateToken, async (req, res) => {
+  try {
+    const { email, billName, amount, dueDate } = req.body;
+    const userEmail = email || req.user.email;
+    
+    await emailService.sendBillReminderEmail(userEmail, billName, amount, dueDate);
+    
+    res.json({ success: true, message: 'Bill reminder sent' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to send bill reminder' });
+  }
+});
+
+// Send goal milestone email
+router.post('/goal-milestone', authenticateToken, async (req, res) => {
+  try {
+    const { email, goalName, progress, milestone } = req.body;
+    const userEmail = email || req.user.email;
+    
+    await emailService.sendGoalMilestoneEmail(userEmail, goalName, progress, milestone);
+    
+    res.json({ success: true, message: 'Goal milestone notification sent' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to send goal notification' });
+  }
+});
+
+// Get user's notifications (in-app)
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { limit = 20, unread_only = false } = req.query;
+    
+    let queryText = 'SELECT * FROM notifications WHERE user_id = $1';
+    const params = [userId];
+    
+    if (unread_only === 'true') {
+      queryText += ' AND is_read = false';
+    }
+    
+    queryText += ' ORDER BY created_at DESC LIMIT $2';
+    params.push(parseInt(limit));
+    
+    const result = await query(queryText, params);
+    
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
+  }
+});
+
+// Mark notification as read
+router.put('/:id/read', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+    
+    await query(
+      'UPDATE notifications SET is_read = true WHERE id = $1 AND user_id = $2',
+      [id, userId]
+    );
+    
+    res.json({ success: true, message: 'Notification marked as read' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to mark notification as read' });
+  }
+});
+
+// Mark all notifications as read
+router.put('/mark-all-read', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    await query(
+      'UPDATE notifications SET is_read = true WHERE user_id = $1',
+      [userId]
+    );
+    
+    res.json({ success: true, message: 'All notifications marked as read' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to mark notifications as read' });
+  }
+});
+
+module.exports = router;

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006B3F">
+  <title>Goals - KudiPal</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <a class="logo" href="dashboard.html" style="text-decoration:none;">
+        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
+        <span>KudiPal</span>
+      </a>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="expenses.html" class="nav-link">Expenses</a>
+        <a href="goals.html" class="nav-link">Goals</a>
+        <a href="reports.html" class="nav-link">Reports</a>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </nav>
+      <button class="hamburger" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- Mobile Side Menu -->
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon"></i></button>
+      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
+    </div>
+    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
+    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
+    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
+    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
+    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
+    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
+    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
+    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
+      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
+    </a>
+    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="layout-dashboard" class="icon"></i></span>
+      <span>Home</span>
+    </a>
+    <a href="expenses.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="receipt" class="icon"></i></span>
+      <span>Expenses</span>
+    </a>
+    <a href="goals.html" class="bottom-nav-item active">
+      <span class="nav-icon"><i data-lucide="target" class="icon"></i></span>
+      <span>Goals</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="settings" class="icon"></i></span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title"><i data-lucide="target" class="icon-inline"></i> Savings Goals</h2>
+        <button class="btn btn-primary" onclick="openGoalModal()">+ New Goal</button>
+      </div>
+      
+      <div id="goalsContainer" style="display: grid; gap: 20px;">
+        <p style="text-align: center; color: rgba(255,255,255,0.7);">Loading goals...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Modal -->
+  <div id="goalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Create Savings Goal</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="goalForm" onsubmit="handleCreateGoal(event)">
+        <div class="form-group">
+          <label class="form-label">Goal Title</label>
+          <input type="text" class="form-input" id="goalTitle" placeholder="e.g., New Laptop" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Amount</label>
+          <div class="currency-input-wrapper">
+            <span class="currency-prefix">₵</span>
+            <input type="number" class="form-input" id="goalAmount" placeholder="0.00" step="0.01" min="1" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Deadline (Optional)</label>
+          <input type="date" class="form-input" id="goalDeadline">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Goal</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.requireAuth();
+
+    async function loadGoals() {
+      try {
+        const response = await api.getGoals();
+        const goals = response.data;
+        
+        const container = document.getElementById('goalsContainer');
+        
+        if (goals.length === 0) {
+          container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7);">No goals yet. Create one to start saving!</p>';
+          return;
+        }
+
+        container.innerHTML = goals.map(goal => {
+          const progress = utils.calculateProgress(goal.current_amount, goal.target_amount);
+          return `
+            <div class="card">
+              <h3 style="margin-bottom: 16px;"><i data-lucide="target" class="icon-inline"></i> ${goal.title}</h3>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>${utils.formatCurrency(goal.current_amount)}</span>
+                <span>${utils.formatCurrency(goal.target_amount)}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progress}%;">${progress.toFixed(0)}%</div>
+              </div>
+              ${goal.deadline ? `<p style="margin-top: 8px; color: rgba(255,255,255,0.7);">Deadline: ${utils.formatDate(goal.deadline)}</p>` : ''}
+              <span class="badge ${goal.status === 'completed' ? 'badge-success' : 'badge-warning'}" style="margin-top: 8px;">${goal.status}</span>
+            </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      } catch (error) {
+        utils.showAlert('Failed to load goals', 'error');
+      }
+    }
+
+    function openGoalModal() {
+      document.getElementById('goalModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('goalModal').classList.remove('active');
+    }
+
+    async function handleCreateGoal(event) {
+      event.preventDefault();
+      
+      const goalData = {
+        title: document.getElementById('goalTitle').value,
+        target_amount: parseFloat(document.getElementById('goalAmount').value),
+        deadline: document.getElementById('goalDeadline').value || null
+      };
+
+      try {
+        utils.showLoading();
+        await api.createGoal(goalData);
+        
+        utils.hideLoading();
+        utils.showAlert('Goal created successfully! 🎯', 'success');
+        
+        closeModal();
+        document.getElementById('goalForm').reset();
+        await loadGoals();
+      } catch (error) {
+        utils.hideLoading();
+        utils.showAlert(error.message || 'Failed to create goal', 'error');
+      }
+    }
+
+    function logout() {
+      api.logout();
+    }
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
+      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadGoals();
+    });
+  </script>
+</body>
+</html>
