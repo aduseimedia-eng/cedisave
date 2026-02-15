@@ -16,7 +16,7 @@
   <style>
     /* Badges Page Styles */
     .badges-header-card {
-      background: linear-gradient(135deg, #006B3F 0%, #00A05E 50%, #FCD116 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--ghana-gold) 100%);
       border-radius: var(--border-radius);
       padding: 20px;
       margin-bottom: 16px;
@@ -41,7 +41,7 @@
       position: absolute;
       top: 10px;
       right: 20px;
-      font-size: 20px;
+      font-size: 24px;
       animation: bounce 2s ease-in-out infinite;
     }
 
@@ -51,8 +51,8 @@
     }
 
     .badges-title {
-      color: white;
-      font-size: 18px;
+      color: var(--text-light);
+      font-size: 20px;
       font-weight: 700;
       margin-bottom: 8px;
       display: flex;
@@ -62,8 +62,8 @@
     }
 
     .badges-subtitle {
-      color: rgba(255,255,255,0.8);
-      font-size: 12px;
+      color: var(--text-secondary);
+      font-size: 15px;
       margin-bottom: 16px;
     }
 
@@ -71,21 +71,21 @@
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      background: rgba(255,255,255,0.2);
-      padding: 12px 24px;
+      background: rgba(255,255,255,0.15);
+      padding: 14px 28px;
       border-radius: 30px;
       margin-bottom: 16px;
     }
 
     .level-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #FFD700, #FFA000);
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--ghana-gold), #FFA000);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 28px;
       box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
     }
 
@@ -94,21 +94,21 @@
     }
 
     .level-label {
-      font-size: 10px;
-      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .level-value {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
-      color: white;
+      color: var(--text-light);
     }
 
     .level-title {
-      font-size: 11px;
-      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+      color: var(--text-secondary);
     }
 
     .xp-progress-section {
@@ -118,28 +118,28 @@
     .xp-progress-header {
       display: flex;
       justify-content: space-between;
-      color: rgba(255,255,255,0.9);
-      font-size: 11px;
+      color: var(--text-secondary);
+      font-size: 14px;
       margin-bottom: 8px;
       font-weight: 500;
     }
 
     .xp-progress-bar {
-      height: 12px;
-      background: rgba(255,255,255,0.15);
+      height: 14px;
+      background: rgba(255,255,255,0.18);
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 2px rgba(255,255,255,0.1);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(255,255,255,0.08);
     }
 
     .xp-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, var(--success) 100%);
+      background: linear-gradient(90deg, var(--ghana-gold) 0%, #FFA500 50%, var(--success) 100%);
       background-size: 200% 100%;
       animation: xpShine 2s ease infinite;
       border-radius: 8px;
       transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
       position: relative;
       overflow: hidden;
     }
@@ -151,7 +151,7 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
       animation: shimmer 1.5s infinite;
     }
 
@@ -169,31 +169,31 @@
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 14px;
+      margin-bottom: 24px;
     }
 
     .stat-item {
       background: var(--card-bg);
-      padding: 14px 8px;
+      padding: 18px 10px;
       border-radius: 14px;
       text-align: center;
       border: 1px solid var(--border-color);
     }
 
     .stat-icon {
-      font-size: 20px;
-      margin-bottom: 6px;
+      font-size: 26px;
+      margin-bottom: 8px;
     }
 
     .stat-value {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--text-primary);
     }
 
     .stat-label {
-      font-size: 9px;
+      font-size: 13px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -202,7 +202,7 @@
 
     /* Section Title */
     .section-title {
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 12px;
@@ -213,7 +213,7 @@
 
     /* Badge Categories */
     .badge-category {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .category-header {
@@ -224,7 +224,7 @@
     }
 
     .category-title {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-primary);
       display: flex;
@@ -233,9 +233,9 @@
     }
 
     .category-count {
-      font-size: 11px;
+      font-size: 13px;
       color: var(--text-muted);
-      background: var(--bg-color);
+      background: var(--bg-secondary);
       padding: 4px 10px;
       border-radius: 12px;
     }
@@ -244,13 +244,13 @@
     .badges-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
 
     .badge-card {
       background: var(--card-bg);
-      border-radius: 16px;
-      padding: 16px 12px;
+      border-radius: 18px;
+      padding: 20px 14px;
       text-align: center;
       border: 2px solid var(--border-color);
       transition: all 0.3s ease;
@@ -261,16 +261,16 @@
 
     .badge-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     }
 
     .badge-card.unlocked {
-      border-color: var(--success-color);
-      background: linear-gradient(145deg, rgba(0, 160, 94, 0.05), rgba(0, 107, 63, 0.05));
+      border-color: var(--success);
+      background: linear-gradient(145deg, rgba(0, 160, 94, 0.08), rgba(0, 107, 63, 0.08));
     }
 
     .badge-card.locked {
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     .badge-card.locked .badge-icon-wrapper {
@@ -278,26 +278,26 @@
     }
 
     .badge-icon-wrapper {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 10px;
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 12px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 36px;
       position: relative;
     }
 
-    .badge-icon-wrapper.savings { background: linear-gradient(135deg, #006B3F, #004d2c); }
-    .badge-icon-wrapper.streak { background: linear-gradient(135deg, #FCD116, #E6B800); }
-    .badge-icon-wrapper.goals { background: linear-gradient(135deg, #00A05E, #006B3F); }
-    .badge-icon-wrapper.challenges { background: linear-gradient(135deg, #004d2c, #003322); }
-    .badge-icon-wrapper.social { background: linear-gradient(135deg, #00A05E, #00804A); }
-    .badge-icon-wrapper.special { background: linear-gradient(135deg, #FCD116, #E6B800); }
+    .badge-icon-wrapper.savings { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); }
+    .badge-icon-wrapper.streak { background: linear-gradient(135deg, var(--ghana-gold), #E6B800); }
+    .badge-icon-wrapper.goals { background: linear-gradient(135deg, var(--primary-light), var(--primary-color)); }
+    .badge-icon-wrapper.challenges { background: linear-gradient(135deg, var(--primary-dark), #003322); }
+    .badge-icon-wrapper.social { background: linear-gradient(135deg, var(--primary-light), #00804A); }
+    .badge-icon-wrapper.special { background: linear-gradient(135deg, var(--ghana-gold), #E6B800); }
 
     .badge-name {
-      font-size: 11px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 4px;
@@ -305,8 +305,8 @@
     }
 
     .badge-xp {
-      font-size: 10px;
-      color: var(--primary-color);
+      font-size: 13px;
+      color: var(--success);
       font-weight: 600;
     }
 
@@ -314,24 +314,24 @@
       position: absolute;
       top: 8px;
       right: 8px;
-      width: 20px;
-      height: 20px;
-      background: rgba(0,0,0,0.5);
+      width: 22px;
+      height: 22px;
+      background: var(--text-muted);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: var(--text-light);
     }
 
     .badge-new {
       position: absolute;
       top: -5px;
       right: -5px;
-      background: #dc3545;
-      color: white;
-      font-size: 8px;
-      padding: 3px 6px;
+      background: var(--danger);
+      color: var(--text-light);
+      font-size: 11px;
+      padding: 4px 8px;
       border-radius: 8px;
       font-weight: 700;
     }
@@ -340,29 +340,37 @@
     .recent-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       padding-bottom: 100px;
     }
 
     .recent-item {
       background: var(--card-bg);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 18px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       border: 1px solid var(--border-color);
     }
 
     .recent-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 32px;
       flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
+    }
+
+    .recent-item .badge-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      margin: 0 !important;
+      border-radius: 14px;
     }
 
     .recent-info {
@@ -370,23 +378,23 @@
     }
 
     .recent-name {
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 2px;
     }
 
     .recent-date {
-      font-size: 11px;
+      font-size: 13px;
       color: var(--text-muted);
     }
 
     .recent-xp {
-      background: rgba(0, 160, 94, 0.1);
-      color: var(--success-color);
-      padding: 6px 12px;
+      background: rgba(0, 160, 94, 0.13);
+      color: var(--success);
+      padding: 8px 14px;
       border-radius: 12px;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 600;
     }
 
@@ -403,24 +411,24 @@
     }
 
     .empty-state p {
-      font-size: 13px;
+      font-size: 15px;
     }
 
     /* Tab Navigation */
     .tab-nav {
       display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 18px;
       overflow-x: auto;
       padding-bottom: 4px;
     }
 
     .tab-btn {
-      padding: 10px 18px;
+      padding: 12px 22px;
       border: none;
       background: var(--card-bg);
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
@@ -430,7 +438,7 @@
 
     .tab-btn.active {
       background: var(--primary-color);
-      color: white;
+      color: var(--text-light);
     }
   </style>
 </head>
@@ -633,11 +641,11 @@
       <div class="modal-header" style="justify-content: flex-end;">
         <button class="close-btn" onclick="closeModal('badgeModal')">&times;</button>
       </div>
-      <div id="badgeModalIcon" style="font-size: 60px; margin-bottom: 16px;">🏆</div>
-      <h2 id="badgeModalName" style="font-size: 18px; color: var(--text-primary); margin-bottom: 8px;">Badge Name</h2>
-      <p id="badgeModalDesc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Badge description</p>
-      <div id="badgeModalXP" style="background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: 600; margin-bottom: 16px;">+100 XP</div>
-      <div id="badgeModalStatus" style="font-size: 12px; color: var(--text-muted);"></div>
+      <div id="badgeModalIcon" style="font-size: 72px; margin-bottom: 20px;">🏆</div>
+      <h2 id="badgeModalName" style="font-size: 20px; color: var(--text-primary); margin-bottom: 10px; font-weight: 700;">Badge Name</h2>
+      <p id="badgeModalDesc" style="font-size: 15px; color: var(--text-muted); margin-bottom: 18px;">Badge description</p>
+      <div id="badgeModalXP" style="background: var(--primary-color); color: white; padding: 12px 24px; border-radius: 20px; display: inline-block; font-weight: 700; font-size: 16px; margin-bottom: 18px;">+100 XP</div>
+      <div id="badgeModalStatus" style="font-size: 14px; color: var(--text-muted);"></div>
     </div>
   </div>
 
@@ -824,7 +832,7 @@
       const unlocked = allBadgesList.filter(b => userBadges.unlocked.includes(b.id));
 
       if (unlocked.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="grid-column: span 3;"><i data-lucide="award" style="width:48px;height:48px"></i><p>No badges unlocked yet.<br>Complete challenges to earn badges!</p></div>`;
+        container.innerHTML = `<div class="empty-state" style="grid-column: span 3;"><i data-lucide="award" style="width:56px;height:56px;color:var(--text-muted)"></i><p style="font-size: 15px; margin-top: 16px;">No badges unlocked yet.<br>Complete challenges to earn badges!</p></div>`;
       } else {
         container.innerHTML = unlocked.map(badge => `
           <div class="badge-card unlocked" onclick="showBadgeDetail('${badge.id}', '${badge.category}')">
@@ -845,7 +853,7 @@
       const locked = allBadgesList.filter(b => !userBadges.unlocked.includes(b.id));
 
       if (locked.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="grid-column: span 3;"><i data-lucide="trophy" style="width:48px;height:48px"></i><p>Amazing! You've unlocked all badges!</p></div>`;
+        container.innerHTML = `<div class="empty-state" style="grid-column: span 3;"><i data-lucide="trophy" style="width:56px;height:56px;color:var(--text-muted)"></i><p style="font-size: 15px; margin-top: 16px;">Amazing! You've unlocked all badges!</p></div>`;
       } else {
         container.innerHTML = locked.map(badge => `
           <div class="badge-card locked" onclick="showBadgeDetail('${badge.id}', '${badge.category}')">
@@ -866,7 +874,7 @@
       );
 
       if (userBadges.recentUnlocks.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i data-lucide="clock" style="width:48px;height:48px"></i><p>No recent achievements.<br>Keep going to earn badges!</p></div>`;
+        container.innerHTML = `<div class="empty-state"><i data-lucide="clock" style="width:56px;height:56px;color:var(--text-muted)"></i><p style="font-size: 15px; margin-top: 16px;">No recent achievements.<br>Keep going to earn badges!</p></div>`;
       } else {
         container.innerHTML = userBadges.recentUnlocks.map(unlock => {
           const badge = allBadgesList.find(b => b.id === unlock.id);
