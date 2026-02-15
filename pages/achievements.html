@@ -294,6 +294,28 @@
     </div>
   </header>
 
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- Mobile Side Menu -->
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
+      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
+    </div>
+    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
+    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
+    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
+    <a href="achievements.html" class="mobile-menu-link active"><i data-lucide="award" class="icon-menu"></i> Achievements</a>
+    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
+    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
+    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
+    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
+      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
+    </a>
+    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
+  </div>
+
   <!-- Main Content -->
   <main class="main-content">
     <!-- Level Header -->
