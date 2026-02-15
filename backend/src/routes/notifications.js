@@ -93,6 +93,43 @@ router.post('/goal-milestone', authenticateToken, async (req, res) => {
   }
 });
 
+// Send budget alert email
+router.post('/budget-alert', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { email, spent, budget, percentage, period } = req.body;
+    const userEmail = email || req.user.email;
+    
+    // Get user name for personalization
+    const userResult = await query('SELECT name FROM users WHERE id = $1', [userId]);
+    const userName = userResult.rows[0]?.name || 'User';
+    
+    await emailService.sendBudgetAlertEmail(userEmail, userName, spent, budget, percentage, period);
+    
+    res.json({ success: true, message: 'Budget alert sent' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to send budget alert' });
+  }
+});
+
+// Send weekly summary email
+router.post('/weekly-summary', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { email, expenses, income, savings, goals } = req.body;
+    const userEmail = email || req.user.email;
+    
+    const userResult = await query('SELECT name FROM users WHERE id = $1', [userId]);
+    const userName = userResult.rows[0]?.name || 'User';
+    
+    await emailService.sendWeeklySummaryEmail(userEmail, userName, expenses, income, savings, goals);
+    
+    res.json({ success: true, message: 'Weekly summary sent' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to send weekly summary' });
+  }
+});
+
 // Get user's notifications (in-app)
 router.get('/', authenticateToken, async (req, res) => {
   try {

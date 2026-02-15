@@ -347,6 +347,7 @@ const getUserXP = async (userId) => {
 
 module.exports = {
   awardXP,
+  addXP: awardXP,  // Alias for consistency
   updateStreak,
   awardBadge,
   checkBudgetBadges,

@@ -120,20 +120,60 @@ async function loadRecentExpenses() {
     }
 
     listContainer.innerHTML = expenses.slice(0, 5).map(expense => `
-      <div class="transaction-item">
+      <div class="transaction-item" id="expense-${expense.id}">
         <div class="transaction-icon">${utils.getCategoryIcon(expense.category)}</div>
         <div class="transaction-info">
           <div class="transaction-category">${expense.category}</div>
           <div class="transaction-date">${utils.formatDate(expense.expense_date || expense.date)}</div>
         </div>
-        <div class="transaction-amount">-${utils.formatCurrencyAmount(expense.amount)}</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="transaction-amount">-${utils.formatCurrencyAmount(expense.amount)}</div>
+          <button class="transaction-delete-btn" onclick="deleteTransaction('${expense.id}')" title="Delete transaction" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 16px;">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
       </div>
     `).join('');
+    
+    // Render lucide icons
+    lucide.createIcons();
 
   } catch (error) {
     console.error('Load expenses error:', error);
     document.getElementById('recentExpensesList').innerHTML = 
       '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Failed to load</div>';
+  }
+}
+
+// Delete transaction
+async function deleteTransaction(expenseId) {
+  // Confirm deletion
+  if (!confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
+    return;
+  }
+
+  try {
+    utils.showLoading();
+    await api.deleteExpense(expenseId);
+    
+    utils.hideLoading();
+    utils.showAlert('Transaction deleted successfully ✓', 'success');
+    
+    // Animate deletion
+    const element = document.getElementById(`expense-${expenseId}`);
+    if (element) {
+      element.style.animation = 'slideOut 0.3s ease forwards';
+      setTimeout(() => {
+        element.remove();
+        loadRecentExpenses(); // Reload to ensure consistency
+      }, 300);
+    }
+    
+    // Reload dashboard to update totals
+    await loadFinancialSummary();
+  } catch (error) {
+    utils.hideLoading();
+    utils.showAlert('Failed to delete transaction', 'error');
   }
 }
 
@@ -152,13 +192,15 @@ async function loadBudget() {
       budgetPercentage.textContent = 'Not set';
       budgetSpent.textContent = 'Tap Budget to set';
       budgetRemaining.textContent = '';
+      budgetFill.style.width = '0%';
       return;
     }
 
-    const usage = parseFloat(budgetData.usage_percentage || 0);
-    const spent = budgetData.spent_amount || 0;
-    const total = budgetData.budget_amount || budgetData.amount || 0;
+    // Calculate usage based on spent vs budget amount
+    const spent = parseFloat(budgetData.spent_amount || budgetData.spent || 0);
+    const total = parseFloat(budgetData.budget_amount || budgetData.amount || budgetData.total_budget || 0);
     const remaining = Math.max(0, total - spent);
+    const usage = total > 0 ? (spent / total * 100) : 0;
     
     // Update UI
     budgetPercentage.textContent = `${usage.toFixed(0)}%`;
@@ -175,9 +217,19 @@ async function loadBudget() {
     } else {
       budgetFill.classList.add('safe');
     }
+    
+    // Show budget status message
+    if (usage >= 100) {
+      utils.showAlert('⚠️ Budget exceeded! You\'re over your limit.', 'warning');
+    } else if (usage >= 90) {
+      utils.showAlert('🚨 Budget warning: You\'re at 90% of your budget', 'warning');
+    }
 
   } catch (error) {
     console.error('Load budget error:', error);
+    // Budget is optional - don't show error
+    document.getElementById('budgetPercentage').textContent = 'Not set';
+    document.getElementById('budgetSpent').textContent = 'Tap to set budget';
   }
 }
 
@@ -188,19 +240,28 @@ async function loadGamificationData() {
     const streakResponse = await api.getStreak();
     const streak = streakResponse.data;
     document.getElementById('currentStreak').textContent = `${streak.current_streak || 0} days`;
+    
+    // Celebrate streaks
+    if (streak.current_streak === 7 || streak.current_streak === 30) {
+      celebrateStreak(streak.current_streak);
+    }
 
     // Load XP
     const xpResponse = await api.getXP();
     const xp = xpResponse.data;
     
-    document.getElementById('userLevel').textContent = `Level ${xp.level}`;
-    document.getElementById('levelBadge').textContent = xp.level;
-    document.getElementById('xpProgress').style.width = `${xp.progress_percentage}%`;
-    document.getElementById('xpText').textContent = `${xp.total_xp} / ${xp.next_level_xp} XP`;
+    const level = xp.level || Math.floor((xp.total_xp || 0) / 100) + 1;
+    const nextLevelXp = xp.next_level_xp || (level * 100);
+    const progressPercent = xp.progress_percentage || ((xp.total_xp || 0) % 100) / 100 * 100;
+    
+    document.getElementById('userLevel').textContent = `Level ${level}`;
+    document.getElementById('levelBadge').textContent = level;
+    document.getElementById('xpProgress').style.width = `${Math.min(100, progressPercent)}%`;
+    document.getElementById('xpText').textContent = `${xp.total_xp || 0} / ${nextLevelXp} XP`;
 
-    // Load badges
+    // Load badges with animation
     const badgesResponse = await api.getBadges();
-    const badges = badgesResponse.data;
+    const badges = badgesResponse.data || [];
     
     const badgesContainer = document.getElementById('badgesContainer');
     const badgeEmojis = ['💰', '🎯', '📊', '⭐', '🔥', '💎'];
@@ -210,10 +271,20 @@ async function loadGamificationData() {
         `<span class="badge-item">${emoji}</span>`
       ).join('');
     } else {
-      const earnedBadges = badges.map(b => utils.getBadgeEmoji(b.badge_name));
-      badgesContainer.innerHTML = badgeEmojis.map(emoji => 
-        `<span class="badge-item ${earnedBadges.includes(emoji) ? 'earned' : ''}">${emoji}</span>`
-      ).join('');
+      const earnedBadgeNames = badges.map(b => b.badge_name || b.name);
+      const badgeNamesToemoji = {
+        'Saver': '💰',
+        'Goal Achiever': '🎯',
+        'Analyst': '📊',
+        'Top Performer': '⭐',
+        'Streak Master': '🔥',
+        'Platinum Member': '💎'
+      };
+      
+      badgesContainer.innerHTML = badgeEmojis.map((emoji, idx) => {
+        const isBadgeEarned = badges.length > idx;
+        return `<span class="badge-item ${isBadgeEarned ? 'earned' : ''}" title="${isBadgeEarned ? 'Earned' : 'Locked'}">${emoji}</span>`;
+      }).join('');
     }
 
     // Set motivational message
@@ -231,6 +302,10 @@ async function loadGamificationData() {
 
   } catch (error) {
     console.error('Load gamification error:', error);
+    // Set defaults if gamification API fails
+    document.getElementById('userLevel').textContent = 'Level 1';
+    document.getElementById('levelBadge').textContent = '1';
+    document.getElementById('xpText').textContent = '0 / 100 XP';
   }
 }
 
@@ -279,11 +354,37 @@ function populateIncomeOptions() {
 async function handleAddExpense(event) {
   event.preventDefault();
   
+  // Validate inputs
+  const amount = parseFloat(document.getElementById('expenseAmount').value);
+  const category = document.getElementById('expenseCategory').value;
+  const paymentMethod = document.getElementById('expensePaymentMethod').value;
+  const expenseDate = document.getElementById('expenseDate').value;
+  
+  if (!amount || amount <= 0) {
+    utils.showAlert('Please enter a valid amount', 'error');
+    return;
+  }
+  
+  if (!category) {
+    utils.showAlert('Please select a category', 'error');
+    return;
+  }
+  
+  if (!paymentMethod) {
+    utils.showAlert('Please select a payment method', 'error');
+    return;
+  }
+  
+  if (!expenseDate) {
+    utils.showAlert('Please select a date', 'error');
+    return;
+  }
+  
   const expenseData = {
-    amount: parseFloat(document.getElementById('expenseAmount').value),
-    category: document.getElementById('expenseCategory').value,
-    payment_method: document.getElementById('expensePaymentMethod').value,
-    expense_date: document.getElementById('expenseDate').value,
+    amount: amount,
+    category: category,
+    payment_method: paymentMethod,
+    expense_date: expenseDate,
     note: document.getElementById('expenseNote').value || null,
     is_recurring: false,
     recurring_frequency: null
@@ -291,10 +392,16 @@ async function handleAddExpense(event) {
 
   try {
     utils.showLoading();
-    await api.createExpense(expenseData);
+    const response = await api.createExpense(expenseData);
     
     utils.hideLoading();
-    utils.showAlert('Expense added successfully! +10 XP earned! 🎉', 'success');
+    
+    // Award XP for expense tracking
+    if (typeof addXP === 'function') {
+      addXP(10); // Award 10 XP for tracking expense
+    }
+    
+    showFunToast('Expense added successfully! +10 XP earned! 🎉', '💸', 'success');
     
     closeModal('expenseModal');
     document.getElementById('expenseForm').reset();
@@ -311,10 +418,30 @@ async function handleAddExpense(event) {
 async function handleAddIncome(event) {
   event.preventDefault();
   
+  // Validate inputs
+  const amount = parseFloat(document.getElementById('incomeAmount').value);
+  const source = document.getElementById('incomeSource').value;
+  const incomeDate = document.getElementById('incomeDate').value;
+  
+  if (!amount || amount <= 0) {
+    utils.showAlert('Please enter a valid amount', 'error');
+    return;
+  }
+  
+  if (!source) {
+    utils.showAlert('Please select an income source', 'error');
+    return;
+  }
+  
+  if (!incomeDate) {
+    utils.showAlert('Please select a date', 'error');
+    return;
+  }
+  
   const incomeData = {
-    amount: parseFloat(document.getElementById('incomeAmount').value),
-    source: document.getElementById('incomeSource').value,
-    income_date: document.getElementById('incomeDate').value,
+    amount: amount,
+    source: source,
+    income_date: incomeDate,
     note: document.getElementById('incomeNote').value || null
   };
 
@@ -323,7 +450,7 @@ async function handleAddIncome(event) {
     await api.createIncome(incomeData);
     
     utils.hideLoading();
-    utils.showAlert('Income added successfully! 💰', 'success');
+    showFunToast('Income added successfully! 💰', '💵', 'success');
     
     closeModal('incomeModal');
     document.getElementById('incomeForm').reset();
@@ -339,10 +466,41 @@ async function handleAddIncome(event) {
 async function handleSetBudget(event) {
   event.preventDefault();
   
+  // Validate inputs
+  const period = document.getElementById('budgetPeriod').value;
+  const amount = parseFloat(document.getElementById('budgetAmount').value);
+  const startDate = document.getElementById('budgetStartDate').value;
+  
+  if (!period) {
+    utils.showAlert('Please select a budget period', 'error');
+    return;
+  }
+  
+  if (!amount || amount <= 0) {
+    utils.showAlert('Please enter a valid budget amount', 'error');
+    return;
+  }
+  
+  if (!startDate) {
+    utils.showAlert('Please select a start date', 'error');
+    return;
+  }
+  
+  // Calculate end date based on period
+  const start = new Date(startDate);
+  const end = new Date(start);
+  if (period === 'weekly') {
+    end.setDate(end.getDate() + 7);
+  } else if (period === 'monthly') {
+    end.setMonth(end.getMonth() + 1);
+  }
+  
   const budgetData = {
-    period_type: document.getElementById('budgetPeriod').value,
-    amount: parseFloat(document.getElementById('budgetAmount').value),
-    start_date: document.getElementById('budgetStartDate').value
+    period_type: period,
+    amount: amount,
+    start_date: startDate,
+    end_date: end.toISOString().split('T')[0],
+    is_active: true
   };
 
   try {
@@ -350,7 +508,7 @@ async function handleSetBudget(event) {
     await api.createBudget(budgetData);
     
     utils.hideLoading();
-    utils.showAlert('Budget set successfully! 💼', 'success');
+    showFunToast('Budget set successfully! 💼', '💰', 'success');
     
     closeModal('budgetModal');
     document.getElementById('budgetForm').reset();
@@ -359,6 +517,53 @@ async function handleSetBudget(event) {
   } catch (error) {
     utils.hideLoading();
     utils.showAlert(error.message || 'Failed to set budget', 'error');
+  }
+}
+
+// Add XP to user
+async function addXP(amount) {
+  try {
+    // Call backend to add XP
+    const response = await api.post('/gamification/xp/add', { amount });
+    if (response.success) {
+      // Check if level up occurred
+      if (response.data.level_up) {
+        celebrateAchievement(`Level ${response.data.new_level}`);
+      }
+      // Reload gamification data
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Failed to add XP:', error);
+  }
+}
+
+// Award badge
+async function awardBadge(badgeName) {
+  try {
+    const response = await api.post('/gamification/badges/award', { badge_name: badgeName });
+    if (response.success) {
+      celebrateAchievement(badgeName);
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Failed to award badge:', error);
+  }
+}
+
+// Update streak
+async function updateStreak() {
+  try {
+    const response = await api.put('/gamification/streak/update', {});
+    if (response.success) {
+      const streak = response.data;
+      if (streak.new_milestone) {
+        celebrateStreak(streak.current_streak);
+      }
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Failed to update streak:', error);
   }
 }
 

@@ -413,11 +413,189 @@ const sendGoalMilestoneEmail = async (email, goalName, progress, milestone) => {
   }
 };
 
+/**
+ * Send budget alert email
+ */
+const sendBudgetAlertEmail = async (email, userName, spent, budget, percentage, period) => {
+  try {
+    const warningLevel = percentage >= 100 ? 'exceeded' : percentage >= 90 ? 'critical' : 'warning';
+    const subject = warningLevel === 'exceeded' ? '⚠️ Budget Exceeded!' : `🚨 Budget Alert - ${percentage}% Used`;
+    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: subject,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: ${warningLevel === 'exceeded' ? '#dc3545' : '#ff6b6b'}; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .alert-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 5px; }
+            .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+            .stat { background: white; padding: 15px; border-radius: 5px; text-align: center; }
+            .stat-value { font-size: 24px; font-weight: bold; color: #006B3F; }
+            .stat-label { font-size: 12px; color: #666; text-transform: uppercase; }
+            .button { display: inline-block; padding: 12px 30px; background: #006B3F; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              ${warningLevel === 'exceeded' ? '❌ Your Budget Has Been Exceeded' : '⚠️ Budget Alert'}
+            </div>
+            <div class="content">
+              <h2>Hello ${userName}!</h2>
+              <div class="alert-box">
+                <strong>Your ${period} budget is now ${percentage}% spent.</strong>
+                ${warningLevel === 'exceeded' ? 'You have exceeded your budget limit. Consider reviewing your spending.' : 'You are approaching your budget limit. Be mindful of your remaining spending.'}
+              </div>
+              <div class="stats">
+                <div class="stat">
+                  <div class="stat-value">GHS ${parseFloat(spent).toFixed(2)}</div>
+                  <div class="stat-label">Spent</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-value">GHS ${parseFloat(budget).toFixed(2)}</div>
+                  <div class="stat-label">Budget</div>
+                </div>
+              </div>
+              <p>Review your recent expenses and adjust your spending patterns if necessary.</p>
+              <a href="${process.env.FRONTEND_URL}/dashboard.html" class="button">View Dashboard</a>
+              <div class="footer">
+                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Budget alert email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Send budget alert email error:', error);
+    return false;
+  }
+};
+
+/**
+ * Send weekly summary email
+ */
+const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings, goals) => {
+  try {
+    const savingsRate = income > 0 ? ((savings / income) * 100).toFixed(1) : 0;
+    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: '📊 Your Weekly Financial Summary - KudiPal',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #006B3F 0%, #00a05e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .section { margin: 25px 0; }
+            .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+            .stat-card { background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #006B3F; }
+            .stat-card.income { border-left-color: #10b981; }
+            .stat-card.saving { border-left-color: #f59e0b; }
+            .stat-value { font-size: 28px; font-weight: bold; color: #006B3F; }
+            .stat-label { font-size: 12px; color: #999; text-transform: uppercase; }
+            .goal-item { background: white; padding: 12px; border-radius: 5px; margin: 8px 0; border-left: 3px solid #00a05e; }
+            .button { display: inline-block; padding: 12px 30px; background: #006B3F; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>📊 Weekly Summary</h1>
+              <p>Your financial snapshot for the week</p>
+            </div>
+            <div class="content">
+              <h2>Hi ${userName}! 👋</h2>
+              <p>Here's how you're doing financially this week:</p>
+              
+              <div class="stats-grid">
+                <div class="stat-card income">
+                  <div class="stat-value">GHS ${parseFloat(income).toFixed(2)}</div>
+                  <div class="stat-label">Income</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">GHS ${parseFloat(expenses).toFixed(2)}</div>
+                  <div class="stat-label">Expenses</div>
+                </div>
+              </div>
+              
+              <div class="stats-grid">
+                <div class="stat-card saving">
+                  <div class="stat-value">GHS ${parseFloat(savings).toFixed(2)}</div>
+                  <div class="stat-label">Savings</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${savingsRate}%</div>
+                  <div class="stat-label">Savings Rate</div>
+                </div>
+              </div>
+              
+              ${goals && goals.length > 0 ? `
+                <div class="section">
+                  <h3>📍 Progress on Goals</h3>
+                  ${goals.map(goal => `
+                    <div class="goal-item">
+                      <strong>${goal.title}</strong>
+                      <div style="font-size: 12px; color: #666;">GHS ${parseFloat(goal.current).toFixed(2)} / GHS ${parseFloat(goal.target).toFixed(2)}</div>
+                      <div style="background: #e0e0e0; height: 6px; border-radius: 3px; margin-top: 5px; overflow: hidden;">
+                        <div style="background: #00a05e; height: 100%; width: ${(goal.current / goal.target * 100)}%; transition: width 0.3s;"></div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+              
+              <p style="margin-top: 30px;">Keep up the great work! Review your dashboard for more detailed insights.</p>
+              <a href="${process.env.FRONTEND_URL}/dashboard.html" class="button">View Full Dashboard</a>
+              
+              <div class="footer">
+                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Weekly summary email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Send weekly summary email error:', error);
+    return false;
+  }
+};
+
 module.exports = {
   sendPasswordResetEmail,
   sendWelcomeEmail,
   sendWeeklySummaryEmail,
   sendTestEmail,
   sendBillReminderEmail,
-  sendGoalMilestoneEmail
+  sendGoalMilestoneEmail,
+  sendBudgetAlertEmail
 };
