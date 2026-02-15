@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006B3F">
+  <title>Expenses - KudiPal</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
+        <span>KudiPal</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="expenses.html" class="nav-link">Expenses</a>
+        <a href="goals.html" class="nav-link">Goals</a>
+        <a href="reports.html" class="nav-link">Reports</a>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </nav>
+      <button class="hamburger" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- Mobile Side Menu -->
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon"></i></button>
+      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
+    </div>
+    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
+    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
+    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
+    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
+    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
+    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
+    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
+    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
+      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
+    </a>
+    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="layout-dashboard" class="icon"></i></span>
+      <span>Home</span>
+    </a>
+    <a href="expenses.html" class="bottom-nav-item active">
+      <span class="nav-icon"><i data-lucide="receipt" class="icon"></i></span>
+      <span>Expenses</span>
+    </a>
+    <a href="goals.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="target" class="icon"></i></span>
+      <span>Goals</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="settings" class="icon"></i></span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title"><i data-lucide="receipt" class="icon-inline"></i> All Expenses</h2>
+        <button class="btn btn-primary btn-sm" onclick="openAddExpenseModal()">+ Add</button>
+      </div>
+      
+      <!-- Mobile List View -->
+      <div id="expensesListView" class="expense-list">
+        <div class="empty-state">
+          <div class="spinner"></div>
+          <p>Loading expenses...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.requireAuth();
+
+    async function loadExpenses() {
+      try {
+        const response = await api.getExpenses({ limit: 100 });
+        const expenses = response.data.expenses || response.data;
+        
+        const listView = document.getElementById('expensesListView');
+        
+        if (expenses.length === 0) {
+          listView.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon"><i data-lucide="receipt" style="width:48px;height:48px"></i></div>
+              <p class="empty-state-text">No expenses yet</p>
+              <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        listView.innerHTML = expenses.map(expense => `
+          <div class="expense-item" onclick="showExpenseDetails('${expense.id}')">
+            <div class="expense-info">
+              <div class="expense-category">
+                ${utils.getCategoryIcon(expense.category)} ${expense.category}
+              </div>
+              <div class="expense-details">
+                ${expense.payment_method} ${expense.note ? '• ' + expense.note : ''}
+              </div>
+            </div>
+            <div>
+              <div class="expense-amount">${utils.formatCurrency(expense.amount)}</div>
+              <div class="expense-date">${utils.formatDate(expense.expense_date || expense.date)}</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        document.getElementById('expensesListView').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon"><i data-lucide="x-circle" style="width:48px;height:48px;color:#dc3545"></i></div>
+            <p class="empty-state-text">Failed to load expenses</p>
+            <button class="btn btn-primary" onclick="loadExpenses()">Try Again</button>
+          </div>
+        `;
+        lucide.createIcons();
+      }
+    }
+
+    function showExpenseDetails(id) {
+      // For now, just show a confirmation to delete
+      if (confirm('Do you want to delete this expense?')) {
+        deleteExpense(id);
+      }
+    }
+
+    async function deleteExpense(id) {
+      try {
+        await api.deleteExpense(id);
+        utils.showAlert('Expense deleted', 'success');
+        await loadExpenses();
+      } catch (error) {
+        utils.showAlert('Failed to delete expense', 'error');
+      }
+    }
+
+    function logout() {
+      api.logout();
+    }
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
+      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadExpenses();
+    });
+  </script>
+</body>
+</html>

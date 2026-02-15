@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006B3F">
+  <title>Badges & Achievements - KudiPal</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Badges Page Styles */
+    .badges-header-card {
+      background: linear-gradient(135deg, #006B3F 0%, #00A05E 50%, #FCD116 100%);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .badges-header-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 150px;
+      height: 150px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+
+    .badges-header-card::after {
+      content: '🏆';
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 20px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .badges-title {
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .badges-subtitle {
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .level-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.2);
+      padding: 12px 24px;
+      border-radius: 30px;
+      margin-bottom: 16px;
+    }
+
+    .level-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #FFD700, #FFA000);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    }
+
+    .level-info {
+      text-align: left;
+    }
+
+    .level-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .level-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .level-title {
+      font-size: 11px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .xp-progress-section {
+      margin-top: 14px;
+    }
+
+    .xp-progress-header {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255,255,255,0.9);
+      font-size: 11px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .xp-progress-bar {
+      height: 12px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 2px rgba(255,255,255,0.1);
+    }
+
+    .xp-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, var(--success) 100%);
+      background-size: 200% 100%;
+      animation: xpShine 2s ease infinite;
+      border-radius: 8px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .xp-progress-fill::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes xpShine {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      background: var(--card-bg);
+      padding: 14px 8px;
+      border-radius: 14px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-icon {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Badge Categories */
+    .badge-category {
+      margin-bottom: 20px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .category-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .category-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-color);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    /* Badge Grid */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .badge-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .badge-card.unlocked {
+      border-color: var(--success-color);
+      background: linear-gradient(145deg, rgba(0, 160, 94, 0.05), rgba(0, 107, 63, 0.05));
+    }
+
+    .badge-card.locked {
+      opacity: 0.6;
+    }
+
+    .badge-card.locked .badge-icon-wrapper {
+      filter: grayscale(100%);
+    }
+
+    .badge-icon-wrapper {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      position: relative;
+    }
+
+    .badge-icon-wrapper.savings { background: linear-gradient(135deg, #006B3F, #004d2c); }
+    .badge-icon-wrapper.streak { background: linear-gradient(135deg, #FCD116, #E6B800); }
+    .badge-icon-wrapper.goals { background: linear-gradient(135deg, #00A05E, #006B3F); }
+    .badge-icon-wrapper.challenges { background: linear-gradient(135deg, #004d2c, #003322); }
+    .badge-icon-wrapper.social { background: linear-gradient(135deg, #00A05E, #00804A); }
+    .badge-icon-wrapper.special { background: linear-gradient(135deg, #FCD116, #E6B800); }
+
+    .badge-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .badge-xp {
+      font-size: 10px;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .badge-locked-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .badge-new {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc3545;
+      color: white;
+      font-size: 8px;
+      padding: 3px 6px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    /* Recent Achievements */
+    .recent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 100px;
+    }
+
+    .recent-item {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .recent-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .recent-info {
+      flex: 1;
+    }
+
+    .recent-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .recent-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .recent-xp {
+      background: rgba(0, 160, 94, 0.1);
+      color: var(--success-color);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      opacity: 0.3;
+      margin-bottom: 16px;
+    }
+
+    .empty-state p {
+      font-size: 13px;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      border: none;
+      background: var(--card-bg);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--primary-color);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
+        <span>KudiPal</span>
+      </div>
+      <nav class="nav">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="expenses.html" class="nav-link">Expenses</a>
+        <a href="goals.html" class="nav-link">Goals</a>
+        <a href="badges.html" class="nav-link active">Badges</a>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </nav>
+      <button class="hamburger" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- Mobile Side Menu -->
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
+      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
+    </div>
+    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
+    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
+    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
+    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
+    <a href="challenges.html" class="mobile-menu-link"><i data-lucide="trophy" class="icon-menu"></i> Challenges</a>
+    <a href="badges.html" class="mobile-menu-link active"><i data-lucide="award" class="icon-menu"></i> Badges</a>
+    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
+    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
+    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
+    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
+      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
+    </a>
+    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header Card -->
+    <div class="badges-header-card">
+      <div class="badges-title">
+        <i data-lucide="award" style="width:22px;height:22px;color:white"></i>
+        Badges & Achievements
+      </div>
+      <div class="badges-subtitle">Unlock rewards for your financial milestones</div>
+      
+      <div class="level-display">
+        <div class="level-icon" id="levelIcon">⭐</div>
+        <div class="level-info">
+          <div class="level-label">Current Level</div>
+          <div class="level-value" id="currentLevel">1</div>
+          <div class="level-title" id="levelTitle">Money Novice</div>
+        </div>
+      </div>
+
+      <div class="xp-progress-section">
+        <div class="xp-progress-header">
+          <span id="currentXP">0 XP</span>
+          <span id="nextLevelXP">100 XP to Level 2</span>
+        </div>
+        <div class="xp-progress-bar">
+          <div class="xp-progress-fill" id="xpProgressFill" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value" id="totalBadges">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">✨</div>
+        <div class="stat-value" id="unlockedBadges">0</div>
+        <div class="stat-label">Unlocked</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value" id="currentStreak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-value" id="totalXP">0</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('all')">All Badges</button>
+      <button class="tab-btn" onclick="showTab('unlocked')">Unlocked</button>
+      <button class="tab-btn" onclick="showTab('locked')">Locked</button>
+      <button class="tab-btn" onclick="showTab('recent')">Recent</button>
+    </div>
+
+    <!-- All Badges Tab -->
+    <div id="allBadgesTab">
+      <!-- Savings Badges -->
+      <div class="badge-category">
+        <div class="category-header">
+          <div class="category-title">💰 Savings Milestones</div>
+          <div class="category-count" id="savingsCount">0/5</div>
+        </div>
+        <div class="badges-grid" id="savingsBadges"></div>
+      </div>
+
+      <!-- Streak Badges -->
+      <div class="badge-category">
+        <div class="category-header">
+          <div class="category-title">🔥 Consistency Streaks</div>
+          <div class="category-count" id="streakCount">0/5</div>
+        </div>
+        <div class="badges-grid" id="streakBadges"></div>
+      </div>
+
+      <!-- Goal Badges -->
+      <div class="badge-category">
+        <div class="category-header">
+          <div class="category-title">🎯 Goal Achievements</div>
+          <div class="category-count" id="goalCount">0/5</div>
+        </div>
+        <div class="badges-grid" id="goalBadges"></div>
+      </div>
+
+      <!-- Challenge Badges -->
+      <div class="badge-category">
+        <div class="category-header">
+          <div class="category-title">🏅 Challenge Master</div>
+          <div class="category-count" id="challengeCount">0/5</div>
+        </div>
+        <div class="badges-grid" id="challengeBadges"></div>
+      </div>
+
+      <!-- Special Badges -->
+      <div class="badge-category" style="padding-bottom: 100px;">
+        <div class="category-header">
+          <div class="category-title">⭐ Special Achievements</div>
+          <div class="category-count" id="specialCount">0/5</div>
+        </div>
+        <div class="badges-grid" id="specialBadges"></div>
+      </div>
+    </div>
+
+    <!-- Unlocked Tab -->
+    <div id="unlockedTab" style="display: none;">
+      <div class="badges-grid" id="unlockedBadgesGrid" style="padding-bottom: 100px;"></div>
+    </div>
+
+    <!-- Locked Tab -->
+    <div id="lockedTab" style="display: none;">
+      <div class="badges-grid" id="lockedBadgesGrid" style="padding-bottom: 100px;"></div>
+    </div>
+
+    <!-- Recent Tab -->
+    <div id="recentTab" style="display: none;">
+      <div class="recent-list" id="recentList"></div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
+      <span>Home</span>
+    </a>
+    <a href="challenges.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="trophy"></i></span>
+      <span>Challenges</span>
+    </a>
+    <a href="badges.html" class="bottom-nav-item active">
+      <span class="nav-icon"><i data-lucide="award"></i></span>
+      <span>Badges</span>
+    </a>
+    <a href="settings.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="settings"></i></span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <!-- Badge Detail Modal -->
+  <div id="badgeModal" class="modal">
+    <div class="modal-content" style="text-align: center;">
+      <div class="modal-header" style="justify-content: flex-end;">
+        <button class="close-btn" onclick="closeModal('badgeModal')">&times;</button>
+      </div>
+      <div id="badgeModalIcon" style="font-size: 60px; margin-bottom: 16px;">🏆</div>
+      <h2 id="badgeModalName" style="font-size: 18px; color: var(--text-primary); margin-bottom: 8px;">Badge Name</h2>
+      <p id="badgeModalDesc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Badge description</p>
+      <div id="badgeModalXP" style="background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: 600; margin-bottom: 16px;">+100 XP</div>
+      <div id="badgeModalStatus" style="font-size: 12px; color: var(--text-muted);"></div>
+    </div>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.requireAuth();
+    lucide.createIcons();
+
+    // Badge definitions
+    const allBadges = {
+      savings: [
+        { id: 'first_save', icon: '💵', name: 'First Save', desc: 'Save your first GHS', xp: 50, requirement: 'Save any amount' },
+        { id: 'save_100', icon: '💰', name: 'Century Saver', desc: 'Save ₵100 total', xp: 100, requirement: 'Total savings reach ₵100' },
+        { id: 'save_500', icon: '🏦', name: 'Bank Starter', desc: 'Save ₵500 total', xp: 200, requirement: 'Total savings reach ₵500' },
+        { id: 'save_1000', icon: '💎', name: 'Money Master', desc: 'Save ₵1,000 total', xp: 500, requirement: 'Total savings reach ₵1,000' },
+        { id: 'save_5000', icon: '👑', name: 'Savings King', desc: 'Save ₵5,000 total', xp: 1000, requirement: 'Total savings reach ₵5,000' }
+      ],
+      streak: [
+        { id: 'streak_3', icon: '🔥', name: 'Getting Started', desc: '3-day login streak', xp: 30, requirement: 'Log in 3 days in a row' },
+        { id: 'streak_7', icon: '⚡', name: 'Week Warrior', desc: '7-day login streak', xp: 70, requirement: 'Log in 7 days in a row' },
+        { id: 'streak_14', icon: '💪', name: 'Fortnight Fighter', desc: '14-day login streak', xp: 150, requirement: 'Log in 14 days in a row' },
+        { id: 'streak_30', icon: '🌟', name: 'Monthly Master', desc: '30-day login streak', xp: 300, requirement: 'Log in 30 days in a row' },
+        { id: 'streak_100', icon: '🏆', name: 'Centurion', desc: '100-day login streak', xp: 1000, requirement: 'Log in 100 days in a row' }
+      ],
+      goals: [
+        { id: 'first_goal', icon: '🎯', name: 'Goal Setter', desc: 'Create your first goal', xp: 50, requirement: 'Create 1 savings goal' },
+        { id: 'complete_goal', icon: '✅', name: 'Goal Crusher', desc: 'Complete a savings goal', xp: 100, requirement: 'Complete 1 goal' },
+        { id: 'goals_3', icon: '🏃', name: 'Triple Threat', desc: 'Complete 3 goals', xp: 250, requirement: 'Complete 3 goals' },
+        { id: 'goals_5', icon: '🚀', name: 'Goal Machine', desc: 'Complete 5 goals', xp: 400, requirement: 'Complete 5 goals' },
+        { id: 'goals_10', icon: '🌈', name: 'Dream Achiever', desc: 'Complete 10 goals', xp: 800, requirement: 'Complete 10 goals' }
+      ],
+      challenges: [
+        { id: 'first_challenge', icon: '🏅', name: 'Challenger', desc: 'Join your first challenge', xp: 50, requirement: 'Join 1 challenge' },
+        { id: 'win_challenge', icon: '🥇', name: 'Challenge Winner', desc: 'Complete a challenge', xp: 100, requirement: 'Complete 1 challenge' },
+        { id: 'challenges_3', icon: '🎖️', name: 'Triple Crown', desc: 'Complete 3 challenges', xp: 250, requirement: 'Complete 3 challenges' },
+        { id: 'challenges_5', icon: '🏆', name: 'Challenge Champion', desc: 'Complete 5 challenges', xp: 400, requirement: 'Complete 5 challenges' },
+        { id: 'challenges_10', icon: '👑', name: 'Challenge Legend', desc: 'Complete 10 challenges', xp: 1000, requirement: 'Complete 10 challenges' }
+      ],
+      special: [
+        { id: 'early_bird', icon: '🌅', name: 'Early Bird', desc: 'Log in before 6 AM', xp: 100, requirement: 'Access app before 6 AM' },
+        { id: 'night_owl', icon: '🦉', name: 'Night Owl', desc: 'Log in after midnight', xp: 100, requirement: 'Access app after 12 AM' },
+        { id: 'budget_master', icon: '📊', name: 'Budget Master', desc: 'Stay under budget for a month', xp: 300, requirement: 'No budget overruns in 30 days' },
+        { id: 'no_spend', icon: '🚫', name: 'No-Spend Hero', desc: 'Complete a no-spend day', xp: 50, requirement: 'Log no expenses for 1 day' },
+        { id: 'perfect_week', icon: '⭐', name: 'Perfect Week', desc: 'Track expenses daily for a week', xp: 200, requirement: 'Log expenses 7 days in a row' }
+      ]
+    };
+
+    // User badge data (stored in localStorage for demo)
+    let userBadges = JSON.parse(localStorage.getItem('kudipal_badges')) || {
+      unlocked: ['first_save', 'streak_3', 'first_goal'],
+      xp: 130,
+      level: 1,
+      streak: 5,
+      recentUnlocks: [
+        { id: 'first_goal', date: new Date(Date.now() - 86400000).toISOString() },
+        { id: 'streak_3', date: new Date(Date.now() - 172800000).toISOString() },
+        { id: 'first_save', date: new Date(Date.now() - 259200000).toISOString() }
+      ]
+    };
+
+    const levelTitles = [
+      { level: 1, title: 'Money Novice', icon: '🌱', xpNeeded: 0 },
+      { level: 2, title: 'Budget Beginner', icon: '📗', xpNeeded: 100 },
+      { level: 3, title: 'Savings Starter', icon: '💵', xpNeeded: 250 },
+      { level: 4, title: 'Finance Fan', icon: '📈', xpNeeded: 500 },
+      { level: 5, title: 'Money Manager', icon: '💼', xpNeeded: 1000 },
+      { level: 6, title: 'Wealth Builder', icon: '🏗️', xpNeeded: 2000 },
+      { level: 7, title: 'Financial Pro', icon: '🎯', xpNeeded: 3500 },
+      { level: 8, title: 'Money Master', icon: '🏆', xpNeeded: 5000 },
+      { level: 9, title: 'Wealth Wizard', icon: '🧙', xpNeeded: 7500 },
+      { level: 10, title: 'Financial Legend', icon: '👑', xpNeeded: 10000 }
+    ];
+
+    let currentTab = 'all';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      renderBadges();
+      lucide.createIcons();
+    });
+
+    function toggleMobileMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.querySelector('.mobile-menu').classList.toggle('active');
+      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
+      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+    }
+
+    function calculateLevel(xp) {
+      for (let i = levelTitles.length - 1; i >= 0; i--) {
+        if (xp >= levelTitles[i].xpNeeded) {
+          return levelTitles[i];
+        }
+      }
+      return levelTitles[0];
+    }
+
+    function getNextLevel(xp) {
+      for (let i = 0; i < levelTitles.length; i++) {
+        if (xp < levelTitles[i].xpNeeded) {
+          return levelTitles[i];
+        }
+      }
+      return null;
+    }
+
+    function updateStats() {
+      const currentLevelInfo = calculateLevel(userBadges.xp);
+      const nextLevelInfo = getNextLevel(userBadges.xp);
+
+      document.getElementById('currentLevel').textContent = currentLevelInfo.level;
+      document.getElementById('levelTitle').textContent = currentLevelInfo.title;
+      document.getElementById('levelIcon').textContent = currentLevelInfo.icon;
+      document.getElementById('currentXP').textContent = `${userBadges.xp} XP`;
+
+      if (nextLevelInfo) {
+        const xpNeeded = nextLevelInfo.xpNeeded - userBadges.xp;
+        document.getElementById('nextLevelXP').textContent = `${xpNeeded} XP to Level ${nextLevelInfo.level}`;
+        const progress = ((userBadges.xp - currentLevelInfo.xpNeeded) / (nextLevelInfo.xpNeeded - currentLevelInfo.xpNeeded)) * 100;
+        document.getElementById('xpProgressFill').style.width = `${Math.min(100, progress)}%`;
+      } else {
+        document.getElementById('nextLevelXP').textContent = 'Max Level!';
+        document.getElementById('xpProgressFill').style.width = '100%';
+      }
+
+      const totalBadges = Object.values(allBadges).flat().length;
+      const unlockedCount = userBadges.unlocked.length;
+
+      document.getElementById('totalBadges').textContent = totalBadges;
+      document.getElementById('unlockedBadges').textContent = unlockedCount;
+      document.getElementById('currentStreak').textContent = userBadges.streak;
+      document.getElementById('totalXP').textContent = userBadges.xp;
+
+      // Update category counts
+      document.getElementById('savingsCount').textContent = `${countUnlocked('savings')}/${allBadges.savings.length}`;
+      document.getElementById('streakCount').textContent = `${countUnlocked('streak')}/${allBadges.streak.length}`;
+      document.getElementById('goalCount').textContent = `${countUnlocked('goals')}/${allBadges.goals.length}`;
+      document.getElementById('challengeCount').textContent = `${countUnlocked('challenges')}/${allBadges.challenges.length}`;
+      document.getElementById('specialCount').textContent = `${countUnlocked('special')}/${allBadges.special.length}`;
+    }
+
+    function countUnlocked(category) {
+      return allBadges[category].filter(b => userBadges.unlocked.includes(b.id)).length;
+    }
+
+    function renderBadges() {
+      renderCategoryBadges('savings', 'savingsBadges');
+      renderCategoryBadges('streak', 'streakBadges');
+      renderCategoryBadges('goals', 'goalBadges');
+      renderCategoryBadges('challenges', 'challengeBadges');
+      renderCategoryBadges('special', 'specialBadges');
+      renderUnlockedBadges();
+      renderLockedBadges();
+      renderRecentList();
+    }
+
+    function renderCategoryBadges(category, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = allBadges[category].map(badge => {
+        const isUnlocked = userBadges.unlocked.includes(badge.id);
+        const isNew = userBadges.recentUnlocks.find(r => r.id === badge.id && 
+          (Date.now() - new Date(r.date).getTime()) < 86400000 * 3);
+        
+        return `
+          <div class="badge-card ${isUnlocked ? 'unlocked' : 'locked'}" onclick="showBadgeDetail('${badge.id}', '${category}')">
+            ${isNew ? '<span class="badge-new">NEW</span>' : ''}
+            ${!isUnlocked ? '<div class="badge-locked-icon"><i data-lucide="lock" style="width:12px;height:12px"></i></div>' : ''}
+            <div class="badge-icon-wrapper ${category}">${badge.icon}</div>
+            <div class="badge-name">${badge.name}</div>
+            <div class="badge-xp">+${badge.xp} XP</div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function renderUnlockedBadges() {
+      const container = document.getElementById('unlockedBadgesGrid');
+      const allBadgesList = Object.entries(allBadges).flatMap(([cat, badges]) => 
+        badges.map(b => ({ ...b, category: cat }))
+      );
+      const unlocked = allBadgesList.filter(b => userBadges.unlocked.includes(b.id));
+
+      if (unlocked.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="grid-column: span 3;"><i data-lucide="award" style="width:48px;height:48px"></i><p>No badges unlocked yet.<br>Complete challenges to earn badges!</p></div>`;
+      } else {
+        container.innerHTML = unlocked.map(badge => `
+          <div class="badge-card unlocked" onclick="showBadgeDetail('${badge.id}', '${badge.category}')">
+            <div class="badge-icon-wrapper ${badge.category}">${badge.icon}</div>
+            <div class="badge-name">${badge.name}</div>
+            <div class="badge-xp">+${badge.xp} XP</div>
+          </div>
+        `).join('');
+      }
+      lucide.createIcons();
+    }
+
+    function renderLockedBadges() {
+      const container = document.getElementById('lockedBadgesGrid');
+      const allBadgesList = Object.entries(allBadges).flatMap(([cat, badges]) => 
+        badges.map(b => ({ ...b, category: cat }))
+      );
+      const locked = allBadgesList.filter(b => !userBadges.unlocked.includes(b.id));
+
+      if (locked.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="grid-column: span 3;"><i data-lucide="trophy" style="width:48px;height:48px"></i><p>Amazing! You've unlocked all badges!</p></div>`;
+      } else {
+        container.innerHTML = locked.map(badge => `
+          <div class="badge-card locked" onclick="showBadgeDetail('${badge.id}', '${badge.category}')">
+            <div class="badge-locked-icon"><i data-lucide="lock" style="width:12px;height:12px"></i></div>
+            <div class="badge-icon-wrapper ${badge.category}">${badge.icon}</div>
+            <div class="badge-name">${badge.name}</div>
+            <div class="badge-xp">+${badge.xp} XP</div>
+          </div>
+        `).join('');
+      }
+      lucide.createIcons();
+    }
+
+    function renderRecentList() {
+      const container = document.getElementById('recentList');
+      const allBadgesList = Object.entries(allBadges).flatMap(([cat, badges]) => 
+        badges.map(b => ({ ...b, category: cat }))
+      );
+
+      if (userBadges.recentUnlocks.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i data-lucide="clock" style="width:48px;height:48px"></i><p>No recent achievements.<br>Keep going to earn badges!</p></div>`;
+      } else {
+        container.innerHTML = userBadges.recentUnlocks.map(unlock => {
+          const badge = allBadgesList.find(b => b.id === unlock.id);
+          if (!badge) return '';
+          const date = new Date(unlock.date);
+          const daysAgo = Math.floor((Date.now() - date.getTime()) / 86400000);
+          const dateText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo} days ago`;
+          
+          return `
+            <div class="recent-item" onclick="showBadgeDetail('${badge.id}', '${badge.category}')">
+              <div class="recent-icon badge-icon-wrapper ${badge.category}">${badge.icon}</div>
+              <div class="recent-info">
+                <div class="recent-name">${badge.name}</div>
+                <div class="recent-date">${dateText}</div>
+              </div>
+              <div class="recent-xp">+${badge.xp} XP</div>
+            </div>
+          `;
+        }).join('');
+      }
+      lucide.createIcons();
+    }
+
+    function showTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('allBadgesTab').style.display = tab === 'all' ? 'block' : 'none';
+      document.getElementById('unlockedTab').style.display = tab === 'unlocked' ? 'block' : 'none';
+      document.getElementById('lockedTab').style.display = tab === 'locked' ? 'block' : 'none';
+      document.getElementById('recentTab').style.display = tab === 'recent' ? 'block' : 'none';
+    }
+
+    function showBadgeDetail(badgeId, category) {
+      const badge = allBadges[category].find(b => b.id === badgeId);
+      if (!badge) return;
+
+      const isUnlocked = userBadges.unlocked.includes(badge.id);
+
+      document.getElementById('badgeModalIcon').textContent = badge.icon;
+      document.getElementById('badgeModalName').textContent = badge.name;
+      document.getElementById('badgeModalDesc').textContent = badge.desc;
+      document.getElementById('badgeModalXP').textContent = `+${badge.xp} XP`;
+      
+      if (isUnlocked) {
+        document.getElementById('badgeModalStatus').innerHTML = `<span style="color: var(--success-color);">✓ Unlocked</span>`;
+      } else {
+        document.getElementById('badgeModalStatus').innerHTML = `<span style="color: var(--text-muted);">🔒 ${badge.requirement}</span>`;
+      }
+
+      document.getElementById('badgeModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '../index.html';
+    }
+
+    // Save badge data
+    function saveBadgeData() {
+      localStorage.setItem('kudipal_badges', JSON.stringify(userBadges));
+    }
+  </script>
+</body>
+</html>
