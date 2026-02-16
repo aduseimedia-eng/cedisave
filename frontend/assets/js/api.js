@@ -607,13 +607,22 @@ class APIService {
       saveDemoData();
       return { success: true, data: newGoal };
     }
-    const response = await fetch(`${API_BASE_URL}/goals`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify(goalData)
-    });
+    
+    // Enhanced API call with better error handling
+    try {
+      const response = await fetch(`${API_BASE_URL}/goals`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(goalData)
+      });
 
-    return await this.handleResponse(response);
+      const result = await this.handleResponse(response);
+      console.log('✅ Goal created successfully:', result.data.title);
+      return result;
+    } catch (error) {
+      console.error('❌ Failed to create goal:', error.message);
+      throw error;
+    }
   }
 
   async getGoals() {
