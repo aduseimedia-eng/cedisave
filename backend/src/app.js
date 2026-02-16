@@ -16,6 +16,7 @@ const budgetRoutes = require('./routes/budget');
 const goalRoutes = require('./routes/goals');
 const reportRoutes = require('./routes/reports');
 const gamificationRoutes = require('./routes/gamification');
+const phoneRoutes = require('./routes/phone');
 
 // New feature routes (v2)
 const billsRoutes = require('./routes/bills');
@@ -81,6 +82,7 @@ app.get('/health', (req, res) => {
 const API_VERSION = '/api/v1';
 
 app.use(`${API_VERSION}/auth`, authRoutes);
+app.use(`${API_VERSION}/phone`, phoneRoutes);
 app.use(`${API_VERSION}/expenses`, expenseRoutes);
 app.use(`${API_VERSION}/income`, incomeRoutes);
 app.use(`${API_VERSION}/budget`, budgetRoutes);
