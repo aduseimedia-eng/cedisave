@@ -1078,6 +1078,14 @@
         // Update display
         updateAvatarDisplay(imageDataUrl);
         
+        // Trigger storage event for cross-tab sync
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'profilePicture',
+          newValue: imageDataUrl,
+          oldValue: localStorage.getItem('profilePicture'),
+          storageArea: localStorage
+        }));
+        
         utils.showAlert('Profile picture updated! 📸', 'success');
       };
       reader.readAsDataURL(file);
@@ -1112,6 +1120,15 @@
         localStorage.setItem('profilePicture', imageDataUrl);
         updateAvatarDisplay(imageDataUrl);
         updateEditModalAvatar(imageDataUrl);
+        
+        // Trigger storage event for cross-tab sync
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'profilePicture',
+          newValue: imageDataUrl,
+          oldValue: localStorage.getItem('profilePicture'),
+          storageArea: localStorage
+        }));
+        
         utils.showAlert('Profile picture updated! 📸', 'success');
       };
       reader.readAsDataURL(file);
@@ -1123,6 +1140,15 @@
         const initials = userData ? getInitials(userData.name) : '👤';
         updateAvatarDisplay(null, initials);
         updateEditModalAvatar(null, initials);
+        
+        // Trigger storage event for cross-tab sync
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'profilePicture',
+          newValue: null,
+          oldValue: localStorage.getItem('profilePicture'),
+          storageArea: localStorage
+        }));
+        
         utils.showAlert('Profile picture removed', 'success');
       }
     }

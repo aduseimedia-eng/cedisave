@@ -49,15 +49,29 @@ async function initDashboard() {
     
     document.getElementById('userName').textContent = userData.name || 'Welcome!';
     
-    // Load profile picture from profile data
+    // Load profile picture from profile data or localStorage
     const avatarEl = document.getElementById('userAvatar');
     const initialsEl = document.getElementById('avatarInitials');
     
-    if (userData.profile_picture && avatarEl) {
-      avatarEl.innerHTML = `<img src="${userData.profile_picture}" alt="Profile">`;
+    // Check for profile picture: API first, then localStorage fallback
+    let profilePicture = userData.profile_picture || localStorage.getItem('profilePicture');
+    
+    if (profilePicture && avatarEl) {
+      avatarEl.innerHTML = `<img src="${profilePicture}" alt="Profile">`;
     } else if (initialsEl) {
       initialsEl.textContent = getInitials(userData.name);
     }
+    
+    // Listen for profile picture updates from other tabs/windows
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'profilePicture' && avatarEl) {
+        if (event.newValue) {
+          avatarEl.innerHTML = `<img src="${event.newValue}" alt="Profile">`;
+        } else {
+          avatarEl.innerHTML = `<span id="avatarInitials">${getInitials(userData.name)}</span>`;
+        }
+      }
+    });
 
     // Load all dashboard data
     await Promise.all([
