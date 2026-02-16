@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const {
   sendEmailVerification,
-  verifyEmailOTP,
   verifyEmailToken,
   resendEmailVerification
 } = require('../controllers/emailController');
@@ -28,7 +27,7 @@ const handleValidationErrors = (req, res, next) => {
 
 /**
  * POST /email/send-verification
- * Send email verification (OTP or Link)
+ * Send email verification link
  */
 router.post(
   '/send-verification',
@@ -38,34 +37,9 @@ router.post(
       .notEmpty().withMessage('Email is required')
       .isEmail().withMessage('Invalid email format')
       .normalizeEmail(),
-    body('verificationType')
-      .optional()
-      .trim()
-      .isIn(['otp', 'link']).withMessage('verficationType must be "otp" or "link"'),
     handleValidationErrors
   ],
   sendEmailVerification
-);
-
-/**
- * POST /email/verify-otp
- * Verify email with OTP code
- */
-router.post(
-  '/verify-otp',
-  [
-    body('email')
-      .trim()
-      .notEmpty().withMessage('Email is required')
-      .isEmail().withMessage('Invalid email format')
-      .normalizeEmail(),
-    body('otp')
-      .trim()
-      .notEmpty().withMessage('OTP is required')
-      .isLength({ min: 6, max: 6 }).withMessage('OTP must be 6 digits'),
-    handleValidationErrors
-  ],
-  verifyEmailOTP
 );
 
 /**
@@ -83,21 +57,17 @@ router.get(
 );
 
 /**
- * POST /email/resend
- * Resend email verification
+ * POST /email/resend-verification
+ * Resend email verification link
  */
 router.post(
-  '/resend',
+  '/resend-verification',
   [
     body('email')
       .trim()
       .notEmpty().withMessage('Email is required')
       .isEmail().withMessage('Invalid email format')
       .normalizeEmail(),
-    body('verificationType')
-      .optional()
-      .trim()
-      .isIn(['otp', 'link']).withMessage('verificationType must be "otp" or "link"'),
     handleValidationErrors
   ],
   resendEmailVerification

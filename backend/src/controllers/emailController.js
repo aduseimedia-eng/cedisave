@@ -3,13 +3,6 @@ const { sendVerificationEmail } = require('../services/emailService');
 const crypto = require('crypto');
 
 /**
- * Generate random 6-digit OTP
- */
-const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-/**
  * Generate secure verification token
  */
 const generateVerificationToken = () => {
@@ -17,26 +10,18 @@ const generateVerificationToken = () => {
 };
 
 /**
- * Send email verification (OTP or Link)
- * POST /auth/email/send-verification
+ * Send email verification link
+ * POST /api/v1/email/send-verification
  */
 const sendEmailVerification = async (req, res) => {
   try {
-    const { email, verificationType = 'otp' } = req.body;
+    const { email } = req.body;
 
     // Validate email format
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({
         success: false,
         message: 'Invalid email format'
-      });
-    }
-
-    // Validate verification type
-    if (!['otp', 'link'].includes(verificationType)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid verification type. Use "otp" or "link"'
       });
     }
 
@@ -77,25 +62,19 @@ const sendEmailVerification = async (req, res) => {
       }
     }
 
-    let otp = null;
-    let verificationToken = null;
-
-    if (verificationType === 'otp') {
-      otp = generateOTP();
-    } else {
-      verificationToken = generateVerificationToken();
-    }
+    // Generate verification token (24-hour validity)
+    const verificationToken = generateVerificationToken();
 
     // Save verification record to database
     const result = await query(
-      `INSERT INTO email_verification (email, otp, verification_token, verification_type, expires_at) 
-       VALUES ($1, $2, $3, $4, NOW() + INTERVAL '15 minutes') 
-       RETURNING id, email, expires_at, verification_type`,
-      [email, otp, verificationToken, verificationType]
+      `INSERT INTO email_verification (email, verification_token, expires_at) 
+       VALUES ($1, $2, NOW() + INTERVAL '24 hours') 
+       RETURNING id, email, expires_at`,
+      [email, verificationToken]
     );
 
-    // Send email
-    const emailSent = await sendVerificationEmail(email, verificationType, otp, verificationToken);
+    // Send verification email
+    const emailSent = await sendVerificationEmail(email, verificationToken);
 
     if (!emailSent) {
       // Delete the verification record if email send failed
@@ -104,18 +83,17 @@ const sendEmailVerification = async (req, res) => {
       return res.status(500).json({
         success: false,
         message: 'Failed to send verification email. Please try again.',
-        ...(process.env.NODE_ENV === 'development' && { otp, verificationToken })
+        ...(process.env.NODE_ENV === 'development' && { verificationToken })
       });
     }
 
     res.json({
       success: true,
-      message: `Verification ${verificationType === 'otp' ? 'code' : 'link'} sent to ${email}`,
+      message: 'Verification link sent to ' + email,
       data: {
         email,
-        verificationType,
-        expiresIn: '15 minutes',
-        ...(process.env.NODE_ENV === 'development' && { otp, verificationToken })
+        expiresIn: '24 hours',
+        ...(process.env.NODE_ENV === 'development' && { verificationToken })
       }
     });
   } catch (error) {
@@ -129,97 +107,8 @@ const sendEmailVerification = async (req, res) => {
 };
 
 /**
- * Verify email OTP code
- * POST /auth/email/verify-otp
- */
-const verifyEmailOTP = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    if (!email || !otp) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email and OTP are required'
-      });
-    }
-
-    // Find valid OTP
-    const result = await query(
-      `SELECT * FROM email_verification 
-       WHERE email = $1 AND otp = $2 AND verification_type = 'otp' 
-       AND expires_at > NOW() AND is_verified = false
-       ORDER BY created_at DESC LIMIT 1`,
-      [email, otp]
-    );
-
-    if (result.rows.length === 0) {
-      // Increment attempts
-      await query(
-        `UPDATE email_verification 
-         SET attempts = attempts + 1 
-         WHERE email = $1 AND verification_type = 'otp' AND expires_at > NOW() AND is_verified = false`,
-        [email]
-      );
-
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired OTP'
-      });
-    }
-
-    const verificationRecord = result.rows[0];
-
-    // Check attempts
-    if (verificationRecord.attempts >= verificationRecord.max_attempts) {
-      await query(
-        'DELETE FROM email_verification WHERE id = $1',
-        [verificationRecord.id]
-      );
-
-      return res.status(400).json({
-        success: false,
-        message: 'Too many failed attempts. Request a new verification email.'
-      });
-    }
-
-    // Mark as verified
-    await query(
-      `UPDATE email_verification 
-       SET is_verified = true, verified_at = NOW() 
-       WHERE id = $1`,
-      [verificationRecord.id]
-    );
-
-    // Mark email as verified for user
-    await query(
-      `UPDATE users 
-       SET email_verified = true, updated_at = NOW() 
-       WHERE email = $1`,
-      [email]
-    );
-
-    res.json({
-      success: true,
-      message: 'Email verified successfully!',
-      data: {
-        email,
-        verified: true,
-        message: 'You can now login to your account'
-      }
-    });
-  } catch (error) {
-    console.error('Verify email OTP error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to verify email',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
-  }
-};
-
-/**
  * Verify email with link/token
- * GET /auth/email/verify-token?token=xxxxx
+ * GET /api/v1/email/verify-token?token=xxxxx
  */
 const verifyEmailToken = async (req, res) => {
   try {
@@ -235,7 +124,7 @@ const verifyEmailToken = async (req, res) => {
     // Find valid token
     const result = await query(
       `SELECT * FROM email_verification 
-       WHERE verification_token = $1 AND verification_type = 'link' 
+       WHERE verification_token = $1 
        AND expires_at > NOW() AND is_verified = false
        ORDER BY created_at DESC LIMIT 1`,
       [token]
@@ -280,7 +169,7 @@ const verifyEmailToken = async (req, res) => {
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
               font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              background: linear-gradient(135deg, #006B3F 0%, #00a05e 100%);
               min-height: 100vh;
               display: flex;
               align-items: center;
@@ -300,12 +189,13 @@ const verifyEmailToken = async (req, res) => {
               width: 80px;
               height: 80px;
               margin: 0 auto 20px;
-              background: #4caf50;
+              background: #006B3F;
               border-radius: 50%;
               display: flex;
               align-items: center;
               justify-content: center;
               font-size: 40px;
+              color: white;
             }
             h1 {
               color: #333;
@@ -321,7 +211,7 @@ const verifyEmailToken = async (req, res) => {
             .button {
               display: inline-block;
               padding: 14px 40px;
-              background: #667eea;
+              background: #006B3F;
               color: white;
               text-decoration: none;
               border-radius: 8px;
@@ -329,7 +219,7 @@ const verifyEmailToken = async (req, res) => {
               transition: all 0.2s;
             }
             .button:hover {
-              background: #764ba2;
+              background: #00a05e;
               transform: translateY(-2px);
             }
           </style>
@@ -368,11 +258,11 @@ const verifyEmailToken = async (req, res) => {
 
 /**
  * Resend email verification
- * POST /auth/email/resend
+ * POST /api/v1/email/resend-verification
  */
 const resendEmailVerification = async (req, res) => {
   try {
-    const { email, verificationType = 'otp' } = req.body;
+    const { email } = req.body;
 
     if (!email) {
       return res.status(400).json({
@@ -409,24 +299,17 @@ const resendEmailVerification = async (req, res) => {
       [email]
     );
 
-    // Generate new verification
-    let otp = null;
-    let verificationToken = null;
-
-    if (verificationType === 'otp') {
-      otp = generateOTP();
-    } else {
-      verificationToken = generateVerificationToken();
-    }
+    // Generate new verification token
+    const verificationToken = generateVerificationToken();
 
     const result = await query(
-      `INSERT INTO email_verification (email, otp, verification_token, verification_type, expires_at) 
-       VALUES ($1, $2, $3, $4, NOW() + INTERVAL '15 minutes') 
+      `INSERT INTO email_verification (email, verification_token, expires_at) 
+       VALUES ($1, $2, NOW() + INTERVAL '24 hours') 
        RETURNING id, email, expires_at`,
-      [email, otp, verificationToken, verificationType]
+      [email, verificationToken]
     );
 
-    const emailSent = await sendVerificationEmail(email, verificationType, otp, verificationToken);
+    const emailSent = await sendVerificationEmail(email, verificationToken);
 
     if (!emailSent) {
       await query('DELETE FROM email_verification WHERE id = $1', [result.rows[0].id]);
@@ -434,17 +317,16 @@ const resendEmailVerification = async (req, res) => {
       return res.status(500).json({
         success: false,
         message: 'Failed to send verification email. Please try again.',
-        ...(process.env.NODE_ENV === 'development' && { otp, verificationToken })
+        ...(process.env.NODE_ENV === 'development' && { verificationToken })
       });
     }
 
     res.json({
       success: true,
-      message: `Verification ${verificationType === 'otp' ? 'code' : 'link'} resent to ${email}`,
+      message: 'Verification link resent to ' + email,
       data: {
         email,
-        verificationType,
-        expiresIn: '15 minutes'
+        expiresIn: '24 hours'
       }
     });
   } catch (error) {
@@ -459,7 +341,6 @@ const resendEmailVerification = async (req, res) => {
 
 module.exports = {
   sendEmailVerification,
-  verifyEmailOTP,
   verifyEmailToken,
   resendEmailVerification
 };

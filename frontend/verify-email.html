@@ -11,7 +11,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       padding: 0;
@@ -37,79 +36,56 @@
       max-width: 400px;
       width: 100%;
       box-shadow: var(--shadow-lg);
-    }
-
-    .verify-header {
       text-align: center;
-      margin-bottom: 28px;
     }
 
     .verify-icon {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 16px;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
       background: rgba(0, 107, 63, 0.1);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--primary-color);
+      font-size: 40px;
     }
 
     .verify-title {
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       color: var(--text-primary);
     }
 
     .verify-subtitle {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-secondary);
       margin-bottom: 8px;
+      line-height: 1.6;
     }
 
     .verify-email {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--primary-color);
-      margin-bottom: 20px;
-    }
-
-    .otp-input-group {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      justify-content: center;
-    }
-
-    .otp-input {
-      width: 48px;
-      height: 56px;
-      border: 2px solid var(--border-color);
+      margin-bottom: 28px;
+      background: rgba(0, 107, 63, 0.05);
+      padding: 12px;
       border-radius: 8px;
-      font-size: 24px;
-      font-weight: 700;
-      text-align: center;
-      color: var(--text-primary);
-      background: var(--input-bg);
-      transition: all 0.2s;
     }
 
-    .otp-input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(0, 107, 63, 0.1);
-    }
-
-    .otp-input.error {
-      border-color: var(--danger);
-      background: rgba(220, 53, 69, 0.05);
+    .verify-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.6;
     }
 
     .verify-button {
       width: 100%;
-      padding: 14px;
+      padding: 14px 20px;
       background: var(--primary-color);
       color: white;
       border: none;
@@ -121,85 +97,113 @@
       margin-bottom: 12px;
     }
 
-    .verify-button:hover {
-      background: var(--primary-dark);
+    .verify-button:hover:not(:disabled) {
+      background: #00a05e;
       transform: translateY(-2px);
     }
 
-    .verify-button:active {
-      transform: translateY(0);
-    }
-
     .verify-button:disabled {
-      background: var(--text-disabled);
+      opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
     }
 
     .resend-container {
-      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .resend-text {
       font-size: 13px;
       color: var(--text-secondary);
+      margin-bottom: 12px;
     }
 
     .resend-button {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
       background: none;
       border: none;
-      color: var(--primary-color);
-      cursor: pointer;
-      font-weight: 600;
-      padding: 4px 8px;
+      padding: 0;
+    }
+
+    .resend-button:hover:not(:disabled) {
       text-decoration: underline;
     }
 
     .resend-button:disabled {
-      color: var(--text-disabled);
+      opacity: 0.6;
       cursor: not-allowed;
     }
 
-    .timer {
+    .resend-timer {
       font-size: 12px;
       color: var(--text-secondary);
-      margin-left: 4px;
+      margin-top: 8px;
     }
 
-    .error-message {
-      padding: 12px;
-      background: rgba(220, 53, 69, 0.1);
-      border-left: 4px solid var(--danger);
-      border-radius: 4px;
-      color: var(--danger);
-      font-size: 13px;
-      margin-bottom: 16px;
-      display: none;
+    .go-back {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
     }
 
-    .error-message.show {
-      display: block;
+    .go-back-link {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
     }
 
-    .success-message {
-      padding: 12px;
-      background: rgba(0, 160, 94, 0.1);
-      border-left: 4px solid var(--success);
-      border-radius: 4px;
-      color: var(--success);
-      font-size: 13px;
-      margin-bottom: 16px;
-      display: none;
+    .go-back-link:hover {
+      text-decoration: underline;
     }
 
-    .success-message.show {
-      display: block;
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      padding: 14px 16px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+      max-width: 360px;
+      margin: 0 auto;
     }
 
-    .spinner {
+    .toast.success {
+      background: #10b981;
+    }
+
+    .toast.error {
+      background: #ef4444;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .loading {
       display: inline-block;
       width: 16px;
       height: 16px;
       border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
       border-top-color: white;
+      border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin-right: 8px;
     }
@@ -207,380 +211,212 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-
-    .edit-email {
-      text-align: center;
-      margin-top: 16px;
-    }
-
-    .edit-email-button {
-      background: none;
-      border: none;
-      color: var(--primary-color);
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: underline;
-      padding: 4px;
-    }
-
-    .verification-methods {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .method-tab {
-      flex: 1;
-      padding: 10px;
-      border: 2px solid var(--border-color);
-      background: transparent;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-secondary);
-    }
-
-    .method-tab.active {
-      border-color: var(--primary-color);
-      background: rgba(0, 107, 63, 0.1);
-      color: var(--primary-color);
-    }
-
-    .method-tab:hover {
-      border-color: var(--primary-color);
-    }
-
-    .method-content {
-      display: none;
-    }
-
-    .method-content.active {
-      display: block;
-    }
   </style>
 </head>
 <body>
   <div class="verify-container">
     <div class="verify-card">
-      <div class="verify-header">
-        <div class="verify-icon">
-          <i data-lucide="mail" style="width: 32px; height: 32px;"></i>
-        </div>
-        <h1 class="verify-title">Verify Your Email</h1>
-        <p class="verify-subtitle">We sent a verification code to</p>
-        <p class="verify-email" id="displayEmail">example@email.com</p>
-      </div>
+      <div class="verify-icon">✉️</div>
+      <h1 class="verify-title">Check Your Email</h1>
+      <p class="verify-subtitle">We've sent a verification link to your email address</p>
+      <div class="verify-email" id="emailDisplay"></div>
+      
+      <p class="verify-message">
+        Click the link in the email to verify your account and complete your registration. The link will expire in 24 hours.
+      </p>
 
-      <div class="error-message" id="errorMessage"></div>
-      <div class="success-message" id="successMessage"></div>
-
-      <!-- OTP Verification Method -->
-      <div id="otpMethod" class="method-content active">
-        <form id="verifyForm" onsubmit="handleVerifyOTP(event)">
-          <div class="otp-input-group">
-            <input type="text" class="otp-input" id="otp1" maxlength="1" inputmode="numeric" placeholder="0">
-            <input type="text" class="otp-input" id="otp2" maxlength="1" inputmode="numeric" placeholder="0">
-            <input type="text" class="otp-input" id="otp3" maxlength="1" inputmode="numeric" placeholder="0">
-            <input type="text" class="otp-input" id="otp4" maxlength="1" inputmode="numeric" placeholder="0">
-            <input type="text" class="otp-input" id="otp5" maxlength="1" inputmode="numeric" placeholder="0">
-            <input type="text" class="otp-input" id="otp6" maxlength="1" inputmode="numeric" placeholder="0">
-          </div>
-
-          <button type="submit" class="verify-button" id="verifyButton">
-            <span id="verifyButtonText">Verify Email</span>
-          </button>
-        </form>
-
-        <div class="resend-container">
-          Didn't receive the code?
-          <button type="button" class="resend-button" id="resendButton" onclick="handleResendOTP()">
-            Resend
-          </button>
-          <span class="timer" id="resendTimer"></span>
-        </div>
-      </div>
-
-      <div class="edit-email">
-        <button type="button" class="edit-email-button" onclick="goBackToRegister()">
-          Use a different email address
+      <div class="resend-container">
+        <p class="resend-text">Didn't receive the email?</p>
+        <button class="resend-button" id="resendBtn" onclick="resendVerification()">
+          <span id="resendText">Resend Email</span>
         </button>
+        <div class="resend-timer" id="resendTimer"></div>
+      </div>
+
+      <div class="go-back">
+        <a href="index.html" class="go-back-link">← Go back to login</a>
       </div>
     </div>
   </div>
 
   <script>
-    let resendTimer = 0;
+    let resendCooldown = 0;
     let email = '';
-    let isVerifying = false;
 
     // Initialize page
-    document.addEventListener('DOMContentLoaded', () => {
-      // Get email from session storage
+    function init() {
       email = sessionStorage.getItem('pendingEmailVerification');
       
       if (!email) {
-        window.location.href = 'index.html';
+        showToast('Email address not found. Please try registering again.', 'error');
+        setTimeout(() => window.location.href = 'index.html', 2000);
         return;
       }
 
-      // Display masked email
-      displayMaskedEmail(email);
+      // Mask email for display
+      const [username, domain] = email.split('@');
+      const maskedEmail = username.substring(0, 1) + '*'.repeat(username.length - 1) + '@' + domain;
+      document.getElementById('emailDisplay').textContent = maskedEmail;
 
-      // Send verification OTP
-      sendOTP();
-
-      // Setup OTP input auto-advance
-      setupOTPInputs();
-
-      // Start resend timer
-      startResendTimer();
-
-      // Initialize Lucide icons
-      lucide.createIcons();
-    });
-
-    // Display masked email
-    function displayMaskedEmail(email) {
-      const [localPart, domain] = email.split('@');
-      const masked = localPart.substring(0, 2) + '***@' + domain;
-      document.getElementById('displayEmail').textContent = masked;
-    }
-
-    // Setup OTP input auto-advance
-    function setupOTPInputs() {
-      const inputs = document.querySelectorAll('.otp-input');
+      // Check if returning from email link click
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
       
-      inputs.forEach((input, index) => {
-        input.addEventListener('input', (e) => {
-          const value = e.target.value;
-          
-          // Only allow digits
-          if (!/^\d*$/.test(value)) {
-            e.target.value = '';
-            return;
-          }
-          
-          // Auto-focus next input
-          if (value.length === 1 && index < inputs.length - 1) {
-            inputs[index + 1].focus();
-          }
-          
-          // Remove error state
-          input.classList.remove('error');
-          clearErrorMessage();
-        });
+      if (token) {
+        // Verify using the token from email link
+        verifyWithToken(token);
+      } else {
+        // Send verification email
+        sendVerificationEmail();
+      }
 
-        input.addEventListener('keydown', (e) => {
-          // Handle backspace
-          if (e.key === 'Backspace' && input.value === '' && index > 0) {
-            inputs[index - 1].focus();
-          }
-        });
-
-        input.addEventListener('paste', (e) => {
-          e.preventDefault();
-          const pastedData = e.clipboardData.getData('text');
-          const digits = pastedData.replace(/\D/g, '').slice(0, 6);
-          
-          digits.split('').forEach((digit, i) => {
-            if (inputs[i]) {
-              inputs[i].value = digit;
-              if (i === digits.length - 1 || i === inputs.length - 1) {
-                inputs[i].focus();
-              }
-            }
-          });
-        });
-      });
+      // Setup resend cooldown if it was interrupted
+      const savedCooldown = localStorage.getItem('emailResendCooldown');
+      if (savedCooldown) {
+        const elapsed = Math.floor((Date.now() - parseInt(savedCooldown)) / 1000);
+        if (elapsed < 60) {
+          resendCooldown = 60 - elapsed;
+          startResendTimer();
+        } else {
+          localStorage.removeItem('emailResendCooldown');
+        }
+      }
     }
 
-    // Send OTP
-    async function sendOTP() {
+    // Send initial verification email
+    async function sendVerificationEmail() {
       try {
         const response = await fetch('/api/v1/email/send-verification', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email, verificationType: 'otp' })
+          body: JSON.stringify({ email })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          showErrorMessage(data.message || 'Failed to send OTP');
-          // In dev mode, show OTP if provided
-          if (data.otp) {
-            console.log('📧 Development OTP:', data.otp);
-            showSuccessMessage(`DEV MODE: OTP is ${data.otp}`);
+          if (response.status === 429) {
+            showToast('Please wait before requesting another email', 'error');
+            startResendTimer();
+          } else {
+            showToast(data.message || 'Failed to send verification email', 'error');
           }
+          return;
         }
+
+        showToast('Verification email sent!', 'success');
       } catch (error) {
-        console.error('Send OTP error:', error);
-        showErrorMessage('Failed to send OTP. Please check your internet connection.');
+        console.error('Send email error:', error);
+        showToast('Error sending verification email. Please try again.', 'error');
       }
     }
 
-    // Handle OTP verification
-    async function handleVerifyOTP(event) {
-      event.preventDefault();
-
-      if (isVerifying) return;
-
-      const inputs = document.querySelectorAll('.otp-input');
-      const otp = Array.from(inputs).map(input => input.value).join('');
-
-      // Validate OTP
-      if (otp.length !== 6) {
-        showErrorMessage('Please enter all 6 digits');
-        inputs.forEach(input => input.classList.add('error'));
-        return;
-      }
-
-      isVerifying = true;
-      const button = document.getElementById('verifyButton');
-      const buttonText = document.getElementById('verifyButtonText');
-      
-      button.disabled = true;
-      buttonText.innerHTML = '<span class="spinner"></span>Verifying...';
+    // Resend verification email
+    async function resendVerification() {
+      if (resendCooldown > 0) return;
 
       try {
-        const response = await fetch('/api/v1/email/verify-otp', {
+        const response = await fetch('/api/v1/email/resend-verification', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email, otp })
+          body: JSON.stringify({ email })
         });
 
         const data = await response.json();
 
-        if (response.ok && data.success) {
-          showSuccessMessage('✓ Email verified successfully!');
-          
-          // Clear session storage
-          sessionStorage.removeItem('pendingEmailVerification');
-          
-          // Redirect to login page to login
-          setTimeout(() => {
-            window.location.href = 'index.html?verified=true';
-          }, 1500);
-        } else {
-          showErrorMessage(data.message || 'Invalid OTP. Please try again.');
-          inputs.forEach(input => input.classList.add('error'));
-          inputs[0].focus();
+        if (!response.ok) {
+          showToast(data.message || 'Failed to resend email', 'error');
+          return;
         }
+
+        showToast('Verification email resent!', 'success');
+        localStorage.setItem('emailResendCooldown', Date.now().toString());
+        resendCooldown = 60;
+        startResendTimer();
       } catch (error) {
-        console.error('Verify OTP error:', error);
-        showErrorMessage('Failed to verify email. Please try again.');
-      } finally {
-        isVerifying = false;
-        button.disabled = false;
-        buttonText.textContent = 'Verify Email';
+        console.error('Resend error:', error);
+        showToast('Error resending email. Please try again.', 'error');
       }
     }
 
-    // Handle resend OTP
-    async function handleResendOTP() {
-      const resendButton = document.getElementById('resendButton');
-      
-      if (resendButton.disabled) {
-        return;
-      }
-
-      resendButton.disabled = true;
-      resendButton.textContent = 'Sending...';
-
+    // Verify using token from email link
+    async function verifyWithToken(token) {
       try {
-        const response = await fetch('/api/v1/email/resend', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, verificationType: 'otp' })
-        });
-
+        const response = await fetch(`/api/v1/email/verify-token?token=${token}`);
         const data = await response.json();
 
-        if (response.ok && data.success) {
-          showSuccessMessage('New verification code sent to your email!');
-          clearOTPInputs();
-          startResendTimer();
-        } else {
-          showErrorMessage(data.message || 'Failed to resend OTP');
-          resendButton.disabled = false;
-          resendButton.textContent = 'Resend';
+        if (!response.ok) {
+          showToast('Invalid or expired verification link', 'error');
+          return;
         }
+
+        // Show success
+        showToast('Email verified successfully!', 'success');
+        
+        // Clear verification data
+        sessionStorage.removeItem('pendingEmailVerification');
+        localStorage.removeItem('emailResendCooldown');
+
+        // Redirect to login
+        setTimeout(() => {
+          window.location.href = 'index.html?verified=true';
+        }, 1500);
       } catch (error) {
-        console.error('Resend OTP error:', error);
-        showErrorMessage('Failed to resend OTP. Please try again.');
-        resendButton.disabled = false;
-        resendButton.textContent = 'Resend';
+        console.error('Token verification error:', error);
+        showToast('Error verifying email. Please try again.', 'error');
       }
     }
 
-    // Start resend timer (60 seconds)
+    // Start resend cooldown timer
     function startResendTimer() {
-      resendTimer = 60;
-      const resendButton = document.getElementById('resendButton');
-      const timerSpan = document.getElementById('resendTimer');
+      const resendBtn = document.getElementById('resendBtn');
+      const resendText = document.getElementById('resendText');
+      const resendTimer = document.getElementById('resendTimer');
 
-      resendButton.disabled = true;
+      resendBtn.disabled = true;
 
       const interval = setInterval(() => {
-        resendTimer--;
-        timerSpan.textContent = `(${resendTimer}s)`;
-
-        if (resendTimer <= 0) {
+        resendCooldown--;
+        
+        if (resendCooldown <= 0) {
           clearInterval(interval);
-          resendButton.disabled = false;
-          timerSpan.textContent = '';
+          resendBtn.disabled = false;
+          resendText.textContent = 'Resend Email';
+          resendTimer.textContent = '';
+          localStorage.removeItem('emailResendCooldown');
+        } else {
+          resendTimer.textContent = `Try again in ${resendCooldown}s`;
         }
       }, 1000);
     }
 
-    // Clear OTP inputs
-    function clearOTPInputs() {
-      const inputs = document.querySelectorAll('.otp-input');
-      inputs.forEach(input => {
-        input.value = '';
-        input.classList.remove('error');
-      });
-      inputs[0].focus();
-    }
+    // Show toast notification
+    function showToast(message, type = 'success') {
+      // Remove existing toast
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
 
-    // Show error message
-    function showErrorMessage(message) {
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.textContent = message;
-      errorDiv.classList.add('show');
-      
-      // Hide after 5 seconds
+      // Create new toast
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      // Remove after 3 seconds
       setTimeout(() => {
-        errorDiv.classList.remove('show');
-      }, 5000);
+        toast.style.animation = 'slideUp 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
 
-    // Clear error message
-    function clearErrorMessage() {
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.classList.remove('show');
-    }
-
-    // Show success message
-    function showSuccessMessage(message) {
-      const successDiv = document.getElementById('successMessage');
-      successDiv.textContent = message;
-      successDiv.classList.add('show');
-    }
-
-    // Go back to register
-    function goBackToRegister() {
-      sessionStorage.removeItem('pendingEmailVerification');
-      window.location.href = 'index.html';
-    }
+    // Initialize on page load
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
