@@ -1327,18 +1327,7 @@ div[style*="background: var(--primary-color)"] {
 }
 
 /* Ghana Flag Decoration */
-.ghana-flag {
-  height: 3px;
-  background: linear-gradient(to right, 
-    var(--accent-color) 0%, 
-    var(--accent-color) 33.33%, 
-    var(--secondary-color) 33.33%, 
-    var(--secondary-color) 66.66%, 
-    var(--primary-color) 66.66%, 
-    var(--primary-color) 100%);
-  margin-bottom: 14px;
-  border-radius: 2px;
-}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
