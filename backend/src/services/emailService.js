@@ -590,6 +590,131 @@ const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings
   }
 };
 
+/**
+ * Send email verification (OTP or Link)
+ */
+const sendVerificationEmail = async (email, verificationType = 'otp', otp = null, verificationToken = null) => {
+  try {
+    let subject, htmlContent;
+
+    if (verificationType === 'otp') {
+      subject = 'Your Email Verification Code - KudiPal';
+      htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #006B3F 0%, #00a05e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; }
+            .otp-box { background: #f0f9ff; border: 2px solid #006B3F; border-radius: 10px; padding: 20px; text-align: center; margin: 30px 0; }
+            .otp-code { font-size: 48px; font-weight: bold; color: #006B3F; letter-spacing: 10px; }
+            .expires { color: #888; font-size: 13px; margin-top: 10px; }
+            .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; color: #856404; }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 20px; }
+            h1 { margin: 0; font-size: 24px; }
+            p { margin: 15px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🔐 Verify Your Email</h1>
+            </div>
+            <div class="content">
+              <p>Hi there! 👋</p>
+              <p>Thank you for signing up for KudiPal. To complete your registration, please use the verification code below:</p>
+              <div class="otp-box">
+                <div class="otp-code">${otp}</div>
+                <div class="expires">Valid for 15 minutes</div>
+              </div>
+              <p><strong>Never share this code with anyone.</strong> KudiPal staff will NEVER ask for this code.</p>
+              <div class="warning">
+                <strong>⏰ Important:</strong> If you didn't sign up for KudiPal, please ignore this email and your account will not be created.
+              </div>
+              <p style="color: #999; font-size: 14px;">
+                If you have any questions, contact us at support@kudipal.com
+              </p>
+              <div class="footer">
+                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+    } else {
+      // Verification link
+      const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+      subject = 'Verify Your Email Address - KudiPal';
+      htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #006B3F 0%, #00a05e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; padding: 14px 40px; background: #006B3F; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 30px auto; text-align: center; }
+            .link-text { color: #006B3F; word-break: break-all; font-size: 12px; }
+            .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; color: #856404; }
+            .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 20px; }
+            h1 { margin: 0; font-size: 24px; }
+            p { margin: 15px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>✅ Verify Your Email</h1>
+            </div>
+            <div class="content">
+              <p>Hi there! 👋</p>
+              <p>Thank you for signing up for KudiPal. To complete your registration, please verify your email by clicking the button below:</p>
+              <a href="${verificationLink}" class="button">Verify Email Address</a>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="background: #f9f9f9; padding: 10px; border-radius: 5px;">
+                <span class="link-text">${verificationLink}</span>
+              </p>
+              <p><strong>This link will expire in 15 minutes.</strong></p>
+              <div class="warning">
+                <strong>⏰ Important:</strong> If you didn't sign up for KudiPal, please ignore this email and your account will not be created.
+              </div>
+              <p style="color: #999; font-size: 14px;">
+                If you have any questions, contact us at support@kudipal.com
+              </p>
+              <div class="footer">
+                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+    }
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: subject,
+      html: htmlContent
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`Email verification (${verificationType}) sent:`, info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Send email verification error:', error);
+    return false;
+  }
+};
+
 module.exports = {
   sendPasswordResetEmail,
   sendWelcomeEmail,
@@ -597,5 +722,6 @@ module.exports = {
   sendTestEmail,
   sendBillReminderEmail,
   sendGoalMilestoneEmail,
-  sendBudgetAlertEmail
+  sendBudgetAlertEmail,
+  sendVerificationEmail
 };

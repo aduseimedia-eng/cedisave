@@ -13,6 +13,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     phone VARCHAR(15) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN DEFAULT FALSE,
     phone_verified BOOLEAN DEFAULT FALSE,
     is_verified BOOLEAN DEFAULT FALSE,
     verification_token VARCHAR(255),
@@ -50,6 +51,28 @@ CREATE TABLE phone_verification (
 -- Index for faster lookups
 CREATE INDEX idx_phone_verification_phone ON phone_verification(phone);
 CREATE INDEX idx_phone_verification_expires ON phone_verification(expires_at);
+
+-- ==========================================
+-- EMAIL VERIFICATION TABLE (OTP + Links)
+-- ==========================================
+CREATE TABLE email_verification (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) NOT NULL,
+    otp VARCHAR(6),
+    verification_token VARCHAR(255),
+    verification_type VARCHAR(20), -- 'otp' or 'link'
+    attempts INT DEFAULT 0,
+    max_attempts INT DEFAULT 5,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    verified_at TIMESTAMP,
+    is_verified BOOLEAN DEFAULT FALSE
+);
+
+-- Index for faster lookups
+CREATE INDEX idx_email_verification_email ON email_verification(email);
+CREATE INDEX idx_email_verification_token ON email_verification(verification_token);
+CREATE INDEX idx_email_verification_expires ON email_verification(expires_at);
 
 -- ==========================================
 -- EXPENSES TABLE
