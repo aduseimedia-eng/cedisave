@@ -659,7 +659,18 @@
         }
       } catch (error) {
         console.error('Login error:', error);
-        showToast(error.message || 'Login failed', 'error');
+        
+        // Check if error is about phone verification
+        if (error.status === 403 && error.response?.data?.requiresPhoneVerification) {
+          showToast('Phone verification required. Redirecting...', 'warning');
+          const phone = error.response.data.phone;
+          sessionStorage.setItem('pendingPhoneVerification', phone);
+          setTimeout(() => {
+            window.location.href = 'verify-phone.html';
+          }, 1000);
+        } else {
+          showToast(error.message || 'Login failed', 'error');
+        }
       }
     }
 
@@ -686,10 +697,20 @@
       try {
         const result = await api.register({ name, email, phone, password });
         if (result.success) {
-          showToast('Registration successful!');
-          setTimeout(() => {
-            window.location.href = 'pages/dashboard.html';
-          }, 500);
+          // Check if phone verification is required
+          if (result.data.requiresPhoneVerification) {
+            showToast('Registration successful! Please verify your phone.');
+            // Store phone for verification page
+            sessionStorage.setItem('pendingPhoneVerification', phone);
+            setTimeout(() => {
+              window.location.href = 'verify-phone.html';
+            }, 500);
+          } else {
+            showToast('Registration successful!');
+            setTimeout(() => {
+              window.location.href = 'pages/dashboard.html';
+            }, 500);
+          }
         }
       } catch (error) {
         console.error('Registration error:', error);

@@ -420,9 +420,9 @@
           // Clear session storage
           sessionStorage.removeItem('pendingPhoneVerification');
           
-          // Redirect to dashboard or next step
+          // Redirect to login page to login
           setTimeout(() => {
-            window.location.href = 'dashboard.html';
+            window.location.href = 'index.html?verified=true';
           }, 1500);
         } else {
           showErrorMessage(data.message || 'Invalid OTP. Please try again.');

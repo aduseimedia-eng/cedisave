@@ -28,7 +28,7 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_ROUNDS) || 10);
     const password_hash = await bcrypt.hash(password, salt);
 
-    // Create user
+    // Create user (phone_verified will be false by default)
     const result = await query(
       `INSERT INTO users (name, email, phone, password_hash) 
        VALUES ($1, $2, $3, $4) 
@@ -50,23 +50,21 @@ const register = async (req, res) => {
       [user.id]
     );
 
-    // Generate tokens
-    const token = generateToken(user.id, user.email);
-    const refreshToken = generateRefreshToken(user.id);
-
+    // Registration successful but phone verification required
+    // Frontend should redirect to verify-phone.html with phone number
     res.status(201).json({
       success: true,
-      message: 'Registration successful',
+      message: 'Registration successful. Phone verification required.',
       data: {
         user: {
           id: user.id,
           name: user.name,
           email: user.email,
           phone: user.phone,
-          created_at: user.created_at
+          created_at: user.created_at,
+          phone_verified: false
         },
-        token,
-        refreshToken
+        requiresPhoneVerification: true
       }
     });
   } catch (error) {
@@ -111,6 +109,25 @@ const login = async (req, res) => {
       });
     }
 
+    // Check if phone is verified
+    const phoneVerificationResult = await query(
+      'SELECT phone_verified FROM users WHERE id = $1',
+      [user.id]
+    );
+
+    const phoneVerified = phoneVerificationResult.rows[0]?.phone_verified || false;
+
+    if (!phoneVerified) {
+      return res.status(403).json({
+        success: false,
+        message: 'Phone number verification required. Please verify your phone first.',
+        data: {
+          requiresPhoneVerification: true,
+          phone: user.phone
+        }
+      });
+    }
+
     // Generate tokens
     const token = generateToken(user.id, user.email);
     const refreshToken = generateRefreshToken(user.id);
@@ -129,7 +146,8 @@ const login = async (req, res) => {
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone
+          phone: user.phone,
+          phone_verified: true
         },
         token,
         refreshToken

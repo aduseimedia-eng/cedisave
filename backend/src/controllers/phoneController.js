@@ -138,7 +138,7 @@ const verifyPhoneOTP = async (req, res) => {
       });
     }
 
-    // Mark as verified
+    // Mark OTP as verified
     await query(
       `UPDATE phone_verification 
        SET is_verified = true, verified_at = NOW() 
@@ -146,12 +146,21 @@ const verifyPhoneOTP = async (req, res) => {
       [otpRecord.id]
     );
 
+    // Mark phone as verified for user
+    await query(
+      `UPDATE users 
+       SET phone_verified = true, updated_at = NOW() 
+       WHERE phone = $1`,
+      [phone]
+    );
+
     res.json({
       success: true,
       message: 'Phone number verified successfully',
       data: {
         phone,
-        verified: true
+        verified: true,
+        message: 'You can now login to your account'
       }
     });
   } catch (error) {
@@ -176,6 +185,27 @@ const resendPhoneOTP = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Phone number is required'
+      });
+    }
+
+    // Check if user exists with this phone
+    const userCheck = await query(
+      'SELECT id, phone_verified FROM users WHERE phone = $1',
+      [phone]
+    );
+
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this phone number'
+      });
+    }
+
+    // Don't allow resending if already verified
+    if (userCheck.rows[0].phone_verified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number is already verified. You can login now.'
       });
     }
 
