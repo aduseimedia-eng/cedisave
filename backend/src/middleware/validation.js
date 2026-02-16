@@ -47,8 +47,7 @@ const registerValidation = [
   
   body('password')
     .notEmpty().withMessage('Password is required')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must contain uppercase, lowercase, and number'),
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
   
   handleValidationErrors
 ];
@@ -86,7 +85,7 @@ const expenseValidation = [
   
   body('expense_date')
     .notEmpty().withMessage('Date is required')
-    .isISO8601().withMessage('Invalid date format')
+    .matches(/^\d{4}-\d{2}-\d{2}(T|\s|$)/).withMessage('Date must be in YYYY-MM-DD format or ISO8601')
     .toDate(),
   
   body('note')
@@ -120,7 +119,7 @@ const incomeValidation = [
   
   body('income_date')
     .notEmpty().withMessage('Date is required')
-    .isISO8601().withMessage('Invalid date format')
+    .matches(/^\d{4}-\d{2}-\d{2}(T|\s|$)/).withMessage('Date must be in YYYY-MM-DD format or ISO8601')
     .toDate(),
   
   body('note')
@@ -146,7 +145,7 @@ const budgetValidation = [
   
   body('start_date')
     .notEmpty().withMessage('Start date is required')
-    .isISO8601().withMessage('Invalid date format')
+    .matches(/^\d{4}-\d{2}-\d{2}(T|\s|$)/).withMessage('Date must be in YYYY-MM-DD format or ISO8601')
     .toDate(),
   
   handleValidationErrors

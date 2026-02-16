@@ -11,7 +11,8 @@ router.post('/', authenticateToken, goalValidation, async (req, res) => {
     const result = await query('INSERT INTO goals (user_id, title, target_amount, deadline) VALUES ($1, $2, $3, $4) RETURNING *', [userId, title, target_amount, deadline]);
     res.status(201).json({ success: true, data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to create goal' });
+    console.error('❌ Error creating goal:', error);
+    res.status(500).json({ success: false, message: 'Failed to create goal', error: error.message });
   }
 });
 

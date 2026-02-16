@@ -24,11 +24,17 @@ const generateOTP = () => {
  */
 const sendOTP = async (phone, otp) => {
   try {
+    // Log OTP in development mode for testing
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`📱 DEV MODE - OTP for ${phone}: ${otp}`);
+      console.log(`${'='.repeat(60)}\n`);
+    }
+
     if (!ARKESEL_API_KEY) {
-      console.warn('⚠️  ARKESEL_API_KEY not configured. OTP not sent.');
-      // For development, just return true and log the OTP
+      console.warn('⚠️  ARKESEL_API_KEY not configured. Using development mode.');
+      // For development, return true and log the OTP (already logged above)
       if (process.env.NODE_ENV === 'development') {
-        console.log(`📱 DEV MODE - OTP for ${phone}: ${otp}`);
         return true;
       }
       throw new Error('SMS service not configured');

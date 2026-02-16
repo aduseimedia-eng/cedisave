@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
@@ -1011,8 +1012,10 @@
         document.getElementById('profileName').textContent = userData.name || 'User';
         document.getElementById('profileEmail').textContent = userData.email || '';
         
-        // Load profile picture or show initials
-        if (!loadProfilePicture()) {
+        // Load profile picture from database or show initials
+        if (userData.profile_picture) {
+          updateAvatarDisplay(userData.profile_picture);
+        } else if (!loadProfilePictureFromStorage()) {
           updateAvatarDisplay(null, getInitials(userData.name));
         }
         
@@ -1052,7 +1055,7 @@
       }
     }
 
-    function handleAvatarUpload(event) {
+    async function handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -1062,36 +1065,56 @@
         return;
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        utils.showAlert('Image size must be less than 5MB', 'error');
+      // Validate file size (max 2MB for database storage)
+      if (file.size > 2 * 1024 * 1024) {
+        utils.showAlert('Image size must be less than 2MB', 'error');
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const imageDataUrl = e.target.result;
         
-        // Save to localStorage for demo mode
-        localStorage.setItem('profilePicture', imageDataUrl);
-        
-        // Update display
-        updateAvatarDisplay(imageDataUrl);
-        
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'profilePicture',
-          newValue: imageDataUrl,
-          oldValue: localStorage.getItem('profilePicture'),
-          storageArea: localStorage
-        }));
-        
-        utils.showAlert('Profile picture updated! 📸', 'success');
+        try {
+          utils.showLoading();
+          
+          // Save to database via API
+          const response = await api.updateProfile({ profile_picture: imageDataUrl });
+          
+          if (response.success) {
+            // Update display
+            updateAvatarDisplay(imageDataUrl);
+            
+            // Also save to localStorage as backup for offline/cross-tab
+            localStorage.setItem('profilePicture', imageDataUrl);
+            
+            // Trigger storage event for cross-tab sync
+            window.dispatchEvent(new StorageEvent('storage', {
+              key: 'profilePicture',
+              newValue: imageDataUrl,
+              oldValue: localStorage.getItem('profilePicture'),
+              storageArea: localStorage
+            }));
+            
+            utils.hideLoading();
+            utils.showAlert('Profile picture saved to database! 📸', 'success');
+          } else {
+            throw new Error(response.message || 'Failed to save profile picture');
+          }
+        } catch (error) {
+          utils.hideLoading();
+          console.error('Avatar upload error:', error);
+          // Fallback to localStorage only
+          localStorage.setItem('profilePicture', imageDataUrl);
+          updateAvatarDisplay(imageDataUrl);
+          utils.showAlert('Profile picture saved locally (offline mode)', 'warning');
+        }
       };
       reader.readAsDataURL(file);
     }
 
-    function loadProfilePicture() {
+    function loadProfilePictureFromStorage() {
+      // Fallback to localStorage for demo/offline mode
       const savedPicture = localStorage.getItem('profilePicture');
       if (savedPicture) {
         updateAvatarDisplay(savedPicture);
@@ -1100,7 +1123,7 @@
       return false;
     }
 
-    function handleEditAvatarUpload(event) {
+    async function handleEditAvatarUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -1109,47 +1132,83 @@
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        utils.showAlert('Image size must be less than 5MB', 'error');
+      if (file.size > 2 * 1024 * 1024) {
+        utils.showAlert('Image size must be less than 2MB', 'error');
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const imageDataUrl = e.target.result;
-        localStorage.setItem('profilePicture', imageDataUrl);
-        updateAvatarDisplay(imageDataUrl);
-        updateEditModalAvatar(imageDataUrl);
         
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'profilePicture',
-          newValue: imageDataUrl,
-          oldValue: localStorage.getItem('profilePicture'),
-          storageArea: localStorage
-        }));
-        
-        utils.showAlert('Profile picture updated! 📸', 'success');
+        try {
+          utils.showLoading();
+          
+          // Save to database via API
+          const response = await api.updateProfile({ profile_picture: imageDataUrl });
+          
+          if (response.success) {
+            localStorage.setItem('profilePicture', imageDataUrl);
+            updateAvatarDisplay(imageDataUrl);
+            updateEditModalAvatar(imageDataUrl);
+            
+            // Trigger storage event for cross-tab sync
+            window.dispatchEvent(new StorageEvent('storage', {
+              key: 'profilePicture',
+              newValue: imageDataUrl,
+              oldValue: localStorage.getItem('profilePicture'),
+              storageArea: localStorage
+            }));
+            
+            utils.hideLoading();
+            utils.showAlert('Profile picture saved to database! 📸', 'success');
+          } else {
+            throw new Error(response.message || 'Failed to save');
+          }
+        } catch (error) {
+          utils.hideLoading();
+          console.error('Avatar upload error:', error);
+          localStorage.setItem('profilePicture', imageDataUrl);
+          updateAvatarDisplay(imageDataUrl);
+          updateEditModalAvatar(imageDataUrl);
+          utils.showAlert('Saved locally (offline mode)', 'warning');
+        }
       };
       reader.readAsDataURL(file);
     }
 
-    function removeProfilePicture() {
+    async function removeProfilePicture() {
       if (confirm('Are you sure you want to remove your profile picture?')) {
-        localStorage.removeItem('profilePicture');
-        const initials = userData ? getInitials(userData.name) : '👤';
-        updateAvatarDisplay(null, initials);
-        updateEditModalAvatar(null, initials);
-        
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'profilePicture',
-          newValue: null,
-          oldValue: localStorage.getItem('profilePicture'),
-          storageArea: localStorage
-        }));
-        
-        utils.showAlert('Profile picture removed', 'success');
+        try {
+          utils.showLoading();
+          
+          // Remove from database
+          const response = await api.updateProfile({ profile_picture: null });
+          
+          localStorage.removeItem('profilePicture');
+          const initials = userData ? getInitials(userData.name) : '👤';
+          updateAvatarDisplay(null, initials);
+          updateEditModalAvatar(null, initials);
+          
+          // Trigger storage event for cross-tab sync
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'profilePicture',
+            newValue: null,
+            oldValue: localStorage.getItem('profilePicture'),
+            storageArea: localStorage
+          }));
+          
+          utils.hideLoading();
+          utils.showAlert('Profile picture removed from database', 'success');
+        } catch (error) {
+          utils.hideLoading();
+          console.error('Remove avatar error:', error);
+          localStorage.removeItem('profilePicture');
+          const initials = userData ? getInitials(userData.name) : '👤';
+          updateAvatarDisplay(null, initials);
+          updateEditModalAvatar(null, initials);
+          utils.showAlert('Profile picture removed locally', 'warning');
+        }
       }
     }
 

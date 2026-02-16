@@ -197,7 +197,8 @@ goalsRouter.post('/', authenticateToken, goalValidation, async (req, res) => {
 
     res.status(201).json({ success: true, data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Failed to create goal' });
+    console.error('❌ Error creating goal:', error);
+    res.status(500).json({ success: false, message: 'Failed to create goal', error: error.message });
   }
 });
 

@@ -56,8 +56,11 @@ const sendPhoneOTP = async (req, res) => {
     const smsSent = await sendOTP(phone, otp);
 
     if (!smsSent) {
-      // Delete the OTP if SMS failed
-      await query('DELETE FROM phone_verification WHERE id = $1', [result.rows[0].id]);
+      // In development mode, keep the OTP in database for testing
+      // In production, delete the OTP if SMS failed
+      if (process.env.NODE_ENV !== 'development') {
+        await query('DELETE FROM phone_verification WHERE id = $1', [result.rows[0].id]);
+      }
       
       return res.status(500).json({
         success: false,
@@ -73,7 +76,9 @@ const sendPhoneOTP = async (req, res) => {
       data: {
         phone,
         expiresIn: '10 minutes'
-      }
+      },
+      // In development mode, include OTP for testing
+      ...(process.env.NODE_ENV === 'development' && { otp })
     });
   } catch (error) {
     console.error('Send OTP error:', error);
@@ -228,7 +233,11 @@ const resendPhoneOTP = async (req, res) => {
     const smsSent = await sendOTP(phone, otp);
 
     if (!smsSent) {
-      await query('DELETE FROM phone_verification WHERE id = $1', [result.rows[0].id]);
+      // In development mode, keep the OTP in database for testing
+      // In production, delete the OTP if SMS failed
+      if (process.env.NODE_ENV !== 'development') {
+        await query('DELETE FROM phone_verification WHERE id = $1', [result.rows[0].id]);
+      }
       
       return res.status(500).json({
         success: false,

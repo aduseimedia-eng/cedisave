@@ -279,15 +279,19 @@ function populateIncomeOptions() {
 async function handleAddExpense(event) {
   event.preventDefault();
   
+  const noteValue = document.getElementById('expenseNote').value;
   const expenseData = {
     amount: parseFloat(document.getElementById('expenseAmount').value),
     category: document.getElementById('expenseCategory').value,
     payment_method: document.getElementById('expensePaymentMethod').value,
     expense_date: document.getElementById('expenseDate').value,
-    note: document.getElementById('expenseNote').value || null,
-    is_recurring: false,
-    recurring_frequency: null
+    is_recurring: false
   };
+  
+  // Only include optional fields if they have values
+  if (noteValue) {
+    expenseData.note = noteValue;
+  }
 
   try {
     utils.showLoading();
@@ -311,12 +315,17 @@ async function handleAddExpense(event) {
 async function handleAddIncome(event) {
   event.preventDefault();
   
+  const noteValue = document.getElementById('incomeNote').value;
   const incomeData = {
     amount: parseFloat(document.getElementById('incomeAmount').value),
     source: document.getElementById('incomeSource').value,
-    income_date: document.getElementById('incomeDate').value,
-    note: document.getElementById('incomeNote').value || null
+    income_date: document.getElementById('incomeDate').value
   };
+  
+  // Only include optional fields if they have values
+  if (noteValue) {
+    incomeData.note = noteValue;
+  }
 
   try {
     utils.showLoading();

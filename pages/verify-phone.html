@@ -271,6 +271,13 @@
   </div>
 
   <script>
+    // API Configuration
+    const API_BASE_URL = window.KUDIPAL_API_URL || (
+      typeof window !== 'undefined' && window.location.hostname === 'localhost'
+        ? 'http://localhost:5000/api/v1'
+        : `http://${window.location.hostname}:5000/api/v1`
+    );
+
     let resendTimer = 0;
     let phoneNumber = '';
     let isVerifying = false;
@@ -356,7 +363,7 @@
     // Send OTP
     async function sendOTP() {
       try {
-        const response = await fetch('/api/v1/phone/send-otp', {
+        const response = await fetch(`${API_BASE_URL}/phone/send-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -366,12 +373,21 @@
 
         const data = await response.json();
 
-        if (!response.ok) {
-          showErrorMessage(data.message || 'Failed to send OTP');
+        if (response.ok && data.success) {
           // In dev mode, show OTP if provided
           if (data.otp) {
             console.log('📱 Development OTP:', data.otp);
-            showSuccessMessage(`DEV MODE: OTP is ${data.otp}`);
+            showSuccessMessage(`✓ OTP sent! DEV MODE: ${data.otp}`);
+          } else {
+            showSuccessMessage('✓ OTP sent to your phone!');
+          }
+        } else {
+          // Always check for OTP in development mode, even on error
+          if (data.otp) {
+            console.log('📱 Development OTP:', data.otp);
+            showSuccessMessage(`✓ OTP generated! DEV MODE: ${data.otp}`);
+          } else {
+            showErrorMessage(data.message || 'Failed to send OTP');
           }
         }
       } catch (error) {
@@ -404,7 +420,7 @@
       buttonText.innerHTML = '<span class="spinner"></span>Verifying...';
 
       try {
-        const response = await fetch('/api/v1/phone/verify-otp', {
+        const response = await fetch(`${API_BASE_URL}/phone/verify-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -451,7 +467,7 @@
       resendButton.textContent = 'Sending...';
 
       try {
-        const response = await fetch('/api/v1/phone/resend-otp', {
+        const response = await fetch(`${API_BASE_URL}/phone/resend-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -466,9 +482,17 @@
           clearOTPInputs();
           startResendTimer();
         } else {
-          showErrorMessage(data.message || 'Failed to resend OTP');
-          resendButton.disabled = false;
-          resendButton.textContent = 'Resend';
+          // Always check for OTP in development mode, even on error
+          if (data.otp) {
+            console.log('📱 Development OTP:', data.otp);
+            showSuccessMessage(`✓ New OTP: ${data.otp}`);
+            clearOTPInputs();
+            startResendTimer();
+          } else {
+            showErrorMessage(data.message || 'Failed to resend OTP');
+            resendButton.disabled = false;
+            resendButton.textContent = 'Resend';
+          }
         }
       } catch (error) {
         console.error('Resend OTP error:', error);

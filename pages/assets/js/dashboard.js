@@ -394,15 +394,22 @@ async function handleAddExpense(event) {
     return;
   }
   
+  const noteValue = document.getElementById('expenseNote').value;
   const expenseData = {
     amount: amount,
     category: category,
     payment_method: paymentMethod,
     expense_date: expenseDate,
-    note: document.getElementById('expenseNote').value || null,
-    is_recurring: false,
-    recurring_frequency: null
+    is_recurring: false
   };
+  
+  // Only include optional fields if they have values
+  if (noteValue) {
+    expenseData.note = noteValue;
+  }
+  if (false) { // is_recurring is false, so don't include recurring_frequency
+    expenseData.recurring_frequency = null;
+  }
 
   try {
     utils.showLoading();
@@ -452,12 +459,17 @@ async function handleAddIncome(event) {
     return;
   }
   
+  const noteValue = document.getElementById('incomeNote').value;
   const incomeData = {
     amount: amount,
     source: source,
-    income_date: incomeDate,
-    note: document.getElementById('incomeNote').value || null
+    income_date: incomeDate
   };
+  
+  // Only include optional fields if they have values
+  if (noteValue) {
+    incomeData.note = noteValue;
+  }
 
   try {
     utils.showLoading();

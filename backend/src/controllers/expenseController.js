@@ -43,7 +43,8 @@ const createExpense = async (req, res) => {
     console.error('Create expense error:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to create expense'
+      message: 'Failed to create expense',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };
