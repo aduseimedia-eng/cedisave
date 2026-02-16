@@ -729,11 +729,15 @@ body {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 100%);
-  color: var(--text-light);
+  color: white !important;
+  text-shadow: none;
 }
 
+.btn-primary:visited,
+.btn-primary:link,
+.btn-primary:hover,
 .btn-primary:active {
-  box-shadow: 0 2px 8px rgba(0, 107, 63, 0.4);
+  color: white !important;
 }
 
 .btn-secondary {
@@ -748,16 +752,28 @@ body {
 
 .btn-danger {
   background: var(--primary-dark);
-  color: var(--text-light);
+  color: white !important;
+  text-shadow: none;
 }
 
+.btn-danger:visited,
+.btn-danger:link,
+.btn-danger:hover,
 .btn-danger:active {
-  background: #003820;
+  color: white !important;
 }
 
 .btn-success {
   background: var(--success);
-  color: var(--text-light);
+  color: white !important;
+  text-shadow: none;
+}
+
+.btn-success:visited,
+.btn-success:link,
+.btn-success:hover,
+.btn-success:active {
+  color: white !important;
 }
 
 .btn-icon {
@@ -786,7 +802,35 @@ body {
   width: 100%;
 }
 
-/* Form Elements - Mobile Optimized */
+.btn-gold {
+  background: linear-gradient(135deg, #00a05e 0%, #006B3F 100%);
+  color: white !important;
+  text-shadow: none;
+}
+
+.btn-gold:visited,
+.btn-gold:link,
+.btn-gold:hover,
+.btn-gold:active {
+  color: white !important;
+}
+
+/* Ensure all buttons with primary backgrounds have white text */
+button[style*="background: var(--primary-color)"],
+button[style*="background:#006B3F"],
+button[style*="background: linear-gradient(135deg, var(--primary-color)"],
+a[style*="background: var(--primary-color)"],
+div[style*="background: var(--primary-color)"] {
+  color: white !important;
+}
+
+/* Generic fallback for any green button */
+[class*="btn"][style*="#006B3F"],
+[class*="btn"][style*="#00a05e"],
+[class*="btn"][style*="primary"],
+[class*="btn"][style*="success"] {
+  color: white !important;
+}
 .form-group {
   margin-bottom: 16px;
   position: relative;
@@ -1088,7 +1132,7 @@ body {
 
 .badge-warning {
   background: var(--primary-color);
-  color: white;
+  color: white !important;
 }
 
 .badge-danger {
