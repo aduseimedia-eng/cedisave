@@ -16,7 +16,7 @@ function showDemoModeIndicator() {
 // Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
   // Always read from localStorage first for instant persistence
-  const savedTheme = localStorage.getItem('kudipal_theme') || 'dark';
+  const savedTheme = localStorage.getItem('kudipal_theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
 }
@@ -28,14 +28,14 @@ function initThemeFromPreferences() {
   const localTheme = localStorage.getItem('kudipal_theme');
   
   // API takes priority if user logged in, otherwise use localStorage
-  const theme = apiTheme || localTheme || 'dark';
+  const theme = apiTheme || localTheme || 'light';
   localStorage.setItem('kudipal_theme', theme);
   document.documentElement.setAttribute('data-theme', theme);
   updateThemeIcon(theme);
 }
 
 async function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   
   // Save to localStorage FIRST for instant persistence

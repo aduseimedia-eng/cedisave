@@ -30,7 +30,7 @@ function setDemoData(key, data) {
 
 // User preferences (loaded from API, cached in memory)
 let userPreferences = {
-  theme: 'dark',
+  theme: 'light',
   currency: 'GHS',
   profile_picture: null,
   low_data_mode: false,
@@ -139,7 +139,7 @@ const MOCK_DATA = {
     email: 'demo@kudipal.com',
     phone: '233241234567',
     created_at: '2026-01-01',
-    theme: 'dark',
+    theme: 'light',
     currency: 'GHS'
   },
   expenses: getDemoData('expenses') || [
@@ -203,7 +203,7 @@ class APIService {
     
     // Demo mode - load from mock data
     if (isDemoMode()) {
-      userPreferences.theme = MOCK_DATA.user.theme || 'dark';
+      userPreferences.theme = MOCK_DATA.user.theme || 'light';
       userPreferences.currency = MOCK_DATA.user.currency || 'GHS';
       userPreferences.profile_picture = MOCK_DATA.user.profile_picture;
       this.preferencesLoaded = true;
@@ -220,7 +220,7 @@ class APIService {
         if (data.success && data.data) {
           const profile = data.data;
           // Update preferences from profile
-          userPreferences.theme = profile.theme || 'dark';
+          userPreferences.theme = profile.theme || 'light';
           userPreferences.currency = profile.currency || 'GHS';
           userPreferences.profile_picture = profile.profile_picture;
           userPreferences.low_data_mode = profile.low_data_mode || false;
@@ -290,7 +290,7 @@ class APIService {
         email: userData.email,
         phone: userData.phone,
         created_at: new Date().toISOString().split('T')[0],
-        theme: 'dark',
+        theme: 'light',
         currency: 'GHS'
       };
       saveDemoData();
@@ -317,7 +317,7 @@ class APIService {
       // Accept any credentials in demo mode
       this.setToken('demo_token_' + Date.now());
       // Load user preferences
-      userPreferences.theme = MOCK_DATA.user.theme || 'dark';
+      userPreferences.theme = MOCK_DATA.user.theme || 'light';
       userPreferences.currency = MOCK_DATA.user.currency || 'GHS';
       this.preferencesLoaded = true;
       return { success: true, data: { token: this.token, user: MOCK_DATA.user } };
@@ -351,7 +351,7 @@ class APIService {
     // Sync preferences from profile
     if (result.success && result.data) {
       const profile = result.data;
-      userPreferences.theme = profile.theme || 'dark';
+      userPreferences.theme = profile.theme || 'light';
       userPreferences.currency = profile.currency || 'GHS';
       userPreferences.profile_picture = profile.profile_picture;
       userPreferences.low_data_mode = profile.low_data_mode || false;
@@ -397,7 +397,7 @@ class APIService {
     this.preferencesLoaded = false;
     // Reset preferences to defaults
     userPreferences = {
-      theme: 'dark',
+      theme: 'light',
       currency: 'GHS',
       profile_picture: null,
       low_data_mode: false,
