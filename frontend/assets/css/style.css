@@ -879,31 +879,22 @@ div[style*="background: var(--primary-color)"] {
   margin-bottom: 6px;
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 13px;
-  letter-spacing: 0.2px;
+  font-size: 12px;
 }
 
 .form-input,
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--border-color);
+  padding: 12px;
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   background: var(--bg-secondary);
   color: var(--text-primary);
   font-size: 14px;
-  font-weight: 500;
   transition: all 0.2s ease;
-  min-height: 46px;
   -webkit-appearance: none;
   appearance: none;
-}
-
-.form-input:hover,
-.form-select:hover,
-.form-textarea:hover {
-  border-color: rgba(0, 160, 94, 0.4);
 }
 
 .form-input:focus,
@@ -911,8 +902,6 @@ div[style*="background: var(--primary-color)"] {
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  background: var(--card-bg);
-  box-shadow: 0 0 0 3px rgba(0, 160, 94, 0.1);
 }
 
 /* Input with icon */
@@ -921,12 +910,12 @@ div[style*="background: var(--primary-color)"] {
 }
 
 .input-with-icon .form-input {
-  padding-left: 44px;
+  padding-left: 40px;
 }
 
 .input-icon {
   position: absolute;
-  left: 14px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
@@ -946,27 +935,27 @@ div[style*="background: var(--primary-color)"] {
 
 .currency-prefix {
   position: absolute;
-  left: 14px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--primary-color);
   pointer-events: none;
 }
 
 .currency-input-wrapper .form-input {
-  padding-left: 36px;
+  padding-left: 32px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .form-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300A05E' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
-  background-size: 16px;
-  padding-right: 38px;
+  background-size: 14px;
+  padding-right: 34px;
   cursor: pointer;
 }
 
@@ -1265,7 +1254,7 @@ div[style*="background: var(--primary-color)"] {
 .modal-content {
   background: var(--card-bg);
   border-radius: 20px 20px 0 0;
-  padding: 6px 20px 24px 20px;
+  padding: 8px 24px 24px 24px;
   padding-bottom: calc(24px + var(--safe-area-bottom));
   width: 100%;
   max-height: 85vh;
@@ -1282,7 +1271,7 @@ div[style*="background: var(--primary-color)"] {
   height: 4px;
   background: var(--border-color);
   border-radius: 2px;
-  margin: 8px auto 14px;
+  margin: 6px auto 12px;
   opacity: 0.5;
 }
 
@@ -1338,24 +1327,9 @@ div[style*="background: var(--primary-color)"] {
 .modal-content .btn-primary {
   margin-top: 8px;
   padding: 14px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   border-radius: 10px;
-  letter-spacing: 0.2px;
-}
-
-/* Modal form spacing */
-.modal-content .form-input,
-.modal-content .form-select,
-.modal-content .form-textarea {
-  padding: 12px 14px;
-  font-size: 14px;
-  min-height: 46px;
-}
-
-.modal-content .currency-input-wrapper .form-input {
-  font-size: 18px;
-  padding: 12px 14px 12px 38px;
 }
 
 /* Two-column form row */
@@ -1370,8 +1344,8 @@ div[style*="background: var(--primary-color)"] {
 }
 
 .form-row .form-select {
-  padding-right: 36px;
-  background-size: 16px;
+  padding-right: 32px;
+  background-size: 14px;
   background-position: right 10px center;
 }
 
@@ -2986,8 +2960,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   }
   
   .form-input, .form-select {
-    padding: 10px 12px;
-    font-size: 14px;
+    padding: 10px;
+    font-size: 13px;
   }
   
   .bottom-nav {
@@ -3096,9 +3070,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   .btn, 
   .nav-item, 
   .settings-item, 
-  .list-item,
-  .form-input,
-  .form-select {
+  .list-item {
     min-height: 44px;
   }
   
