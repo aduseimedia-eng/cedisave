@@ -947,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Add fun entrance animations
   setTimeout(() => {
-    document.querySelector('.greeting-banner')?.classList.add('animate-slide-up');
+    document.querySelector('.mtn-profile-section')?.classList.add('animate-slide-up');
     document.querySelector('.balance-card')?.classList.add('animate-zoom');
   }, 100);
   
