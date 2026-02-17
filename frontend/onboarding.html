@@ -37,8 +37,9 @@
       display: flex;
       flex-direction: column;
       padding: 20px;
-      padding-top: calc(40px + env(safe-area-inset-top, 0px));
-      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      padding-top: calc(60px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      position: relative;
     }
 
     .skip-btn {
@@ -64,11 +65,12 @@
     }
 
     .slides-container {
-      flex: 1;
+      flex: 0 0 auto;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       overflow: hidden;
+      margin-bottom: 40px;
+      padding-bottom: 160px;
     }
 
     .slides-wrapper {
@@ -84,17 +86,18 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
+      padding-top: 20px;
     }
 
     .slide-icon {
-      margin-bottom: 24px;
+      margin-bottom: 32px;
       animation: float 3s ease-in-out infinite;
-      color: #ffffff;
-      width: 120px;
-      height: 120px;
+      width: 180px;
+      height: 180px;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     .slide-icon i {
@@ -106,6 +109,12 @@
     .lottie-container {
       width: 100%;
       height: 100%;
+      display: block;
+    }
+
+    .lottie-container svg {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     @keyframes float {
@@ -137,30 +146,37 @@
 
     /* Navigation */
     .nav-section {
-      padding-top: 20px;
-      padding-bottom: env(safe-area-inset-bottom, 8px);
-      margin-top: auto;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to top, rgba(0, 61, 34, 0.95) 0%, rgba(0, 61, 34, 0.8) 70%, transparent 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 100;
     }
 
     .dots-container {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.4);
       transition: all 0.3s ease;
       cursor: pointer;
     }
 
     .dot.active {
-      width: 30px;
-      border-radius: 5px;
+      width: 24px;
+      border-radius: 4px;
       background: #ffffff;
     }
 
@@ -402,37 +418,75 @@
     let animationInstances = {};
 
     function initLottieAnimations() {
-      // Animation 1: Wallet - Track Finances
-      animationInstances.anim1 = lottie.loadAnimation({
-        container: document.querySelector('#lottie-1 .lottie-container'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/wallet.json'
-      });
+      try {
+        // Animation 1: Wallet - Track Finances
+        const container1 = document.querySelector('#lottie-1 .lottie-container');
+        if (container1) {
+          animationInstances.anim1 = lottie.loadAnimation({
+            container: container1,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/wallet.json',
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid meet'
+            }
+          });
+        }
 
-      // Animation 2: Target - Set Goals
-      animationInstances.anim2 = lottie.loadAnimation({
-        container: document.querySelector('#lottie-2 .lottie-container'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/target.json'
-      });
+        // Animation 2: Target - Set Goals
+        const container2 = document.querySelector('#lottie-2 .lottie-container');
+        if (container2) {
+          animationInstances.anim2 = lottie.loadAnimation({
+            container: container2,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/target.json',
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid meet'
+            }
+          });
+        }
 
-      // Animation 3: Growth - Build Habits
-      animationInstances.anim3 = lottie.loadAnimation({
-        container: document.querySelector('#lottie-3 .lottie-container'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/growth.json'
-      });
+        // Animation 3: Growth - Build Habits
+        const container3 = document.querySelector('#lottie-3 .lottie-container');
+        if (container3) {
+          animationInstances.anim3 = lottie.loadAnimation({
+            container: container3,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/growth.json',
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid meet'
+            }
+          });
+        }
+
+        console.log('Lottie animations loaded successfully');
+      } catch (error) {
+        console.error('Error loading Lottie animations:', error);
+        // Fallback to Lucide icons if Lottie fails
+        showFallbackIcons();
+      }
+    }
+
+    function showFallbackIcons() {
+      document.querySelector('#lottie-1 .lottie-container').innerHTML = '<i data-lucide="wallet" style="width:100%;height:100%;stroke-width:1.5;color:white"></i>';
+      document.querySelector('#lottie-2 .lottie-container').innerHTML = '<i data-lucide="target" style="width:100%;height:100%;stroke-width:1.5;color:white"></i>';
+      document.querySelector('#lottie-3 .lottie-container').innerHTML = '<i data-lucide="trending-up" style="width:100%;height:100%;stroke-width:1.5;color:white"></i>';
+      lucide.createIcons();
     }
 
     // Load animations when page is ready
     window.addEventListener('load', () => {
-      initLottieAnimations();
+      if (typeof lottie !== 'undefined') {
+        initLottieAnimations();
+      } else {
+        console.warn('Lottie library not loaded, using fallback icons');
+        showFallbackIcons();
+      }
     });
     
     // Initialize Lucide icons
