@@ -2704,11 +2704,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     padding: 6px 0;
   }
   
-  .nav-item {
+  .bottom-nav-item {
     font-size: 9px;
   }
   
-  .nav-icon {
+  .bottom-nav-item i {
     width: 20px;
     height: 20px;
   }
