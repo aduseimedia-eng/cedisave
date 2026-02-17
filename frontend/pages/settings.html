@@ -398,7 +398,7 @@
 
     /* ===== MTN-Style Header ===== */
     body { padding-top: 0 !important; }
-    .mtn-header { background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 60%, #003822 100%); position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); overflow: hidden; }
+    .mtn-header { background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 60%, #003822 100%); position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: 24px; overflow: hidden; }
     .mtn-header::before { content: ''; position: absolute; top: -40%; right: -15%; width: 200px; height: 200px; background: rgba(255,255,255,0.06); border-radius: 50%; }
     .mtn-header::after { content: ''; position: absolute; bottom: -30%; left: -10%; width: 160px; height: 160px; background: rgba(255,255,255,0.04); border-radius: 50%; }
     .mtn-topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 0 16px; position: relative; z-index: 1; }
@@ -407,12 +407,13 @@
     .mtn-back-btn i { width: 18px; height: 18px; }
     .mtn-page-title { font-size: 17px; font-weight: 700; color: white; letter-spacing: -0.2px; }
     .mtn-topbar-spacer { width: 36px; }
-    .mtn-info-section { display: flex; align-items: center; gap: 14px; padding: 18px 16px 12px 16px; position: relative; z-index: 1; }
-    .mtn-info-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; border: 2.5px solid rgba(255,255,255,0.3); flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.15); color: white; }
-    .mtn-info-icon i { width: 26px; height: 26px; }
-    .mtn-info-text { flex: 1; min-width: 0; }
-    .mtn-info-title { font-size: 20px; font-weight: 700; color: white; line-height: 1.2; }
-    .mtn-info-subtitle { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+    .mtn-info-section { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px 8px 16px; position: relative; z-index: 1; text-align: center; }
+    .mtn-profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; border: 2.5px solid rgba(255,255,255,0.4); flex-shrink: 0; color: white; cursor: pointer; position: relative; overflow: hidden; }
+    .mtn-profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .mtn-profile-avatar .avatar-placeholder { display: flex; align-items: center; justify-content: center; }
+    .mtn-profile-avatar .avatar-placeholder i { width: 26px; height: 26px; }
+    .mtn-profile-name { font-size: 17px; font-weight: 700; color: white; line-height: 1.2; margin-top: 4px; }
+    .mtn-profile-email { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; }
     .mtn-header-curve { position: absolute; bottom: -1px; left: 0; right: 0; height: 20px; background: var(--bg-color); border-radius: 20px 20px 0 0; }
     [data-theme="light"] .mtn-header-curve { background: #f5f5f5; }
     .mtn-header::before, .mtn-header::after { pointer-events: none; }
@@ -431,13 +432,11 @@
       <div class="mtn-topbar-spacer"></div>
     </div>
     <div class="mtn-info-section">
-      <div class="mtn-info-icon">
-        <i data-lucide="settings"></i>
+      <div class="mtn-profile-avatar" id="headerAvatar" onclick="document.getElementById('avatarInput').click()">
+        <span class="avatar-placeholder"><i data-lucide="user"></i></span>
       </div>
-      <div class="mtn-info-text">
-        <div class="mtn-info-title">Preferences</div>
-        <div class="mtn-info-subtitle">Customize your KudiPal experience</div>
-      </div>
+      <div class="mtn-profile-name" id="headerProfileName">Loading...</div>
+      <div class="mtn-profile-email" id="headerProfileEmail">...</div>
     </div>
     <div class="mtn-header-curve"></div>
   </header>
@@ -464,16 +463,9 @@
   </nav>
 
   <div class="container">
-    <!-- Profile Header -->
-    <div class="profile-header">
-      <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)">
-      <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarInput').click()">
-        <span class="profile-avatar-text"><i data-lucide="user" style="width:28px;height:28px;"></i></span>
-        <div class="avatar-edit-overlay"><i data-lucide="camera" style="width:12px;height:12px;"></i> Edit</div>
-      </div>
-      <div class="profile-name" id="profileName">Loading...</div>
-      <div class="profile-email" id="profileEmail">...</div></div>
-      <div class="profile-joined" id="profileJoined">Member since ...</div>
+    <!-- Hidden file input for avatar -->
+    <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)" style="display:none">
+    <div class="profile-joined" id="profileJoined">Member since ...</div>
     </div>
 
     <!-- Profile Information -->
@@ -1011,8 +1003,8 @@
         userData = response.data;
         
         // Update profile header
-        document.getElementById('profileName').textContent = userData.name || 'User';
-        document.getElementById('profileEmail').textContent = userData.email || '';
+        document.getElementById('headerProfileName').textContent = userData.name || 'User';
+        document.getElementById('headerProfileEmail').textContent = userData.email || '';
         
         // Load profile picture from database or show initials
         if (userData.profile_picture) {
@@ -1049,11 +1041,12 @@
     }
 
     function updateAvatarDisplay(imageUrl, initials) {
-      const avatar = document.getElementById('profileAvatar');
+      const headerAvatar = document.getElementById('headerAvatar');
       if (imageUrl) {
-        avatar.innerHTML = `<img src="${imageUrl}" alt="Profile"><div class="avatar-edit-overlay">📷 Edit</div>`;
+        headerAvatar.innerHTML = `<img src="${imageUrl}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
       } else {
-        avatar.innerHTML = `<span class="profile-avatar-text">${initials}</span><div class="avatar-edit-overlay">📷 Edit</div>`;
+        headerAvatar.innerHTML = `<span class="avatar-placeholder">${initials || '<i data-lucide="user"></i>'}</span>`;
+        lucide.createIcons();
       }
     }
 
