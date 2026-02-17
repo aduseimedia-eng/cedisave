@@ -25,7 +25,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+      background: linear-gradient(135deg, #006B3F 0%, #004d2c 50%, #003822 100%);
       min-height: 100vh;
       overflow: hidden;
       font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
@@ -33,11 +33,12 @@
 
     .onboarding-container {
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       padding: 20px;
       padding-top: calc(40px + env(safe-area-inset-top, 0px));
-      padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     }
 
     .skip-btn {
@@ -84,7 +85,7 @@
     .slide-icon {
       margin-bottom: 24px;
       animation: float 3s ease-in-out infinite;
-      color: var(--primary-light, #00a05e);
+      color: #ffffff;
       width: 120px;
       height: 120px;
       display: flex;
@@ -130,14 +131,16 @@
 
     /* Navigation */
     .nav-section {
-      padding-top: 40px;
+      padding-top: 20px;
+      padding-bottom: env(safe-area-inset-bottom, 8px);
+      margin-top: auto;
     }
 
     .dots-container {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
 
     .dot {
@@ -162,13 +165,14 @@
 
     .btn-onboard {
       flex: 1;
-      padding: 14px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
       border: none;
+      min-height: 52px;
     }
 
     .btn-onboard:active {
@@ -176,19 +180,21 @@
     }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.15);
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255,255,255,0.3);
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #006B3F 0%, #004d2c 100%);
-      color: white;
+      background: rgba(255,255,255,0.95);
+      color: #006B3F;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, #00a05e 0%, #006B3F 100%);
-      color: #ffffff;
+      background: #FCD116;
+      color: #003822;
+      box-shadow: 0 4px 16px rgba(252, 209, 22, 0.3);
     }
 
     /* Ghana colors bar */
@@ -205,9 +211,9 @@
       flex: 1;
     }
 
-    .ghana-colors span:nth-child(1) { background: #006B3F; }
-    .ghana-colors span:nth-child(2) { background: #ffffff; }
-    .ghana-colors span:nth-child(3) { background: #004d2c; }
+    .ghana-colors span:nth-child(1) { background: #CE1126; }
+    .ghana-colors span:nth-child(2) { background: #FCD116; }
+    .ghana-colors span:nth-child(3) { background: #006B3F; }
 
     /* Decorative elements */
     .decoration {
@@ -219,7 +225,7 @@
     .decoration-1 {
       width: 200px;
       height: 200px;
-      background: #ffffff;
+      background: rgba(255,255,255,0.08);
       top: -50px;
       right: -50px;
     }
@@ -227,7 +233,7 @@
     .decoration-2 {
       width: 150px;
       height: 150px;
-      background: #006B3F;
+      background: rgba(255,255,255,0.05);
       bottom: 100px;
       left: -50px;
     }
