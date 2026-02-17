@@ -410,7 +410,6 @@
         const container1 = document.querySelector('#lottie-1 .lottie-container');
         if (container1) {
           console.log('Container 1 found, loading wallet animation...');
-          container1.innerHTML = ''; // Clear fallback
           
           animationInstances.anim1 = lottie.loadAnimation({
             container: container1,
@@ -433,7 +432,6 @@
         const container2 = document.querySelector('#lottie-2 .lottie-container');
         if (container2) {
           console.log('Container 2 found, loading target animation...');
-          container2.innerHTML = ''; // Clear fallback
           
           animationInstances.anim2 = lottie.loadAnimation({
             container: container2,
@@ -456,7 +454,6 @@
         const container3 = document.querySelector('#lottie-3 .lottie-container');
         if (container3) {
           console.log('Container 3 found, loading growth animation...');
-          container3.innerHTML = ''; // Clear fallback
           
           animationInstances.anim3 = lottie.loadAnimation({
             container: container3,
@@ -516,14 +513,16 @@
       console.log('Lottie available:', typeof lottie !== 'undefined');
       console.log('Current URL:', window.location.href);
       
-      if (typeof lottie !== 'undefined') {
-        // Delay slightly to ensure everything is ready
+      // Disable Lottie loading to keep fallback icons visible
+      console.log('Using fallback Lucide icons (Lottie disabled)');
+      
+      /* Uncomment to enable Lottie animations when served via http-server:
+      if (typeof lottie !== 'undefined' && window.location.protocol === 'http:') {
         setTimeout(() => {
           initLottieAnimations();
         }, 500);
-      } else {
-        console.error('✗ Lottie library not loaded!');
       }
+      */
     });
   </script>
 </body>
