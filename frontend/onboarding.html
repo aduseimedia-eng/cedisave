@@ -13,6 +13,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Lottie Animation Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     * {
       margin: 0;
@@ -103,6 +107,20 @@
       width: 70px;
       height: 70px;
       stroke-width: 1.5;
+    }
+
+    .lottie-container {
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lottie-container svg {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
     }
 
     @keyframes float {
@@ -266,10 +284,10 @@
       <div class="slides-wrapper" id="slidesWrapper">
         <!-- Slide 1 -->
         <div class="slide">
-          <div class="slide-icon">
-            <img src="https://cdn-icons-png.flaticon.com/512/1570/1570887.png" 
-                 alt="Wallet" 
-                 style="width:140px;height:140px;filter:brightness(0) invert(1);">
+          <div class="slide-icon" id="lottie-1">
+            <div class="lottie-container">
+              <i data-lucide="wallet" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>
+            </div>
           </div>
           <h2 class="slide-title">Track Your<br><span class="slide-highlight">Finances</span></h2>
           <p class="slide-description">Easily track all your income and expenses in one place. Know exactly where your money goes every month.</p>
@@ -277,10 +295,10 @@
 
         <!-- Slide 2 -->
         <div class="slide">
-          <div class="slide-icon">
-            <img src="https://cdn-icons-png.flaticon.com/512/2618/2618245.png" 
-                 alt="Target" 
-                 style="width:140px;height:140px;filter:brightness(0) invert(1);">
+          <div class="slide-icon" id="lottie-2">
+            <div class="lottie-container">
+              <i data-lucide="target" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>
+            </div>
           </div>
           <h2 class="slide-title">Set Goals &<br><span class="slide-highlight">Achieve More</span></h2>
           <p class="slide-description">Create savings goals for what matters most to you. Whether it's a new phone, school fees, or your dream car.</p>
@@ -288,10 +306,10 @@
 
         <!-- Slide 3 -->
         <div class="slide">
-          <div class="slide-icon">
-            <img src="https://cdn-icons-png.flaticon.com/512/3281/3281307.png" 
-                 alt="Growth" 
-                 style="width:140px;height:140px;filter:brightness(0) invert(1);">
+          <div class="slide-icon" id="lottie-3">
+            <div class="lottie-container">
+              <i data-lucide="trending-up" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>
+            </div>
           </div>
           <h2 class="slide-title">Build Better<br><span class="slide-highlight">Money Habits</span></h2>
           <p class="slide-description">Get insights with beautiful reports, earn badges for good habits, and level up your financial game!</p>
@@ -407,6 +425,153 @@
 
     // In demo mode, always show onboarding (don't auto-redirect)
     // Check is now skipped to allow viewing
+    
+    // Initialize Lottie Animations
+    let animationInstances = {};
+
+    function initLottieAnimations() {
+      console.log('Attempting to load Lottie animations...');
+      try {
+        // Animation 1: Wallet - Track Finances
+        const container1 = document.querySelector('#lottie-1 .lottie-container');
+        if (container1) {
+          container1.innerHTML = ''; // Clear fallback icon
+          console.log('Loading wallet animation from: assets/animations/wallet.json');
+          animationInstances.anim1 = lottie.loadAnimation({
+            container: container1,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/wallet.json',
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid meet'
+            }
+          });
+          
+          animationInstances.anim1.addEventListener('data_failed', function() {
+            console.error('Failed to load wallet animation');
+            container1.innerHTML = '<i data-lucide="wallet" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>';
+            lucide.createIcons();
+          });
+          
+          animationInstances.anim1.addEventListener('DOMLoaded', function() {
+            console.log('Wallet animation loaded successfully');
+          });
+        }
+
+        // Animation 2: Target - Set Goals
+        const container2 = document.querySelector('#lottie-2 .lottie-container');
+        if (container2) {
+          container2.innerHTML = ''; // Clear fallback icon
+          console.log('Loading target animation from: assets/animations/target.json');
+          animationInstances.anim2 = lottie.loadAnimation({
+            container: container2,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/target.json',
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid meet'
+            }
+          });
+          
+          animationInstances.anim2.addEventListener('data_failed', function() {
+            console.error('Failed to load target animation');
+            container2.innerHTML = '<i data-lucide="target" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>';
+            lucide.createIcons();
+          });
+          
+          animationInstances.anim2.addEventListener('DOMLoaded', function() {
+            console.log('Target animation loaded successfully');
+          });
+        }
+
+        // Animation 3: Growth - Build Habits
+        const container3 = document.querySelector('#lottie-3 .lottie-container');
+        if (container3) {
+          container3.innerHTML = ''; // Clear fallback icon
+          console.log('Loading growth animation from: assets/animations/growth.json');
+          animationInstances.anim3 = lottie.loadAnimation({
+            container: container3,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/growth.json',
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid meet'
+            }
+          });
+          
+          animationInstances.anim3.addEventListener('data_failed', function() {
+            console.error('Failed to load growth animation');
+            container3.innerHTML = '<i data-lucide="trending-up" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>';
+            lucide.createIcons();
+          });
+          
+          animationInstances.anim3.addEventListener('DOMLoaded', function() {
+            console.log('Growth animation loaded successfully');
+          });
+        }
+
+        console.log('Lottie animations initialized');
+      } catch (error) {
+        console.error('Error loading Lottie animations:', error);
+        showFallbackIcons();
+      }
+    }
+
+    function showFallbackIcons() {
+      console.log('Using fallback Lucide icons');
+      const containers = [
+        document.querySelector('#lottie-1 .lottie-container'),
+        document.querySelector('#lottie-2 .lottie-container'),
+        document.querySelector('#lottie-3 .lottie-container')
+      ];
+      
+      const icons = [
+        '<i data-lucide="wallet" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>',
+        '<i data-lucide="target" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>',
+        '<i data-lucide="trending-up" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>'
+      ];
+      
+      containers.forEach((container, index) => {
+        if (container && !container.querySelector('i[data-lucide]')) {
+          container.innerHTML = icons[index];
+        }
+      });
+      
+      lucide.createIcons();
+    }
+
+    // Initialize Lucide icons immediately on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      console.log('Lucide icons initialized');
+    });
+
+    // Load animations when page is ready
+    window.addEventListener('load', () => {
+      if (typeof lottie !== 'undefined') {
+        console.log('Lottie library loaded, attempting to load animations...');
+        setTimeout(() => {
+          initLottieAnimations();
+          
+          // Fallback timeout - if animations don't load in 3 seconds, revert to icons
+          setTimeout(() => {
+            const hasLoadedAnimations = Object.values(animationInstances).some(anim => 
+              anim && anim.isLoaded
+            );
+            
+            if (!hasLoadedAnimations) {
+              console.warn('Lottie animations timed out, keeping fallback icons');
+              showFallbackIcons();
+            }
+          }, 3000);
+        }, 100);
+      } else {
+        console.warn('Lottie library not loaded, using fallback icons');
+      }
+    });
   </script>
 </body>
 </html>
