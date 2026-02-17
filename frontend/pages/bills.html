@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -176,12 +176,12 @@
       left: 0;
       right: 0;
       height: 20px;
-      background: var(--bg-color);
+      background: #f5f5f5;
       border-radius: 20px 20px 0 0;
     }
 
-    [data-theme="light"] .mtn-header-curve {
-      background: #f5f5f5;
+    [data-theme="dark"] .mtn-header-curve {
+      background: var(--bg-color, #1a1a2e);
     }
 
     .mtn-header-spacer {
@@ -685,17 +685,18 @@
           <input type="text" class="form-input" id="billName" placeholder="e.g., ECG Monthly" required>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Amount</label>
-          <div class="currency-input-wrapper">
-            <span class="currency-prefix" id="currencyPrefix">₵</span>
-            <input type="number" class="form-input has-prefix" id="billAmount" placeholder="0.00" step="0.01" min="0.01" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Amount</label>
+            <div class="currency-input-wrapper">
+              <span class="currency-prefix" id="currencyPrefix">₵</span>
+              <input type="number" class="form-input has-prefix" id="billAmount" placeholder="0.00" step="0.01" min="0.01" required>
+            </div>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Due Date</label>
-          <input type="date" class="form-input" id="billDueDate" required>
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input type="date" class="form-input" id="billDueDate" required>
+          </div>
         </div>
 
         <div class="form-group">
