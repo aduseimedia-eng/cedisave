@@ -267,13 +267,22 @@ async function loadGamificationData() {
       celebrateStreak(streak.current_streak);
     }
 
-    // Load XP
+    // Load XP with level-up detection
     const xpResponse = await api.getXP();
     const xp = xpResponse.data;
     
     const level = xp.level || Math.floor((xp.total_xp || 0) / 100) + 1;
     const nextLevelXp = xp.next_level_xp || (level * 100);
     const progressPercent = xp.progress_percentage || ((xp.total_xp || 0) % 100) / 100 * 100;
+    
+    // Check for level up
+    const previousLevel = parseInt(localStorage.getItem('userLevel') || '1');
+    if (level > previousLevel) {
+      localStorage.setItem('userLevel', level.toString());
+      celebrateLevelUp(level);
+    } else {
+      localStorage.setItem('userLevel', level.toString());
+    }
     
     document.getElementById('userLevel').textContent = `Level ${level}`;
     document.getElementById('levelBadge').textContent = level;
@@ -438,17 +447,16 @@ async function handleAddExpense(event) {
     utils.hideLoading();
     
     // Award XP for expense tracking
-    if (typeof addXP === 'function') {
-      addXP(10); // Award 10 XP for tracking expense
-    }
+    celebrateXPGain(10); // Award 10 XP for tracking expense
     
     showFunToast('Expense added successfully! +10 XP earned! 🎉', '💸', 'success');
     
     closeModal('expenseModal');
     document.getElementById('expenseForm').reset();
     
-    // Reload data
+    // Reload data and check for new achievements
     await initDashboard();
+    await checkNewAchievements();
   } catch (error) {
     utils.hideLoading();
     utils.showAlert(error.message || 'Failed to add expense', 'error');
@@ -502,6 +510,7 @@ async function handleAddIncome(event) {
     document.getElementById('incomeForm').reset();
     
     await loadFinancialSummary();
+    await checkNewAchievements();
   } catch (error) {
     utils.hideLoading();
     utils.showAlert(error.message || 'Failed to add income', 'error');
@@ -851,6 +860,113 @@ function celebrateStreak(days) {
   }
 }
 
+// XP gain celebration
+function celebrateXPGain(amount) {
+  showFunToast(`+${amount} XP earned! 🌟`, '⭐');
+  
+  // Animate the XP bar
+  const xpBar = document.getElementById('xpProgress');
+  if (xpBar) {
+    xpBar.style.transition = 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+  }
+}
+
+// Level up celebration
+function celebrateLevelUp(newLevel) {
+  // Show confetti
+  showConfetti();
+  
+  // Create level-up overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 107, 63, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s;
+  `;
+  
+  overlay.innerHTML = `
+    <div style="
+      text-align: center;
+      color: white;
+      animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    ">
+      <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+      <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 10px;">Level Up!</h1>
+      <div style="
+        font-size: 64px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+      ">Level ${newLevel}</div>
+      <p style="font-size: 18px; opacity: 0.9;">You're getting better at managing your money!</p>
+      <button onclick="this.parentElement.parentElement.remove()" style="
+        margin-top: 30px;
+        background: white;
+        color: var(--primary-color);
+        border: none;
+        padding: 12px 32px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+      ">Continue</button>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+  
+  // Add animation styles if not exists
+  if (!document.getElementById('levelup-animations')) {
+    const style = document.createElement('style');
+    style.id = 'levelup-animations';
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  // Play level-up sound
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // C4, E4, G4, C5, E5
+    
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.1 + 0.4);
+      osc.start(audioCtx.currentTime + i * 0.1);
+      osc.stop(audioCtx.currentTime + i * 0.1 + 0.4);
+    });
+  } catch (e) { /* Audio not supported */ }
+  
+  // Auto-dismiss after 5 seconds
+  setTimeout(() => overlay.remove(), 5000);
+}
+
 // Add bounce to navigation items on tap
 document.querySelectorAll('.bottom-nav-item').forEach(item => {
   item.addEventListener('touchstart', function() {
@@ -937,6 +1053,134 @@ function getDailyQuote() {
   
   const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
   return quotes[dayOfYear % quotes.length];
+}
+
+// Check for new achievements (global function accessible from all pages)
+async function checkNewAchievements() {
+  try {
+    const response = await api.post('/achievements/check');
+    if (response.success && response.data.newly_earned && response.data.newly_earned.length > 0) {
+      // Show achievement unlock for each new achievement (max 3 to avoid spam)
+      const achievements = response.data.newly_earned.slice(0, 3);
+      achievements.forEach((achievement, index) => {
+        setTimeout(() => {
+          showAchievementUnlockNotification(achievement);
+        }, index * 1000); // Stagger notifications by 1 second each
+      });
+      
+      // Reload gamification data to update badges/XP
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Achievement check error:', error);
+  }
+}
+
+// Show achievement unlock notification (global popup)
+function showAchievementUnlockNotification(achievement) {
+  // Play celebration sound
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 (achievement jingle)
+    
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.1 + 0.3);
+      osc.start(audioCtx.currentTime + i * 0.1);
+      osc.stop(audioCtx.currentTime + i * 0.1 + 0.3);
+    });
+  } catch (e) { /* Audio not supported */ }
+  
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'achievement-unlock-overlay';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s;
+  `;
+  
+  overlay.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #006B3F 0%, #004d2c 100%);
+      border-radius: 24px;
+      padding: 2.5rem;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.1);
+    ">
+      <div style="font-size: 4.5rem; margin-bottom: 1.2rem; animation: pulse 1s infinite;">🎉</div>
+      <h2 style="color: #FFD700; margin-bottom: 0.8rem; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+        Achievement Unlocked!
+      </h2>
+      <div style="font-size: 3.5rem; margin: 1.2rem 0; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+        ${achievement.icon || '⭐'}
+      </div>
+      <h3 style="color: white; margin-bottom: 0.6rem; font-size: 20px; font-weight: 600;">
+        ${achievement.name || 'New Achievement'}
+      </h3>
+      <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.5; margin-bottom: 1.2rem;">
+        ${achievement.description || 'You did something amazing!'}
+      </p>
+      <div style="
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: #004d2c;
+        padding: 10px 20px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 1rem;
+        font-weight: 700;
+        font-size: 15px;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.4);
+      ">
+        <span style="font-size: 18px;">⭐</span>
+        +${achievement.xp_reward || 0} XP
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+  
+  // Add animation styles if not exists
+  if (!document.getElementById('achievement-animations')) {
+    const style = document.createElement('style');
+    style.id = 'achievement-animations';
+    style.textContent = `
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  // Show confetti
+  showConfetti();
+  
+  // Click to dismiss
+  overlay.addEventListener('click', () => overlay.remove());
+  
+  // Auto-dismiss after 5 seconds
+  setTimeout(() => overlay.remove(), 5000);
 }
 
 // Initialize currency display with correct symbol

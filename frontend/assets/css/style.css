@@ -644,6 +644,7 @@ textarea {
 .bottom-nav-item.active span:last-child {
   opacity: 1;
   font-weight: 600;
+  color: white;
 }
 
 /* Glow dot indicator */

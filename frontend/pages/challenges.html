@@ -224,11 +224,31 @@
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      cursor: pointer;
+    }
+
+    .challenge-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), #00c853, #FFD700);
+      background-size: 200% 100%;
+      animation: progressGradient 3s ease infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .challenge-card:hover::before {
+      opacity: 1;
     }
 
     .challenge-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      border-color: var(--primary-color);
     }
 
     .challenge-header {

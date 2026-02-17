@@ -671,9 +671,18 @@
       animation-delay: 0.6s;
     }
 
+    .gamification-card {
+      cursor: pointer;
+    }
+
+    .gamification-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 107, 63, 0.15);
+    }
+
     .gamification-card:active {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(0, 107, 63, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0, 107, 63, 0.2);
     }
 
     .gamification-title {
@@ -693,9 +702,31 @@
 
     .badge-item {
       font-size: 23px;
-      opacity: 0.3;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0.25;
+      filter: grayscale(100%);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
+      position: relative;
+    }
+
+    .badge-item.earned {
+      opacity: 1;
+      filter: grayscale(0%);
+      animation: badgePop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .badge-item.earned:hover {
+      transform: scale(1.15);
+    }
+
+    .badge-item:not(.earned):hover {
+      opacity: 0.4;
     }
 
     .badge-item:active {
@@ -1431,7 +1462,7 @@
 
     <!-- Gamification -->
     <div class="gamification-section">
-      <div class="gamification-card">
+      <a href="achievements.html" class="gamification-card" style="text-decoration: none; color: inherit;">
         <div class="gamification-title"><i data-lucide="trophy" class="icon-inline"></i> Badges</div>
         <div class="badges-grid" id="badgesContainer">
           <span class="badge-item"><i data-lucide="coins"></i></span>
@@ -1439,8 +1470,8 @@
           <span class="badge-item"><i data-lucide="bar-chart-2"></i></span>
           <span class="badge-item"><i data-lucide="star"></i></span>
         </div>
-      </div>
-      <div class="gamification-card">
+      </a>
+      <a href="achievements.html" class="gamification-card" style="text-decoration: none; color: inherit;">
         <div class="gamification-title"><i data-lucide="star" class="icon-inline"></i> Level Progress</div>
         <div class="level-display">
           <div class="level-badge" id="levelBadge">1</div>
@@ -1452,7 +1483,7 @@
         <div class="xp-bar">
           <div class="xp-fill" id="xpProgress" style="width: 0%;"></div>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 
