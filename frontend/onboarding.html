@@ -429,95 +429,83 @@
     // Initialize Lottie Animations
     let animationInstances = {};
 
-    async function loadAnimationData(path) {
+    function initLottieAnimations() {
+      console.log('Starting Lottie initialization...');
+      console.log('Lottie version:', lottie.version);
+      
       try {
-        console.log(`Fetching: ${path}`);
-        const response = await fetch(path);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(`Successfully loaded: ${path}`);
-        return data;
-      } catch (error) {
-        console.error(`Failed to load ${path}:`, error);
-        return null;
-      }
-    }
-
-    async function initLottieAnimations() {
-      console.log('Attempting to load Lottie animations...');
-      try {
-        // Animation 1: Wallet - Track Finances
+        // Animation 1: Wallet
         const container1 = document.querySelector('#lottie-1 .lottie-container');
         if (container1) {
-          const animData1 = await loadAnimationData('assets/animations/wallet.json');
-          if (animData1) {
-            container1.innerHTML = ''; // Clear fallback icon
-            animationInstances.anim1 = lottie.loadAnimation({
-              container: container1,
-              renderer: 'svg',
-              loop: true,
-              autoplay: true,
-              animationData: animData1,
-              rendererSettings: {
-                preserveAspectRatio: 'xMidYMid meet'
-              }
-            });
-            console.log('Wallet animation loaded and playing');
-          } else {
-            console.error('Wallet animation data is null, keeping fallback');
-          }
+          console.log('Container 1 found, loading wallet animation...');
+          container1.innerHTML = ''; // Clear fallback
+          
+          animationInstances.anim1 = lottie.loadAnimation({
+            container: container1,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/wallet.json'
+          });
+          
+          animationInstances.anim1.addEventListener('DOMLoaded', () => {
+            console.log('✓ Wallet animation loaded successfully');
+          });
+          
+          animationInstances.anim1.addEventListener('data_failed', () => {
+            console.error('✗ Wallet animation failed to load');
+          });
         }
 
-        // Animation 2: Target - Set Goals
+        // Animation 2: Target
         const container2 = document.querySelector('#lottie-2 .lottie-container');
         if (container2) {
-          const animData2 = await loadAnimationData('assets/animations/target.json');
-          if (animData2) {
-            container2.innerHTML = ''; // Clear fallback icon
-            animationInstances.anim2 = lottie.loadAnimation({
-              container: container2,
-              renderer: 'svg',
-              loop: true,
-              autoplay: true,
-              animationData: animData2,
-              rendererSettings: {
-                preserveAspectRatio: 'xMidYMid meet'
-              }
-            });
-            console.log('Target animation loaded and playing');
-          } else {
-            console.error('Target animation data is null, keeping fallback');
-          }
+          console.log('Container 2 found, loading target animation...');
+          container2.innerHTML = ''; // Clear fallback
+          
+          animationInstances.anim2 = lottie.loadAnimation({
+            container: container2,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/target.json'
+          });
+          
+          animationInstances.anim2.addEventListener('DOMLoaded', () => {
+            console.log('✓ Target animation loaded successfully');
+          });
+          
+          animationInstances.anim2.addEventListener('data_failed', () => {
+            console.error('✗ Target animation failed to load');
+          });
         }
 
-        // Animation 3: Growth - Build Habits
+        // Animation 3: Growth
         const container3 = document.querySelector('#lottie-3 .lottie-container');
         if (container3) {
-          const animData3 = await loadAnimationData('assets/animations/growth.json');
-          if (animData3) {
-            container3.innerHTML = ''; // Clear fallback icon
-            animationInstances.anim3 = lottie.loadAnimation({
-              container: container3,
-              renderer: 'svg',
-              loop: true,
-              autoplay: true,
-              animationData: animData3,
-              rendererSettings: {
-                preserveAspectRatio: 'xMidYMid meet'
-              }
-            });
-            console.log('Growth animation loaded and playing');
-          } else {
-            console.error('Growth animation data is null, keeping fallback');
-          }
+          console.log('Container 3 found, loading growth animation...');
+          container3.innerHTML = ''; // Clear fallback
+          
+          animationInstances.anim3 = lottie.loadAnimation({
+            container: container3,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/growth.json'
+          });
+          
+          animationInstances.anim3.addEventListener('DOMLoaded', () => {
+            console.log('✓ Growth animation loaded successfully');
+          });
+          
+          animationInstances.anim3.addEventListener('data_failed', () => {
+            console.error('✗ Growth animation failed to load');
+          });
         }
-
-        console.log('All Lottie animations processed');
+        
+        console.log('Lottie initialization complete');
       } catch (error) {
-        console.error('Error loading Lottie animations:', error);
-        showFallbackIcons();
+        console.error('Error initializing Lottie:', error);
       }
     }
 
@@ -547,17 +535,22 @@
     // Initialize Lucide icons immediately on page load
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      console.log('Lucide icons initialized');
+      console.log('✓ Lucide icons initialized');
     });
 
     // Load animations when page is ready
     window.addEventListener('load', () => {
+      console.log('Page loaded');
+      console.log('Lottie available:', typeof lottie !== 'undefined');
+      console.log('Current URL:', window.location.href);
+      
       if (typeof lottie !== 'undefined') {
-        console.log('Lottie library loaded successfully');
-        initLottieAnimations();
+        // Delay slightly to ensure everything is ready
+        setTimeout(() => {
+          initLottieAnimations();
+        }, 500);
       } else {
-        console.error('Lottie library failed to load!');
-        console.log('Using fallback Lucide icons');
+        console.error('✗ Lottie library not loaded!');
       }
     });
   </script>
