@@ -62,16 +62,22 @@ async function initDashboard() {
       initialsEl.textContent = getInitials(userData.name);
     }
     
-    // Listen for profile picture updates from other tabs/windows
-    window.addEventListener('storage', (event) => {
-      if (event.key === 'profilePicture' && avatarEl) {
-        if (event.newValue) {
-          avatarEl.innerHTML = `<img src="${event.newValue}" alt="Profile">`;
-        } else {
-          avatarEl.innerHTML = `<span id="avatarInitials">${getInitials(userData.name)}</span>`;
+    // Storage listener setup (only once)
+    if (!window._dashboardStorageListenerAdded) {
+      window._dashboardStorageListenerAdded = true;
+      window.addEventListener('storage', (event) => {
+        if (event.key === 'profilePicture') {
+          const av = document.getElementById('userAvatar');
+          if (av) {
+            if (event.newValue) {
+              av.innerHTML = `<img src="${event.newValue}" alt="Profile">`;
+            } else {
+              av.innerHTML = `<span id="avatarInitials">${getInitials(userData ? userData.name : '')}</span>`;
+            }
+          }
         }
-      }
-    });
+      });
+    }
 
     // Load all dashboard data
     await Promise.all([
@@ -149,8 +155,9 @@ async function loadRecentExpenses() {
       </div>
     `).join('');
     
-    // Render lucide icons
-    lucide.createIcons();
+    // Render lucide icons (scoped to list container only)
+    const listEl = document.getElementById('recentExpensesList');
+    if (listEl) lucide.createIcons({ node: listEl });
 
   } catch (error) {
     console.error('Load expenses error:', error);

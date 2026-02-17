@@ -443,9 +443,9 @@
       <span class="nav-icon"><i data-lucide="receipt"></i></span>
       <span>Expenses</span>
     </a>
-    <a href="goals.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="target"></i></span>
-      <span>Goals</span>
+    <a href="reports.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span>
+      <span>Reports</span>
     </a>
     <a href="settings.html" class="bottom-nav-item">
       <span class="nav-icon"><i data-lucide="settings"></i></span>
@@ -615,14 +615,16 @@
       return div.innerHTML;
     }
 
-    // Check for new achievements periodically
+    // Check for new achievements periodically (only once on page load)
+    let _achievementCheckDone = false;
     async function checkNewAchievements() {
+      if (_achievementCheckDone) return;
+      _achievementCheckDone = true;
       try {
         const response = await api.post('/achievements/check');
         if (response.success && response.data.newly_earned && response.data.newly_earned.length > 0) {
-          response.data.newly_earned.forEach(achievement => {
-            showAchievementUnlock(achievement);
-          });
+          // Show only the first unlock overlay to avoid stacking
+          showAchievementUnlock(response.data.newly_earned[0]);
           loadAchievements(); // Reload to update UI
         }
       } catch (error) {

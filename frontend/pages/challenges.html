@@ -812,9 +812,9 @@
       <span class="nav-icon"><i data-lucide="receipt"></i></span>
       <span>Expenses</span>
     </a>
-    <a href="goals.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="target"></i></span>
-      <span>Goals</span>
+    <a href="reports.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span>
+      <span>Reports</span>
     </a>
     <a href="settings.html" class="bottom-nav-item">
       <span class="nav-icon"><i data-lucide="settings"></i></span>
@@ -918,7 +918,8 @@
             <p>No active challenges.<br>Start one from below!</p>
           </div>
         `;
-        lucide.createIcons();
+        const activeEl = document.getElementById('activeChallenges');
+        if (activeEl) lucide.createIcons({ node: activeEl });
         return;
       }
 
@@ -966,7 +967,7 @@
           </div>
         `;
       }).join('');
-      lucide.createIcons();
+      lucide.createIcons({ node: container });
     }
 
     function renderAvailableChallenges() {
@@ -981,7 +982,7 @@
             <p>You've joined all available challenges!<br>Create a custom one.</p>
           </div>
         `;
-        lucide.createIcons();
+        lucide.createIcons({ node: container });
         return;
       }
 
@@ -993,7 +994,7 @@
           <span class="difficulty-badge ${challenge.difficulty}">${challenge.difficulty}</span>
         </div>
       `).join('');
-      lucide.createIcons();
+      lucide.createIcons({ node: container });
     }
 
     function showChallengeDetail(id) {

@@ -166,7 +166,7 @@ const goalValidation = [
     .toFloat(),
   
   body('deadline')
-    .optional()
+    .optional({ nullable: true, checkFalsy: true })
     .isISO8601().withMessage('Invalid date format')
     .toDate()
     .custom((value) => {

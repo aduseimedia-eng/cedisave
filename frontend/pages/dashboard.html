@@ -1303,9 +1303,9 @@
       <span class="nav-icon"><i data-lucide="receipt"></i></span>
       <span>Expenses</span>
     </a>
-    <a href="goals.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="target"></i></span>
-      <span>Goals</span>
+    <a href="reports.html" class="bottom-nav-item">
+      <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span>
+      <span>Reports</span>
     </a>
     <a href="settings.html" class="bottom-nav-item">
       <span class="nav-icon"><i data-lucide="settings"></i></span>
@@ -1613,7 +1613,7 @@
                 <option value="INR">🇮🇳 INR</option>
               </select>
               <input type="number" class="currency-amount-input" id="fromAmount" 
-                placeholder="0.00" step="0.01" oninput="convertCurrency()">
+                placeholder="0.00" step="0.01" oninput="debouncedConvert()">
             </div>
             <!-- Quick Amount Buttons -->
             <div class="quick-amounts">
@@ -1700,6 +1700,13 @@
   <script>
     // Initialize Lucide icons
     lucide.createIcons();
+
+    // Debounced currency converter (prevents freezing on fast typing)
+    let _convertTimer = null;
+    function debouncedConvert() {
+      clearTimeout(_convertTimer);
+      _convertTimer = setTimeout(convertCurrency, 150);
+    }
 
     // Mobile Menu Toggle
     function toggleMobileMenu() {
@@ -1802,7 +1809,7 @@
       } else {
         el.innerHTML = `<i data-lucide="clock" style="width:10px;height:10px;vertical-align:middle"></i> Using offline rates • <a href="#" onclick="refreshRates(); return false;" style="color:var(--primary-color);text-decoration:underline;">Try refresh</a>`;
       }
-      lucide.createIcons();
+      lucide.createIcons({ node: el });
     }
 
     async function refreshRates() {
@@ -1838,7 +1845,6 @@
       document.getElementById('currencyModal').classList.add('active');
       document.body.style.overflow = 'hidden';
       switchCurrencyTab('convert');
-      lucide.createIcons();
       // Fetch live rates when opening
       fetchLiveRates().then(() => convertCurrency());
     }
@@ -1851,7 +1857,6 @@
       document.getElementById('favoritesContent').style.display = tab === 'favorites' ? 'block' : 'none';
       if (tab === 'rates') populateAllRates();
       if (tab === 'favorites') populateFavorites();
-      lucide.createIcons();
     }
 
     function setQuickAmount(amount) {
@@ -1964,7 +1969,8 @@
             </button>
           </div>`;
       }).join('');
-      lucide.createIcons();
+      const favsContainer = document.getElementById('favoritesList');
+      if (favsContainer) lucide.createIcons({ node: favsContainer });
     }
 
     function loadFavorite(from, to) {
