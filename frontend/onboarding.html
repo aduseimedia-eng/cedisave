@@ -429,91 +429,92 @@
     // Initialize Lottie Animations
     let animationInstances = {};
 
-    function initLottieAnimations() {
+    async function loadAnimationData(path) {
+      try {
+        console.log(`Fetching: ${path}`);
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(`Successfully loaded: ${path}`);
+        return data;
+      } catch (error) {
+        console.error(`Failed to load ${path}:`, error);
+        return null;
+      }
+    }
+
+    async function initLottieAnimations() {
       console.log('Attempting to load Lottie animations...');
       try {
         // Animation 1: Wallet - Track Finances
         const container1 = document.querySelector('#lottie-1 .lottie-container');
         if (container1) {
-          container1.innerHTML = ''; // Clear fallback icon
-          console.log('Loading wallet animation from: assets/animations/wallet.json');
-          animationInstances.anim1 = lottie.loadAnimation({
-            container: container1,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: 'assets/animations/wallet.json',
-            rendererSettings: {
-              preserveAspectRatio: 'xMidYMid meet'
-            }
-          });
-          
-          animationInstances.anim1.addEventListener('data_failed', function() {
-            console.error('Failed to load wallet animation');
-            container1.innerHTML = '<i data-lucide="wallet" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>';
-            lucide.createIcons();
-          });
-          
-          animationInstances.anim1.addEventListener('DOMLoaded', function() {
-            console.log('Wallet animation loaded successfully');
-          });
+          const animData1 = await loadAnimationData('assets/animations/wallet.json');
+          if (animData1) {
+            container1.innerHTML = ''; // Clear fallback icon
+            animationInstances.anim1 = lottie.loadAnimation({
+              container: container1,
+              renderer: 'svg',
+              loop: true,
+              autoplay: true,
+              animationData: animData1,
+              rendererSettings: {
+                preserveAspectRatio: 'xMidYMid meet'
+              }
+            });
+            console.log('Wallet animation loaded and playing');
+          } else {
+            console.error('Wallet animation data is null, keeping fallback');
+          }
         }
 
         // Animation 2: Target - Set Goals
         const container2 = document.querySelector('#lottie-2 .lottie-container');
         if (container2) {
-          container2.innerHTML = ''; // Clear fallback icon
-          console.log('Loading target animation from: assets/animations/target.json');
-          animationInstances.anim2 = lottie.loadAnimation({
-            container: container2,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: 'assets/animations/target.json',
-            rendererSettings: {
-              preserveAspectRatio: 'xMidYMid meet'
-            }
-          });
-          
-          animationInstances.anim2.addEventListener('data_failed', function() {
-            console.error('Failed to load target animation');
-            container2.innerHTML = '<i data-lucide="target" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>';
-            lucide.createIcons();
-          });
-          
-          animationInstances.anim2.addEventListener('DOMLoaded', function() {
-            console.log('Target animation loaded successfully');
-          });
+          const animData2 = await loadAnimationData('assets/animations/target.json');
+          if (animData2) {
+            container2.innerHTML = ''; // Clear fallback icon
+            animationInstances.anim2 = lottie.loadAnimation({
+              container: container2,
+              renderer: 'svg',
+              loop: true,
+              autoplay: true,
+              animationData: animData2,
+              rendererSettings: {
+                preserveAspectRatio: 'xMidYMid meet'
+              }
+            });
+            console.log('Target animation loaded and playing');
+          } else {
+            console.error('Target animation data is null, keeping fallback');
+          }
         }
 
         // Animation 3: Growth - Build Habits
         const container3 = document.querySelector('#lottie-3 .lottie-container');
         if (container3) {
-          container3.innerHTML = ''; // Clear fallback icon
-          console.log('Loading growth animation from: assets/animations/growth.json');
-          animationInstances.anim3 = lottie.loadAnimation({
-            container: container3,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: 'assets/animations/growth.json',
-            rendererSettings: {
-              preserveAspectRatio: 'xMidYMid meet'
-            }
-          });
-          
-          animationInstances.anim3.addEventListener('data_failed', function() {
-            console.error('Failed to load growth animation');
-            container3.innerHTML = '<i data-lucide="trending-up" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>';
-            lucide.createIcons();
-          });
-          
-          animationInstances.anim3.addEventListener('DOMLoaded', function() {
-            console.log('Growth animation loaded successfully');
-          });
+          const animData3 = await loadAnimationData('assets/animations/growth.json');
+          if (animData3) {
+            container3.innerHTML = ''; // Clear fallback icon
+            animationInstances.anim3 = lottie.loadAnimation({
+              container: container3,
+              renderer: 'svg',
+              loop: true,
+              autoplay: true,
+              animationData: animData3,
+              rendererSettings: {
+                preserveAspectRatio: 'xMidYMid meet'
+              }
+            });
+            console.log('Growth animation loaded and playing');
+          } else {
+            console.error('Growth animation data is null, keeping fallback');
+          }
         }
 
-        console.log('Lottie animations initialized');
+        console.log('All Lottie animations processed');
       } catch (error) {
         console.error('Error loading Lottie animations:', error);
         showFallbackIcons();
@@ -552,24 +553,11 @@
     // Load animations when page is ready
     window.addEventListener('load', () => {
       if (typeof lottie !== 'undefined') {
-        console.log('Lottie library loaded, attempting to load animations...');
-        setTimeout(() => {
-          initLottieAnimations();
-          
-          // Fallback timeout - if animations don't load in 3 seconds, revert to icons
-          setTimeout(() => {
-            const hasLoadedAnimations = Object.values(animationInstances).some(anim => 
-              anim && anim.isLoaded
-            );
-            
-            if (!hasLoadedAnimations) {
-              console.warn('Lottie animations timed out, keeping fallback icons');
-              showFallbackIcons();
-            }
-          }, 3000);
-        }, 100);
+        console.log('Lottie library loaded successfully');
+        initLottieAnimations();
       } else {
-        console.warn('Lottie library not loaded, using fallback icons');
+        console.error('Lottie library failed to load!');
+        console.log('Using fallback Lucide icons');
       }
     });
   </script>
