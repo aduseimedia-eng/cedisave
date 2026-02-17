@@ -14,134 +14,189 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* Challenges Header Card */
-    .challenges-header-card {
-      background: linear-gradient(135deg, #006B3F 0%, #00A05E 50%, #FFD700 100%);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      margin-bottom: 16px;
-      position: relative;
+    /* ===== MTN-Style Header for Challenges ===== */
+    .mtn-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 60%, #003822 100%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
       overflow: hidden;
-      text-align: center;
     }
 
-    .challenges-header-card::before {
+    .mtn-header::before {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 150px;
-      height: 150px;
-      background: rgba(255,255,255,0.1);
+      top: -40%;
+      right: -15%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255,255,255,0.06);
       border-radius: 50%;
     }
 
-    .challenges-header-card::after {
-      content: '🏆';
+    .mtn-header::after {
+      content: '';
       position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 20px;
-      animation: bounce 2s ease-in-out infinite;
+      bottom: -30%;
+      left: -10%;
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .mtn-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .mtn-back-btn:active {
+      transform: scale(0.92);
+      background: rgba(255,255,255,0.2);
+    }
+
+    .mtn-back-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .mtn-page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.2px;
+    }
+
+    .mtn-topbar-spacer {
+      width: 36px;
+    }
+
+    /* Challenge info section inside header */
+    .mtn-challenge-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 16px 12px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-challenge-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .mtn-challenge-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mtn-challenge-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .mtn-challenge-xp {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* Stats row inside header */
+    .mtn-stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 12px 16px 20px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-stat {
+      text-align: center;
+    }
+
+    .mtn-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .mtn-stat-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .mtn-header-curve {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: var(--bg-color);
+      border-radius: 20px 20px 0 0;
+    }
+
+    [data-theme="light"] .mtn-header-curve {
+      background: #f5f5f5;
+    }
+
+    .mtn-header-spacer {
+      height: 270px;
+    }
+
+    body {
+      padding-top: 0 !important;
     }
 
     @keyframes shimmer {
       0% { background-position: -200% 0; }
       100% { background-position: 200% 0; }
-    }
-
-    .challenges-title {
-      color: white;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .challenges-subtitle {
-      color: rgba(255,255,255,0.8);
-      font-size: 12px;
-      margin-bottom: 16px;
-    }
-
-    .xp-display {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255,255,255,0.2);
-      padding: 12px 24px;
-      border-radius: 30px;
-    }
-
-    .xp-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #FFD700, #FFA000);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .xp-info {
-      text-align: left;
-    }
-
-    .xp-label {
-      font-size: 10px;
-      color: rgba(255,255,255,0.7);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .xp-amount {
-      font-size: 24px;
-      font-weight: 700;
-      color: white;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .stat-item {
-      background: var(--card-bg);
-      padding: 14px 8px;
-      border-radius: 14px;
-      text-align: center;
-      border: 1px solid var(--border-color);
-    }
-
-    .stat-icon {
-      font-size: 20px;
-      margin-bottom: 6px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
     }
 
     /* Section Title */
@@ -580,90 +635,51 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiPal</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="challenges.html" class="nav-link active">Challenges</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Savings Challenges</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
-  </header>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="challenges.html" class="mobile-menu-link active"><i data-lucide="trophy" class="icon-menu"></i> Challenges</a>
-    <a href="badges.html" class="mobile-menu-link"><i data-lucide="award" class="icon-menu"></i> Badges</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
-
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Header Card -->
-    <div class="challenges-header-card">
-      <div class="challenges-title">
-        <i data-lucide="trophy" style="width:22px;height:22px;color:white"></i>
-        Savings Challenges
-      </div>
-      <div class="challenges-subtitle">Complete challenges to earn XP and level up!</div>
-      
-      <div class="xp-display">
-        <div class="xp-icon">⚡</div>
-        <div class="xp-info">
-          <div class="xp-label">Total XP Earned</div>
-          <div class="xp-amount" id="totalXP">0</div>
+    <!-- Challenge Info Section -->
+    <div class="mtn-challenge-section">
+      <div class="mtn-challenge-icon">🏆</div>
+      <div class="mtn-challenge-info">
+        <div class="mtn-challenge-title">Challenges</div>
+        <div class="mtn-challenge-xp">
+          ⚡ <span id="totalXP">0</span> XP Earned
         </div>
       </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-icon">✅</div>
-        <div class="stat-value" id="completedCount">0</div>
-        <div class="stat-label">Completed</div>
+    <!-- Stats Row -->
+    <div class="mtn-stats-row">
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="completedCount">0</div>
+        <div class="mtn-stat-label">Completed</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-icon">🔥</div>
-        <div class="stat-value" id="activeCount">0</div>
-        <div class="stat-label">Active</div>
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="activeCount">0</div>
+        <div class="mtn-stat-label">Active</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-icon">📊</div>
-        <div class="stat-value" id="availableCount">0</div>
-        <div class="stat-label">Available</div>
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="availableCount">0</div>
+        <div class="mtn-stat-label">Available</div>
       </div>
     </div>
 
+    <div class="mtn-header-curve"></div>
+  </header>
+
+  <!-- Header Spacer -->
+  <div class="mtn-header-spacer"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
     <!-- Active Challenges Section -->
     <div class="section-title">🔥 Active Challenges</div>
     <div class="active-challenges" id="activeChallenges">
@@ -789,7 +805,7 @@
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <a href="dashboard.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
+      <span class="nav-icon"><i data-lucide="home"></i></span>
       <span>Home</span>
     </a>
     <a href="expenses.html" class="bottom-nav-item">

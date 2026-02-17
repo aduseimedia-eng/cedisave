@@ -762,56 +762,192 @@
     .summary-diff.better { background: rgba(0, 160, 94, 0.15); color: #00a05e; }
     .summary-diff.worse { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
     .summary-diff.neutral { background: rgba(108, 117, 125, 0.15); color: #6c757d; }
+
+    /* ===== MTN-Style Header for Reports ===== */
+    .mtn-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 60%, #003822 100%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+      overflow: hidden;
+    }
+
+    .mtn-header::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -15%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+
+    .mtn-header::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    .mtn-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .mtn-back-btn:active {
+      transform: scale(0.92);
+      background: rgba(255,255,255,0.2);
+    }
+
+    .mtn-back-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .mtn-page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.2px;
+    }
+
+    .mtn-topbar-spacer {
+      width: 36px;
+    }
+
+    /* Reports info section inside header */
+    .mtn-reports-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 16px 12px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-reports-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      color: white;
+    }
+
+    .mtn-reports-icon i {
+      width: 26px;
+      height: 26px;
+    }
+
+    .mtn-reports-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mtn-reports-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .mtn-reports-subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 4px;
+    }
+
+    .mtn-header-curve {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: var(--bg-color);
+      border-radius: 20px 20px 0 0;
+    }
+
+    [data-theme="light"] .mtn-header-curve {
+      background: #f5f5f5;
+    }
+
+    .mtn-header::before, .mtn-header::after { pointer-events: none; }
+
+    .mtn-header-spacer {
+      height: 200px;
+    }
+
+    body {
+      padding-top: 0 !important;
+    }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiPal</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="reports.html" class="nav-link">Reports</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Reports & Analytics</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
+
+    <!-- Reports Info Section -->
+    <div class="mtn-reports-section">
+      <div class="mtn-reports-icon">
+        <i data-lucide="bar-chart-3"></i>
+      </div>
+      <div class="mtn-reports-info">
+        <div class="mtn-reports-title">Analytics</div>
+        <div class="mtn-reports-subtitle">Track your spending habits & financial health</div>
+      </div>
+    </div>
+
+    <div class="mtn-header-curve"></div>
   </header>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
+  <!-- Header Spacer -->
+  <div class="mtn-header-spacer"></div>
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <a href="dashboard.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
+      <span class="nav-icon"><i data-lucide="home"></i></span>
       <span>Home</span>
     </a>
     <a href="expenses.html" class="bottom-nav-item">
@@ -1777,14 +1913,6 @@
 
     function logout() {
       api.logout();
-    }
-
-    // Mobile Menu Toggle
-    function toggleMobileMenu() {
-      document.querySelector('.hamburger').classList.toggle('active');
-      document.querySelector('.mobile-menu').classList.toggle('active');
-      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
-      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
     }
 
     // Initialize currency display with correct symbol
