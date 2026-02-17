@@ -335,22 +335,35 @@ function openExpenseModal() {
   populateSelectOptions();
   document.getElementById('expenseDate').value = utils.getTodayDate();
   document.getElementById('expenseModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
 function openIncomeModal() {
   populateIncomeOptions();
   document.getElementById('incomeDate').value = utils.getTodayDate();
   document.getElementById('incomeModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
 function openBudgetModal() {
   document.getElementById('budgetStartDate').value = utils.getTodayDate();
   document.getElementById('budgetModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeModal(modalId) {
   document.getElementById(modalId).classList.remove('active');
+  document.body.style.overflow = '';
 }
+
+// Backdrop click to close modals
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) closeModal(this.id);
+    });
+  });
+});
 
 function populateSelectOptions() {
   const categorySelect = document.getElementById('expenseCategory');

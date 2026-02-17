@@ -1145,6 +1145,13 @@
       document.body.style.overflow = '';
     }
 
+    // Backdrop click to close modals
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+      });
+    });
+
     function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

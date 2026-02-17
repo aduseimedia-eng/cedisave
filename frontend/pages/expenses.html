@@ -239,6 +239,11 @@
       document.body.style.overflow = '';
     }
 
+    // Backdrop click to close
+    document.getElementById('expenseModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('expenseModal');
+    });
+
     async function handleAddExpense(event) {
       event.preventDefault();
 
