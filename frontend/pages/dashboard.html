@@ -1324,8 +1324,10 @@
         <span class="mtn-logo-text">KudiPal</span>
       </a>
       <div class="mtn-topbar-actions">
-        <button class="mtn-icon-btn" onclick="openCurrencyCalculator()" title="Currency Converter">
-          <i data-lucide="calculator"></i>
+        <button class="hamburger" onclick="toggleMobileMenu()" title="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
         </button>
       </div>
     </div>
@@ -1360,6 +1362,8 @@
     <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
     <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
     <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
+    <a href="achievements.html" class="mobile-menu-link"><i data-lucide="trophy" class="icon-menu"></i> Achievements</a>
+    <a href="challenges.html" class="mobile-menu-link"><i data-lucide="swords" class="icon-menu"></i> Challenges</a>
     <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
     <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
     <a href="#" class="mobile-menu-link currency-link" onclick="openCurrencyCalculator(); toggleMobileMenu();">
@@ -1368,25 +1372,7 @@
     <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
   </div>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="bottom-nav-item active">
-      <span class="nav-icon"><i data-lucide="home"></i></span>
-      <span>Home</span>
-    </a>
-    <a href="expenses.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="receipt"></i></span>
-      <span>Expenses</span>
-    </a>
-    <a href="reports.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span>
-      <span>Reports</span>
-    </a>
-    <a href="settings.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="settings"></i></span>
-      <span>Settings</span>
-    </a>
-  </nav>
+
 
   <!-- Header Spacer -->
   <div class="mtn-header-spacer"></div>

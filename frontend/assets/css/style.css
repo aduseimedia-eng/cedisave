@@ -326,7 +326,7 @@ textarea {
   display: none;
 }
 
-/* Hamburger Menu Button */
+/* Fries Menu Button */
 .hamburger {
   display: flex;
   flex-direction: column;
@@ -335,19 +335,33 @@ textarea {
   border: none;
   cursor: pointer;
   padding: 8px;
-  z-index: 101;
+  z-index: 103;
+  position: relative;
+  align-items: flex-end;
 }
 
 .hamburger span {
   display: block;
-  width: 24px;
   height: 3px;
   background: #ffffff;
   border-radius: 2px;
   transition: all 0.3s ease;
 }
 
+.hamburger span:nth-child(1) {
+  width: 24px;
+}
+
+.hamburger span:nth-child(2) {
+  width: 18px;
+}
+
+.hamburger span:nth-child(3) {
+  width: 12px;
+}
+
 .hamburger.active span:nth-child(1) {
+  width: 24px;
   transform: rotate(45deg) translate(5px, 5px);
 }
 
@@ -356,6 +370,7 @@ textarea {
 }
 
 .hamburger.active span:nth-child(3) {
+  width: 24px;
   transform: rotate(-45deg) translate(7px, -6px);
 }
 
@@ -417,8 +432,8 @@ textarea {
   height: 100vh;
   height: 100dvh; /* Dynamic viewport height for iOS */
   background: var(--card-bg);
-  z-index: 99;
-  padding-top: calc(var(--header-total-height) + 20px);
+  z-index: 102;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
   padding-right: var(--safe-area-right);
   padding-bottom: var(--safe-area-bottom);
   transition: right 0.3s ease;
@@ -439,7 +454,7 @@ textarea {
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.5);
-  z-index: 98;
+  z-index: 101;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -482,29 +497,9 @@ textarea {
   margin-top: 20px;
 }
 
-/* Bottom Navigation - Glass Morphism */
+/* Bottom Navigation - HIDDEN (replaced by hamburger menu) */
 .bottom-nav {
-  display: flex;
-  position: fixed;
-  bottom: 0px;
-  left: 16px;
-  right: 16px;
-  height: var(--bottom-nav-height);
-  align-items: center;
-  justify-content: space-around;
-  padding: 8px 4px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 107, 63, 0.15);
-  box-shadow: 
-    0 -4px 30px rgba(0, 107, 63, 0.08),
-    0 4px 20px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  z-index: 90;
-  border-radius: 28px;
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  display: none !important;
 }
 
 [data-theme="dark"] .bottom-nav {
