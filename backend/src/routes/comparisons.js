@@ -270,98 +270,21 @@ router.get('/income-vs-expenses', authenticateToken, async (req, res) => {
   }
 });
 
-// Get spending insights summary
+// Get spending insights summary (powered by insights engine)
 router.get('/insights', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
+    const { limit = 6, all = 'false' } = req.query;
+    const { generateInsights } = require('../services/insightsService');
 
-    // Get multiple insights in parallel
-    const [weeklyResult, topCategoryResult, streakResult] = await Promise.all([
-      // Weekly change
-      query(
-        `WITH current_week AS (
-          SELECT COALESCE(SUM(amount), 0) as total FROM expenses
-          WHERE user_id = $1 AND expense_date >= date_trunc('week', CURRENT_DATE)
-        ),
-        previous_week AS (
-          SELECT COALESCE(SUM(amount), 0) as total FROM expenses
-          WHERE user_id = $1 
-            AND expense_date >= date_trunc('week', CURRENT_DATE) - INTERVAL '7 days'
-            AND expense_date < date_trunc('week', CURRENT_DATE)
-        )
-        SELECT cw.total as current, pw.total as previous,
-          CASE WHEN pw.total = 0 THEN 0 
-          ELSE ROUND(((cw.total - pw.total) / pw.total * 100), 2) END as change
-        FROM current_week cw, previous_week pw`,
-        [userId]
-      ),
-      // Top spending category change
-      query(
-        `SELECT category, SUM(amount) as total
-         FROM expenses
-         WHERE user_id = $1 AND expense_date >= CURRENT_DATE - INTERVAL '30 days'
-         GROUP BY category
-         ORDER BY total DESC
-         LIMIT 1`,
-        [userId]
-      ),
-      // No-spend days this week
-      query(
-        `SELECT COUNT(*) as tracked_days,
-          7 - COUNT(*) as no_spend_days
-         FROM (
-           SELECT DISTINCT expense_date FROM expenses
-           WHERE user_id = $1 AND expense_date >= date_trunc('week', CURRENT_DATE)
-         ) d`,
-        [userId]
-      )
-    ]);
-
-    const insights = [];
-    
-    // Weekly insight
-    const weekly = weeklyResult.rows[0];
-    if (weekly.change < 0) {
-      insights.push({
-        type: 'positive',
-        icon: '📉',
-        title: 'Spending Down!',
-        message: `You're spending ${Math.abs(weekly.change)}% less than last week. Keep it up!`
-      });
-    } else if (weekly.change > 20) {
-      insights.push({
-        type: 'warning',
-        icon: '⚠️',
-        title: 'Spending Alert',
-        message: `You're spending ${weekly.change}% more than last week. Consider reviewing your expenses.`
-      });
-    }
-
-    // Top category insight
-    if (topCategoryResult.rows.length > 0) {
-      const topCategory = topCategoryResult.rows[0];
-      insights.push({
-        type: 'info',
-        icon: '📊',
-        title: 'Top Spending',
-        message: `${topCategory.category} is your biggest expense this month at ₵${Math.round(topCategory.total)}`
-      });
-    }
-
-    // No-spend days insight
-    const streak = streakResult.rows[0];
-    if (parseInt(streak.no_spend_days) > 0) {
-      insights.push({
-        type: 'positive',
-        icon: '✨',
-        title: 'No-Spend Days',
-        message: `You've had ${streak.no_spend_days} no-spend day(s) this week!`
-      });
-    }
+    const insights = await generateInsights(userId, {
+      limit: parseInt(limit) || 6,
+      includeAll: all === 'true'
+    });
 
     res.json({ success: true, data: insights });
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error generating insights:', error);
     res.status(500).json({ success: false, message: 'Failed to get insights' });
   }
 });

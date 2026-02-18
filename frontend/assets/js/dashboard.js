@@ -660,19 +660,22 @@ async function loadWidgets() {
 
     // Load spending insights
     try {
-      const insightsResponse = await api.get('/comparisons/insights');
+      const insightsResponse = await api.get('/comparisons/insights?limit=6');
       if (insightsResponse.success && insightsResponse.data.length > 0) {
         const insightsCard = document.getElementById('insightsCard');
         const insightsContainer = document.getElementById('spendingInsights');
+        const insightCount = document.getElementById('insightCount');
         
         if (insightsCard && insightsContainer) {
           insightsCard.style.display = 'block';
+          if (insightCount) insightCount.textContent = `${insightsResponse.data.length} insights`;
           insightsContainer.innerHTML = insightsResponse.data.map(insight => `
-            <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
-              <span style="font-size: 20px;">${insight.icon}</span>
-              <div>
-                <div style="font-weight: 600; font-size: 12px; color: var(--text-primary);">${insight.title}</div>
-                <div style="font-size: 11px; color: var(--text-secondary);">${insight.message}</div>
+            <div class="insight-card ${insight.type || 'info'}">
+              <span class="insight-icon">${insight.icon}</span>
+              <div class="insight-body">
+                <div class="insight-title">${insight.title}</div>
+                <div class="insight-msg">${insight.message}</div>
+                ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
               </div>
             </div>
           `).join('');

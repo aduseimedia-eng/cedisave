@@ -1268,6 +1268,50 @@
     .transaction-delete-btn:hover {
       color: #dc3545 !important;
     }
+
+    /* Spending Insights Cards */
+    .insight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border-left: 3px solid transparent;
+      transition: transform 0.2s ease;
+    }
+    .insight-card:active { transform: scale(0.98); }
+    .insight-card.positive {
+      background: rgba(0, 200, 83, 0.08);
+      border-left-color: #00C853;
+    }
+    .insight-card.warning {
+      background: rgba(255, 171, 0, 0.08);
+      border-left-color: #FFAB00;
+    }
+    .insight-card.alert {
+      background: rgba(255, 61, 0, 0.08);
+      border-left-color: #FF3D00;
+    }
+    .insight-card.info {
+      background: var(--bg-secondary);
+      border-left-color: var(--primary);
+    }
+    .insight-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .insight-body { flex: 1; min-width: 0; }
+    .insight-title { font-weight: 700; font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+    .insight-msg { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
+    .insight-tip {
+      font-size: 10px;
+      color: var(--primary-light);
+      margin-top: 4px;
+      padding: 4px 8px;
+      background: rgba(0, 160, 94, 0.06);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .insight-tip::before { content: '💡'; font-size: 10px; }
   </style>
 </head>
 <body>
@@ -1426,10 +1470,11 @@
 
     <!-- Spending Insights Widget -->
     <div class="card" id="insightsCard" style="margin-bottom: 14px; display: none;">
-      <div class="transaction-header">
+      <div class="transaction-header" style="display: flex; justify-content: space-between; align-items: center;">
         <span class="transaction-title"><i data-lucide="lightbulb" class="icon-inline"></i> Spending Insights</span>
+        <span id="insightCount" style="font-size: 10px; color: var(--text-muted); background: var(--bg-secondary); padding: 2px 8px; border-radius: 10px;"></span>
       </div>
-      <div id="spendingInsights" style="padding: 8px 0;">
+      <div id="spendingInsights" style="padding: 8px 0; display: flex; flex-direction: column; gap: 8px;">
         <!-- Insights will be loaded here -->
       </div>
     </div>

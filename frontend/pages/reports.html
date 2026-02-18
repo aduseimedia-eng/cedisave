@@ -790,6 +790,45 @@
     .mtn-header::before, .mtn-header::after { pointer-events: none; }
     .mtn-header-spacer { height: 155px; }
     .container { padding-top: 30px; }
+
+    /* Spending Insights Cards */
+    .ri-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border-left: 3px solid transparent;
+    }
+    .ri-card.positive {
+      background: rgba(0, 200, 83, 0.08);
+      border-left-color: #00C853;
+    }
+    .ri-card.warning {
+      background: rgba(255, 171, 0, 0.08);
+      border-left-color: #FFAB00;
+    }
+    .ri-card.alert {
+      background: rgba(255, 61, 0, 0.08);
+      border-left-color: #FF3D00;
+    }
+    .ri-card.info {
+      background: var(--bg-secondary);
+      border-left-color: var(--primary);
+    }
+    .ri-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .ri-body { flex: 1; min-width: 0; }
+    .ri-title { font-weight: 700; font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+    .ri-msg { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
+    .ri-tip {
+      font-size: 10px;
+      color: var(--primary-light, #00C853);
+      margin-top: 4px;
+      padding: 4px 8px;
+      background: rgba(0, 160, 94, 0.06);
+      border-radius: 6px;
+    }
+    .ri-tip::before { content: '💡 '; }
   </style>
 </head>
 <body>
@@ -953,6 +992,21 @@
       <div class="health-score-rating">
         <i data-lucide="award" style="width:14px;height:14px"></i>
         <span id="healthRating">Calculating...</span>
+      </div>
+    </div>
+
+    <!-- Smart Spending Insights -->
+    <div class="section-header">
+      <div class="section-title">
+        <i data-lucide="lightbulb" style="width:18px;height:18px"></i>
+        Smart Insights
+      </div>
+      <span id="reportInsightCount" style="font-size:10px;color:var(--text-muted);background:var(--bg-secondary);padding:2px 8px;border-radius:10px;"></span>
+    </div>
+    <div id="reportInsights" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">
+        <div class="spinner" style="margin:0 auto 8px;width:20px;height:20px;border-width:2px;"></div>
+        Analyzing your data...
       </div>
     </div>
 
@@ -1583,6 +1637,7 @@
         // Render all sections
         renderOverview();
         renderHealthScore();
+        loadSmartInsights();
         renderSpendingChart();
         renderCategories();
         renderTopExpenses();
@@ -1593,6 +1648,32 @@
       } catch (error) {
         console.error('Error loading reports:', error);
         utils.showAlert('Failed to load reports', 'error');
+      }
+    }
+
+    async function loadSmartInsights() {
+      const container = document.getElementById('reportInsights');
+      const countEl = document.getElementById('reportInsightCount');
+      try {
+        const response = await api.get('/comparisons/insights?limit=8&all=true');
+        if (response.success && response.data.length > 0) {
+          if (countEl) countEl.textContent = response.data.length + ' insights';
+          container.innerHTML = response.data.map(insight => `
+            <div class="ri-card ${insight.type || 'info'}">
+              <span class="ri-icon">${insight.icon}</span>
+              <div class="ri-body">
+                <div class="ri-title">${insight.title}</div>
+                <div class="ri-msg">${insight.message}</div>
+                ${insight.tip ? `<div class="ri-tip">${insight.tip}</div>` : ''}
+              </div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:12px;">Log more expenses to unlock insights!</div>';
+          if (countEl) countEl.textContent = '';
+        }
+      } catch (e) {
+        container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:12px;">Insights unavailable</div>';
       }
     }
 
