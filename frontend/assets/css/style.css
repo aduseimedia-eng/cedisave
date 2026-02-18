@@ -489,6 +489,7 @@ textarea {
   bottom: 0px;
   left: 16px;
   right: 16px;
+  height: var(--bottom-nav-height);
   align-items: center;
   justify-content: space-around;
   padding: 8px 4px;
@@ -503,7 +504,7 @@ textarea {
   border-radius: 28px;
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
-  transition: all 0.3s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
 }
 
 [data-theme="dark"] .bottom-nav {
