@@ -42,7 +42,7 @@ router.get('/callback', async (req, res) => {
     // Check for errors from Google
     if (error) {
       console.error('OAuth error:', error);
-      return res.redirect(`${process.env.FRONTEND_URL}/pages/settings.html?gmail=error&reason=${error}`);
+      return res.redirect(`${process.env.FRONTEND_URL}/pages/settings.html?gmail=error&reason=${encodeURIComponent(error)}`);
     }
     
     if (!code || !userId) {

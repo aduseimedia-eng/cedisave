@@ -151,7 +151,7 @@ router.put('/settings', authenticateToken, async (req, res) => {
 });
 
 // Refresh exchange rates (admin/cron job)
-router.post('/rates/refresh', async (req, res) => {
+router.post('/rates/refresh', authenticateToken, async (req, res) => {
   try {
     // In production, this would fetch from an external API
     // For now, just update the timestamp

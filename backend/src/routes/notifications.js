@@ -54,8 +54,7 @@ router.put('/settings', authenticateToken, async (req, res) => {
 // Send test email
 router.post('/test-email', authenticateToken, async (req, res) => {
   try {
-    const { email } = req.body;
-    const userEmail = email || req.user.email;
+    const userEmail = req.user.email;
     
     await emailService.sendTestEmail(userEmail);
     
@@ -68,8 +67,8 @@ router.post('/test-email', authenticateToken, async (req, res) => {
 // Send bill reminder email
 router.post('/bill-reminder', authenticateToken, async (req, res) => {
   try {
-    const { email, billName, amount, dueDate } = req.body;
-    const userEmail = email || req.user.email;
+    const { billName, amount, dueDate } = req.body;
+    const userEmail = req.user.email;
     
     await emailService.sendBillReminderEmail(userEmail, billName, amount, dueDate);
     
@@ -82,8 +81,8 @@ router.post('/bill-reminder', authenticateToken, async (req, res) => {
 // Send goal milestone email
 router.post('/goal-milestone', authenticateToken, async (req, res) => {
   try {
-    const { email, goalName, progress, milestone } = req.body;
-    const userEmail = email || req.user.email;
+    const { goalName, progress, milestone } = req.body;
+    const userEmail = req.user.email;
     
     await emailService.sendGoalMilestoneEmail(userEmail, goalName, progress, milestone);
     
@@ -97,8 +96,8 @@ router.post('/goal-milestone', authenticateToken, async (req, res) => {
 router.post('/budget-alert', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { email, spent, budget, percentage, period } = req.body;
-    const userEmail = email || req.user.email;
+    const { spent, budget, percentage, period } = req.body;
+    const userEmail = req.user.email;
     
     // Get user name for personalization
     const userResult = await query('SELECT name FROM users WHERE id = $1', [userId]);
@@ -116,8 +115,8 @@ router.post('/budget-alert', authenticateToken, async (req, res) => {
 router.post('/weekly-summary', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { email, expenses, income, savings, goals } = req.body;
-    const userEmail = email || req.user.email;
+    const { expenses, income, savings, goals } = req.body;
+    const userEmail = req.user.email;
     
     const userResult = await query('SELECT name FROM users WHERE id = $1', [userId]);
     const userName = userResult.rows[0]?.name || 'User';

@@ -119,7 +119,7 @@ router.get('/progress', authenticateToken, async (req, res) => {
         default: currentValue = 0;
       }
 
-      const progressPercentage = Math.min(100, Math.round((currentValue / achievement.requirement_value) * 100));
+      const progressPercentage = achievement.requirement_value > 0 ? Math.min(100, Math.round((currentValue / achievement.requirement_value) * 100)) : 0;
 
       return {
         ...achievement,

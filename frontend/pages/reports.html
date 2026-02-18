@@ -1273,7 +1273,7 @@
           return date >= period1Dates.start && date <= period1Dates.end;
         });
         const period1Income = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= period1Dates.start && date <= period1Dates.end;
         });
 
@@ -1290,7 +1290,7 @@
           return date >= period2Dates.start && date <= period2Dates.end;
         });
         const period2Income = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= period2Dates.start && date <= period2Dates.end;
         });
 
@@ -1506,12 +1506,12 @@
 
         // Filter income for current and previous periods
         const currentIncome = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= start && date <= end;
         });
 
         const previousIncome = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= prevStart && date <= prevEnd;
         });
 
@@ -1532,7 +1532,7 @@
         });
 
         reportData.categories = Object.entries(categoryTotals)
-          .map(([name, amount]) => ({ name, amount, percent: (amount / reportData.current.expenses * 100) || 0 }))
+          .map(([name, amount]) => ({ name, amount, percent: reportData.current.expenses > 0 ? (amount / reportData.current.expenses * 100) : 0 }))
           .sort((a, b) => b.amount - a.amount);
 
         // Calculate daily/weekly spending

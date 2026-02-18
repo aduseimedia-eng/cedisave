@@ -11,15 +11,8 @@ const calculateMonthlySavingsRate = async (userId, month = new Date()) => {
 
     const result = await query(
       `SELECT 
-        COALESCE(SUM(i.amount), 0) as total_income,
-        COALESCE(SUM(e.amount), 0) as total_expenses
-       FROM users u
-       LEFT JOIN income i ON u.id = i.user_id 
-         AND i.income_date >= $2 AND i.income_date <= $3
-       LEFT JOIN expenses e ON u.id = e.user_id 
-         AND e.expense_date >= $2 AND e.expense_date <= $3
-       WHERE u.id = $1
-       GROUP BY u.id`,
+        COALESCE((SELECT SUM(amount) FROM income WHERE user_id = $1 AND income_date >= $2 AND income_date <= $3), 0) as total_income,
+        COALESCE((SELECT SUM(amount) FROM expenses WHERE user_id = $1 AND expense_date >= $2 AND expense_date <= $3), 0) as total_expenses`,
       [userId, start, end]
     );
 
@@ -55,8 +48,8 @@ const calculateAverageDailySpending = async (userId, days = 30) => {
       `SELECT COALESCE(SUM(amount), 0) as total
        FROM expenses
        WHERE user_id = $1 
-         AND expense_date >= CURRENT_DATE - INTERVAL '${days} days'`,
-      [userId]
+         AND expense_date >= CURRENT_DATE - INTERVAL '1 day' * $2`,
+      [userId, days]
     );
 
     const total = parseFloat(result.rows[0].total);
@@ -84,7 +77,7 @@ const getCategoryBreakdown = async (userId, start_date, end_date) => {
         COUNT(*) as transaction_count,
         SUM(amount) as total_amount,
         ROUND(
-          (SUM(amount) / (SELECT SUM(amount) FROM expenses WHERE user_id = $1 AND expense_date BETWEEN $2 AND $3)) * 100,
+          (SUM(amount) / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = $1 AND expense_date BETWEEN $2 AND $3), 0)) * 100,
           2
         ) as percentage
        FROM expenses
@@ -114,7 +107,7 @@ const calculateFinancialHealthScore = async (userId) => {
     if (savingsData.savings_rate >= 30) score += 30;
     else if (savingsData.savings_rate >= 20) score += 25;
     else if (savingsData.savings_rate >= 10) score += 20;
-    else score += (savingsData.savings_rate / 10) * 15;
+    else score += Math.max(0, (savingsData.savings_rate / 10) * 15);
 
     // 2. Budget adherence (30 points)
     const budgetResult = await query(
@@ -131,7 +124,8 @@ const calculateFinancialHealthScore = async (userId) => {
 
     if (budgetResult.rows.length > 0) {
       const { budget_amount, spent_amount } = budgetResult.rows[0];
-      const usage = (parseFloat(spent_amount) / parseFloat(budget_amount)) * 100;
+      const budgetAmt = parseFloat(budget_amount) || 0;
+      const usage = budgetAmt > 0 ? (parseFloat(spent_amount) / budgetAmt) * 100 : 0;
       
       if (usage <= 80) score += 30;
       else if (usage <= 90) score += 25;
@@ -174,7 +168,7 @@ const calculateFinancialHealthScore = async (userId) => {
     }
 
     return {
-      score: Math.min(100, Math.round(score)),
+      score: Math.max(0, Math.min(100, Math.round(score))),
       breakdown: {
         savings_rate: Math.min(30, score >= 30 ? 30 : 0),
         budget_adherence: 30,
@@ -199,10 +193,10 @@ const getMonthlyComparison = async (userId, months = 6) => {
         SUM(amount) as total
        FROM expenses
        WHERE user_id = $1 
-         AND expense_date >= CURRENT_DATE - INTERVAL '${months} months'
+         AND expense_date >= CURRENT_DATE - INTERVAL '1 month' * $2
        GROUP BY TO_CHAR(expense_date, 'YYYY-MM')
        ORDER BY month`,
-      [userId]
+      [userId, months]
     );
 
     return result.rows;
@@ -279,11 +273,11 @@ const getTopSpendingCategories = async (userId, limit = 5, days = 30) => {
         SUM(amount) as total
        FROM expenses
        WHERE user_id = $1 
-         AND expense_date >= CURRENT_DATE - INTERVAL '${days} days'
+         AND expense_date >= CURRENT_DATE - INTERVAL '1 day' * $3
        GROUP BY category
        ORDER BY total DESC
        LIMIT $2`,
-      [userId, limit]
+      [userId, limit, days]
     );
 
     return result.rows;

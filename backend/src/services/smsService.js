@@ -9,11 +9,13 @@ const axios = require('axios');
 const ARKESEL_API_BASE = 'https://sms.arkesel.com/api/v2';
 const ARKESEL_API_KEY = process.env.ARKESEL_API_KEY;
 
+const crypto = require('crypto');
+
 /**
- * Generate random 6-digit OTP
+ * Generate cryptographically random 6-digit OTP
  */
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 999999).toString();
 };
 
 /**

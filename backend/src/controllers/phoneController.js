@@ -64,9 +64,7 @@ const sendPhoneOTP = async (req, res) => {
       
       return res.status(500).json({
         success: false,
-        message: 'Failed to send OTP. Please try again.',
-        // In dev mode, include OTP for testing
-        ...(process.env.NODE_ENV === 'development' && { otp })
+        message: 'Failed to send OTP. Please try again.'
       });
     }
 
@@ -76,9 +74,7 @@ const sendPhoneOTP = async (req, res) => {
       data: {
         phone,
         expiresIn: '10 minutes'
-      },
-      // In development mode, include OTP for testing
-      ...(process.env.NODE_ENV === 'development' && { otp })
+      }
     });
   } catch (error) {
     console.error('Send OTP error:', error);

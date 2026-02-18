@@ -98,7 +98,7 @@ async function loadFinancialSummary() {
   try {
     const summaryResponse = await api.getExpenseSummary('month');
     const summary = summaryResponse.data.summary || summaryResponse.data;
-    const totalExpenses = summary.total_amount || summary.total || 0;
+    const totalExpenses = parseFloat(summary.total_amount || summary.total || 0);
 
     // Get income for the month
     const dateRange = utils.getDateRange ? utils.getDateRange('month') : {};
@@ -273,7 +273,7 @@ async function loadGamificationData() {
     
     const level = xp.level || Math.floor((xp.total_xp || 0) / 100) + 1;
     const nextLevelXp = xp.next_level_xp || (level * 100);
-    const progressPercent = xp.progress_percentage || ((xp.total_xp || 0) % 100) / 100 * 100;
+    const progressPercent = (xp.progress_percentage != null ? xp.progress_percentage : ((xp.total_xp || 0) % 100));
     
     // Check for level up
     const previousLevel = parseInt(localStorage.getItem('userLevel') || '1');

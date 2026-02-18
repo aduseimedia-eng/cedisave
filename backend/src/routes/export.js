@@ -112,7 +112,7 @@ router.get('/data', authenticateToken, async (req, res) => {
             target_amount,
             current_amount,
             target_amount - current_amount as remaining,
-            ROUND((current_amount / target_amount * 100), 1) as progress_percent,
+            ROUND((current_amount / NULLIF(target_amount, 0) * 100), 1) as progress_percent,
             deadline
            FROM goals
            WHERE user_id = $1
@@ -129,8 +129,16 @@ router.get('/data', authenticateToken, async (req, res) => {
 
     // Format data based on requested format
     if (format === 'csv') {
+      const escapeCsvValue = (v) => {
+        let str = String(v == null ? '' : v);
+        // Escape double quotes
+        str = str.replace(/"/g, '""');
+        // Neutralize formula injection
+        if (/^[=+\-@\t\r]/.test(str)) str = "'" + str;
+        return `"${str}"`;
+      };
       const csvHeader = columns.join(',');
-      const csvRows = data.map(row => Object.values(row).map(v => `"${v}"`).join(','));
+      const csvRows = data.map(row => Object.values(row).map(escapeCsvValue).join(','));
       const csv = [csvHeader, ...csvRows].join('\n');
       
       res.setHeader('Content-Type', 'text/csv');
@@ -189,7 +197,7 @@ router.get('/report', authenticateToken, async (req, res) => {
           category,
           SUM(amount) as total,
           COUNT(*) as count,
-          ROUND((SUM(amount) / (SELECT SUM(amount) FROM expenses WHERE user_id = $1 AND expense_date >= $2 AND expense_date <= $3) * 100), 1) as percentage
+          ROUND((SUM(amount) / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = $1 AND expense_date >= $2 AND expense_date <= $3), 0) * 100), 1) as percentage
          FROM expenses
          WHERE user_id = $1 AND expense_date >= $2 AND expense_date <= $3
          GROUP BY category
@@ -238,9 +246,10 @@ router.get('/report', authenticateToken, async (req, res) => {
 
     const summary = summaryResult.rows[0];
     const income = incomeResult.rows[0];
-    const netSavings = parseFloat(income.total_income) - parseFloat(summary.total_expenses);
-    const savingsRate = income.total_income > 0 
-      ? Math.round((netSavings / income.total_income) * 100) 
+    const totalIncomeNum = parseFloat(income.total_income) || 0;
+    const netSavings = totalIncomeNum - parseFloat(summary.total_expenses);
+    const savingsRate = totalIncomeNum > 0 
+      ? Math.round((netSavings / totalIncomeNum) * 100) 
       : 0;
 
     res.json({

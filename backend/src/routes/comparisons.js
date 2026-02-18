@@ -238,7 +238,7 @@ router.get('/income-vs-expenses', authenticateToken, async (req, res) => {
         COALESCE(i.total_income, 0) - COALESCE(e.total_expenses, 0) as savings
        FROM (
          SELECT generate_series(
-           date_trunc('month', CURRENT_DATE - INTERVAL '${parseInt(months)} months'),
+           date_trunc('month', CURRENT_DATE - INTERVAL '1 month' * $2),
            date_trunc('month', CURRENT_DATE),
            '1 month'
          ) as date
@@ -254,7 +254,7 @@ router.get('/income-vs-expenses', authenticateToken, async (req, res) => {
          GROUP BY date_trunc('month', expense_date)
        ) e ON d.date = e.month
        ORDER BY d.date ASC`,
-      [userId]
+      [userId, parseInt(months) || 6]
     );
 
     // Calculate savings rate

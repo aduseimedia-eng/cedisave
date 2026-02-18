@@ -17,8 +17,11 @@ const authenticateToken = (req, res, next) => {
       });
     }
 
-    // Verify token
-    jwt.verify(token, jwtConfig.secret, (err, decoded) => {
+    // Verify token with issuer/audience validation
+    jwt.verify(token, jwtConfig.secret, {
+      issuer: jwtConfig.options.issuer,
+      audience: jwtConfig.options.audience
+    }, (err, decoded) => {
       if (err) {
         if (err.name === 'TokenExpiredError') {
           return res.status(401).json({

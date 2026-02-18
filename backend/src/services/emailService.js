@@ -416,7 +416,7 @@ const sendBudgetAlertEmail = async (email, userName, spent, budget, percentage, 
  */
 const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings, goals) => {
   try {
-    const savingsRate = income > 0 ? ((savings / income) * 100).toFixed(1) : 0;
+    const savingsRate = income > 0 ? ((savings / income) * 100).toFixed(1) : '0.0';
     
     const mailOptions = {
       from: process.env.EMAIL_FROM,
@@ -484,7 +484,7 @@ const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings
                       <strong>${goal.title}</strong>
                       <div style="font-size: 12px; color: #666;">GHS ${parseFloat(goal.current).toFixed(2)} / GHS ${parseFloat(goal.target).toFixed(2)}</div>
                       <div style="background: #e0e0e0; height: 6px; border-radius: 3px; margin-top: 5px; overflow: hidden;">
-                        <div style="background: #00a05e; height: 100%; width: ${(goal.current / goal.target * 100)}%; transition: width 0.3s;"></div>
+                        <div style="background: #00a05e; height: 100%; width: ${goal.target > 0 ? Math.min(100, (goal.current / goal.target * 100)) : 0}%; transition: width 0.3s;"></div>
                       </div>
                     </div>
                   `).join('')}

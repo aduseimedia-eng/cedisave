@@ -153,7 +153,7 @@ budgetRouter.get('/active', authenticateToken, async (req, res) => {
         b.*,
         COALESCE(SUM(e.amount), 0) as spent_amount,
         b.amount - COALESCE(SUM(e.amount), 0) as remaining,
-        ROUND((COALESCE(SUM(e.amount), 0) / b.amount * 100), 2) as usage_percentage
+        ROUND((COALESCE(SUM(e.amount), 0) / NULLIF(b.amount, 0) * 100), 2) as usage_percentage
        FROM budgets b
        LEFT JOIN expenses e ON b.user_id = e.user_id AND e.expense_date BETWEEN b.start_date AND b.end_date
        WHERE b.user_id = $1 AND b.is_active = true

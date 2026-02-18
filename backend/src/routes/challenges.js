@@ -93,7 +93,9 @@ router.get('/history', authenticateToken, async (req, res) => {
       params.push(status);
     }
 
-    queryText += ` ORDER BY uc.created_at DESC LIMIT ${parseInt(limit)}`;
+    const safeLimit = Math.min(Math.max(parseInt(limit) || 20, 1), 100);
+    params.push(safeLimit);
+    queryText += ` ORDER BY uc.created_at DESC LIMIT $${params.length}`;
 
     const result = await query(queryText, params);
     res.json({ success: true, data: result.rows });

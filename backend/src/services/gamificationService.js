@@ -330,7 +330,8 @@ const getUserXP = async (userId) => {
     const { total_xp, level } = result.rows[0];
     const currentLevelXP = LEVEL_THRESHOLDS[level - 1] || 0;
     const nextLevelXP = LEVEL_THRESHOLDS[level] || total_xp;
-    const progressToNextLevel = ((total_xp - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
+    const denominator = nextLevelXP - currentLevelXP;
+    const progressToNextLevel = denominator > 0 ? ((total_xp - currentLevelXP) / denominator) * 100 : 100;
 
     return {
       total_xp,
