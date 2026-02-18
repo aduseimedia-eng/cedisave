@@ -324,7 +324,7 @@ const getUserXP = async (userId) => {
     );
 
     if (result.rows.length === 0) {
-      return { total_xp: 0, level: 1 };
+      return { total_xp: 0, level: 1, current_level_xp: 0, next_level_xp: LEVEL_THRESHOLDS[1] || 100, progress_percentage: 0 };
     }
 
     const { total_xp, level } = result.rows[0];

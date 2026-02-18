@@ -287,10 +287,17 @@ const getExpenseSummary = async (req, res) => {
       [userId]
     );
 
+    const summary = result.rows[0];
     res.json({
       success: true,
       data: {
-        summary: result.rows[0],
+        summary: {
+          total_transactions: summary.total_transactions || '0',
+          total_amount: summary.total_amount || '0',
+          avg_amount: summary.avg_amount || '0',
+          max_amount: summary.max_amount || '0',
+          min_amount: summary.min_amount || '0'
+        },
         by_category: categoryResult.rows,
         period
       }

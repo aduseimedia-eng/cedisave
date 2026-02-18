@@ -85,7 +85,7 @@ router.get('/progress', authenticateToken, async (req, res) => {
         (SELECT COUNT(*) FROM budgets WHERE user_id = $1) as budget_count,
         (SELECT COUNT(*) FROM goals WHERE user_id = $1) as goal_count,
         (SELECT COUNT(*) FROM goals WHERE user_id = $1 AND status = 'completed') as goals_completed,
-        (SELECT COALESCE(current_streak, 0) FROM streaks WHERE user_id = $1) as streak_days,
+        COALESCE((SELECT current_streak FROM streaks WHERE user_id = $1), 0) as streak_days,
         (SELECT COALESCE(SUM(current_amount), 0) FROM goals WHERE user_id = $1) as total_saved,
         (SELECT COUNT(*) FROM user_challenges WHERE user_id = $1 AND status = 'completed') as challenges_completed`,
       [userId]
@@ -148,7 +148,7 @@ router.post('/check', authenticateToken, async (req, res) => {
         (SELECT COUNT(*) FROM budgets WHERE user_id = $1) as budget_count,
         (SELECT COUNT(*) FROM goals WHERE user_id = $1) as goal_count,
         (SELECT COUNT(*) FROM goals WHERE user_id = $1 AND status = 'completed') as goals_completed,
-        (SELECT COALESCE(current_streak, 0) FROM streaks WHERE user_id = $1) as streak_days,
+        COALESCE((SELECT current_streak FROM streaks WHERE user_id = $1), 0) as streak_days,
         (SELECT COALESCE(SUM(current_amount), 0) FROM goals WHERE user_id = $1) as total_saved,
         (SELECT COUNT(*) FROM user_challenges WHERE user_id = $1 AND status = 'completed') as challenges_completed`,
       [userId]

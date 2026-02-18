@@ -1539,12 +1539,13 @@
         // Only fetch from API if cache is empty
         if (allExpenses.length === 0) {
           const expensesResponse = await api.getExpenses({ limit: 500 });
-          allExpenses = expensesResponse.data.expenses || expensesResponse.data || [];
+          const expData = expensesResponse.data || {};
+          allExpenses = Array.isArray(expData.expenses) ? expData.expenses : (Array.isArray(expData) ? expData : []);
         }
 
         if (allIncome.length === 0) {
           const incomeResponse = await api.getIncome();
-          allIncome = incomeResponse.data || [];
+          allIncome = Array.isArray(incomeResponse.data) ? incomeResponse.data : [];
         }
 
         // Filter expenses for current and previous periods
@@ -1762,6 +1763,13 @@
 
     function renderSpendingChart() {
       const container = document.getElementById('spendingChart');
+      
+      if (!reportData.daily || reportData.daily.length === 0 || reportData.daily.every(d => d.amount === 0)) {
+        container.innerHTML = '<div class="empty-state" style="text-align:center;color:rgba(255,255,255,0.6);padding:24px;"><i data-lucide="bar-chart-2"></i><p>No spending data for this period</p></div>';
+        if (typeof lucide !== 'undefined') lucide.createIcons({ node: container });
+        return;
+      }
+      
       const maxAmount = Math.max(...reportData.daily.map(d => d.amount), 1);
 
       container.innerHTML = reportData.daily.map(day => {

@@ -103,7 +103,8 @@ async function loadFinancialSummary() {
     // Get income for the month
     const dateRange = utils.getDateRange ? utils.getDateRange('month') : {};
     const incomeResponse = await api.getIncome(dateRange);
-    const totalIncome = incomeResponse.data.reduce((sum, inc) => sum + parseFloat(inc.amount), 0);
+    const incomeData = Array.isArray(incomeResponse.data) ? incomeResponse.data : [];
+    const totalIncome = incomeData.reduce((sum, inc) => sum + parseFloat(inc.amount || 0), 0);
 
     // Update balance card
     const balance = totalIncome - totalExpenses;
@@ -633,8 +634,8 @@ async function loadWidgets() {
     // Load bills summary
     try {
       const billsResponse = await api.get('/bills/summary');
-      if (billsResponse.success) {
-        const dueBills = (billsResponse.data.overdue || 0) + (billsResponse.data.due_soon || 0);
+      if (billsResponse.success && billsResponse.data) {
+        const dueBills = (billsResponse.data.overdue_count || billsResponse.data.overdue || 0) + (billsResponse.data.due_soon_count || billsResponse.data.due_soon || 0);
         const billsCountEl = document.getElementById('billsDueCount');
         if (billsCountEl) billsCountEl.textContent = dueBills;
       }

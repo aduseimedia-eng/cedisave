@@ -135,7 +135,7 @@
     async function loadGoals() {
       try {
         const response = await api.getGoals();
-        const goals = response.data;
+        const goals = Array.isArray(response.data) ? response.data : [];
         
         const container = document.getElementById('goalsContainer');
         
