@@ -1185,18 +1185,8 @@
       border-top: 1px solid var(--border-color);
     }
 
-    /* Currency Link in Mobile Menu */
-    .mobile-menu-link.currency-link {
-      background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1));
-      color: var(--primary-color) !important;
-      border-radius: 10px;
-      margin: 4px 12px;
-      padding: 12px 16px !important;
-    }
-
-    .mobile-menu-link.currency-link:hover {
-      background: linear-gradient(135deg, rgba(0, 107, 63, 0.2), rgba(0, 160, 94, 0.2));
-    }
+    /* Menu profile sync styles */
+    .menu-avatar { font-family: 'Inter', sans-serif; }
 
     /* Animation Styles */
     @keyframes slideOut {
@@ -1351,25 +1341,90 @@
   <!-- Mobile Menu Overlay -->
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
 
-  <!-- Mobile Side Menu -->
+  <!-- Premium Mobile Side Menu -->
   <div class="mobile-menu">
+    <!-- Profile Header -->
     <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
+      <div class="menu-header-top">
+        <span style="color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; opacity: 0.7;">Menu</span>
+        <button class="menu-close-btn" onclick="toggleMobileMenu()" title="Close">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <div class="menu-profile-area">
+        <div class="menu-avatar" id="menuAvatarInitials">U</div>
+        <div class="menu-profile-info">
+          <div class="menu-profile-name" id="menuUserName">Welcome!</div>
+          <div class="menu-profile-email" id="menuUserEmail">Manage your finances</div>
+        </div>
+      </div>
     </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="achievements.html" class="mobile-menu-link"><i data-lucide="trophy" class="icon-menu"></i> Achievements</a>
-    <a href="challenges.html" class="mobile-menu-link"><i data-lucide="swords" class="icon-menu"></i> Challenges</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="#" class="mobile-menu-link currency-link" onclick="openCurrencyCalculator(); toggleMobileMenu();">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
+
+    <!-- Nav Links -->
+    <div class="menu-nav-section">
+      <div class="menu-section-label">Navigate</div>
+      <a href="dashboard.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-dashboard"><i data-lucide="layout-dashboard" class="icon-menu"></i></div>
+        Dashboard
+      </a>
+      <a href="expenses.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-expenses"><i data-lucide="receipt" class="icon-menu"></i></div>
+        Expenses
+      </a>
+      <a href="goals.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-goals"><i data-lucide="target" class="icon-menu"></i></div>
+        Goals
+      </a>
+      <a href="bills.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-bills"><i data-lucide="calendar-clock" class="icon-menu"></i></div>
+        Bills & Payments
+      </a>
+      <a href="reports.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-reports"><i data-lucide="bar-chart-3" class="icon-menu"></i></div>
+        Reports
+      </a>
+
+      <div class="menu-section-label">Rewards</div>
+      <a href="achievements.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-achievements"><i data-lucide="trophy" class="icon-menu"></i></div>
+        Achievements
+      </a>
+      <a href="challenges.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-challenges"><i data-lucide="swords" class="icon-menu"></i></div>
+        Challenges
+      </a>
+
+      <div class="menu-section-label">Tools</div>
+      <a href="#" class="mobile-menu-link" onclick="openCurrencyCalculator(); toggleMobileMenu();">
+        <div class="menu-icon-wrap menu-icon-currency"><i data-lucide="calculator" class="icon-menu"></i></div>
+        Currency Converter
+      </a>
+      <a href="settings.html" class="mobile-menu-link">
+        <div class="menu-icon-wrap menu-icon-settings"><i data-lucide="settings" class="icon-menu"></i></div>
+        Settings
+      </a>
+
+      <!-- Theme Toggle -->
+      <div class="menu-theme-row">
+        <span class="menu-theme-label">
+          <i data-lucide="moon" style="width:14px;height:14px;"></i> Dark Mode
+        </span>
+        <button class="menu-theme-toggle" onclick="toggleTheme()" title="Toggle Theme"></button>
+      </div>
+
+      <div class="menu-divider"></div>
+
+      <a href="#" class="mobile-menu-link logout" onclick="logout()">
+        <div class="menu-icon-wrap"><i data-lucide="log-out" class="icon-menu"></i></div>
+        Logout
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="menu-footer">
+      <span class="menu-footer-brand">KudiPal</span>
+      <span class="menu-footer-version">v2.0</span>
+    </div>
   </div>
 
 

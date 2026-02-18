@@ -49,6 +49,14 @@ async function initDashboard() {
     
     document.getElementById('userName').textContent = userData.name || 'Welcome!';
     
+    // Sync menu profile
+    const menuName = document.getElementById('menuUserName');
+    const menuInitials = document.getElementById('menuAvatarInitials');
+    const menuEmail = document.getElementById('menuUserEmail');
+    if (menuName) menuName.textContent = userData.name || 'Welcome!';
+    if (menuInitials) menuInitials.textContent = getInitials(userData.name);
+    if (menuEmail) menuEmail.textContent = userData.email || 'Manage your finances';
+    
     // Load profile picture from profile data or localStorage
     const avatarEl = document.getElementById('userAvatar');
     const initialsEl = document.getElementById('avatarInitials');
