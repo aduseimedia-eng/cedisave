@@ -486,7 +486,7 @@ textarea {
 .bottom-nav {
   display: flex;
   position: fixed;
-  bottom: 12px;
+  bottom: 0px;
   left: 16px;
   right: 16px;
   align-items: center;
