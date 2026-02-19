@@ -454,7 +454,7 @@ textarea {
   height: 100dvh;
   background: var(--card-bg);
   z-index: 102;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 0px);
+  padding-top: env(safe-area-inset-top, 0px);
   padding-right: var(--safe-area-right);
   padding-bottom: var(--safe-area-bottom);
   transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -508,6 +508,7 @@ textarea {
   padding: 28px 20px 22px;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 /* Subtle pattern overlay on header */
@@ -607,6 +608,7 @@ textarea {
 .menu-nav-section {
   flex: 1;
   padding: 4px 0;
+  overflow-y: auto;
 }
 
 .mobile-menu-link {
@@ -648,18 +650,20 @@ textarea {
   width: 18px;
   height: 18px;
   stroke-width: 2;
+  margin-right: 0;
+  stroke: currentColor;
 }
 
 /* Color-coded icon backgrounds */
-.menu-icon-dashboard { background: rgba(0, 107, 63, 0.12); color: var(--primary-color); }
+.menu-icon-dashboard { background: rgba(0, 107, 63, 0.12); color: #006B3F; }
 .menu-icon-expenses { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-.menu-icon-goals { background: rgba(0, 160, 94, 0.12); color: var(--accent-color); }
+.menu-icon-goals { background: rgba(0, 160, 94, 0.12); color: #00a05e; }
 .menu-icon-bills { background: rgba(252, 209, 22, 0.15); color: #d4a800; }
 .menu-icon-reports { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
 .menu-icon-achievements { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
 .menu-icon-challenges { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
 .menu-icon-settings { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
-.menu-icon-currency { background: linear-gradient(135deg, rgba(0, 107, 63, 0.12), rgba(0, 160, 94, 0.12)); color: var(--primary-color); }
+.menu-icon-currency { background: linear-gradient(135deg, rgba(0, 107, 63, 0.12), rgba(0, 160, 94, 0.12)); color: #006B3F; }
 
 [data-theme="dark"] .menu-icon-dashboard { background: rgba(0, 160, 94, 0.15); }
 [data-theme="dark"] .menu-icon-expenses { background: rgba(239, 68, 68, 0.15); }
@@ -699,6 +703,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .menu-footer-brand {
