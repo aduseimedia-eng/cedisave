@@ -742,6 +742,13 @@ class APIService {
 
   // Generic HTTP methods for flexible API calls
   async get(endpoint) {
+    // Demo mode: return mock data for known endpoints
+    if (isDemoMode()) {
+      if (endpoint.includes('/comparisons/insights')) {
+        return { success: true, data: this._getDemoInsights() };
+      }
+      return { success: true, data: [] };
+    }
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
       headers: this.getHeaders()
@@ -773,6 +780,33 @@ class APIService {
       headers: this.getHeaders()
     });
     return await this.handleResponse(response);
+  }
+
+  // Generate demo insights from mock data
+  _getDemoInsights() {
+    const expenses = MOCK_DATA.expenses || [];
+    const income = MOCK_DATA.income || [];
+    const goals = MOCK_DATA.goals || [];
+    const budget = MOCK_DATA.budget || {};
+    const totalSpent = expenses.reduce((s, e) => s + e.amount, 0);
+    const totalIncome = income.reduce((s, i) => s + i.amount, 0);
+    const topCategory = expenses.length > 0 ? expenses.reduce((a, b) => a.amount > b.amount ? a : b).category : 'Food / Chop Bar';
+    const savingsRate = totalIncome > 0 ? Math.round((1 - totalSpent / totalIncome) * 100) : 0;
+
+    const insights = [
+      { type: 'positive', icon: 'party-popper', priority: 1, mood: 'celebrate', title: 'Welcome to KudiPal! \uD83C\uDF89', message: `You're exploring demo mode! This is where your personalized money insights will appear. Add real expenses to unlock 30 smart insights!`, tip: 'Sign up and start logging expenses to see YOUR money story!', source: 'Demo Mode' },
+      { type: 'info', icon: 'tag', priority: 2, mood: 'chill', title: `#1 Spending: ${topCategory}`, message: `In demo mode, ${topCategory} is your top category at \u20B5${expenses.length > 0 ? expenses.reduce((a, b) => a.amount > b.amount ? a : b).amount.toFixed(2) : '0'}. Your real data will show YOUR actual top category!`, tip: 'Track every expense to see which category really rules your wallet!', source: 'Demo Expenses' },
+      { type: 'positive', icon: 'trophy', priority: 2, mood: 'celebrate', title: `${savingsRate}% Savings Rate!`, message: `Demo shows you'd save ${savingsRate}% of your income. That's ${savingsRate >= 20 ? 'amazing! Keep it up!' : 'a start! You can do better!'}`, tip: 'Aim for at least 20% savings rate for financial health!', source: 'Demo Income vs Expenses' },
+      { type: 'info', icon: 'target', priority: 3, mood: 'chill', title: `${goals.length} Goals Tracking!`, message: `You have ${goals.filter(g => g.status === 'in_progress').length} active goals in demo mode. Real goals will show your actual progress with motivating updates!`, tip: 'Set specific, measurable goals with deadlines for best results!', source: 'Demo Goals' },
+      { type: 'warning', icon: 'zap', priority: 2, mood: 'nudge', title: 'Biggest Expense Alert!', message: `Your largest demo expense is \u20B5${Math.max(...expenses.map(e => e.amount), 0).toFixed(2)}. With real data, we'll track your actual monster expenses!`, tip: 'Review big expenses weekly — small changes add up to big savings!', source: 'Demo Expenses' },
+      { type: 'info', icon: 'bar-chart-3', priority: 3, mood: 'chill', title: `\u20B5${totalSpent > 0 ? (totalSpent / 7).toFixed(0) : '0'}/Day Life!`, message: `Demo daily average is \u20B5${totalSpent > 0 ? (totalSpent / 7).toFixed(2) : '0'}. Connect your real expenses to see your actual daily burn rate!`, tip: 'Knowing your daily spend helps you make better daily choices!', source: 'Demo Daily Average' },
+      { type: 'positive', icon: 'sparkles', priority: 3, mood: 'celebrate', title: '30 Insights Awaiting!', message: 'KudiPal can generate up to 30 personalized insights based on YOUR real spending patterns, income, goals, and budgets!', tip: 'The more data you log, the smarter and more fun your insights become!', source: 'Insights Engine' },
+      { type: 'info', icon: 'wallet', priority: 4, mood: 'chill', title: 'Budget Power!', message: `Demo budget: \u20B5${budget.total_budget || 0} with \u20B5${budget.remaining || 0} remaining. Set a real budget to get alerts when you're close to the limit!`, tip: 'A budget isn\'t a restriction — it\'s a plan to spend on what matters!', source: 'Demo Budget' },
+      { type: 'info', icon: 'brain', priority: 4, mood: 'chill', title: 'AI-Powered Tips!', message: 'Each insight comes with a personalized tip based on your data. The more you use KudiPal, the smarter it gets!', tip: 'Check back daily for fresh insights — they update with your spending!', source: 'Insights Engine' },
+      { type: 'positive', icon: 'flame', priority: 3, mood: 'celebrate', title: 'Streak System!', message: `Current demo streak: ${MOCK_DATA.streak?.current_streak || 0} days! Log expenses daily to build your real streak and earn XP!`, tip: 'A 7-day streak unlocks the Consistency Champ badge!', source: 'Demo Streaks' }
+    ];
+
+    return insights;
   }
 }
 

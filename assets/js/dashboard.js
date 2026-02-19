@@ -49,14 +49,37 @@ async function initDashboard() {
     
     document.getElementById('userName').textContent = userData.name || 'Welcome!';
     
-    // Load profile picture from profile data
+    // Load profile picture from profile data or localStorage
     const avatarEl = document.getElementById('userAvatar');
     const initialsEl = document.getElementById('avatarInitials');
     
-    if (userData.profile_picture && avatarEl) {
-      avatarEl.innerHTML = `<img src="${userData.profile_picture}" alt="Profile">`;
+    // Check for profile picture: API first, then localStorage fallback
+    let profilePicture = userData.profile_picture || localStorage.getItem('profilePicture');
+    
+    if (profilePicture && avatarEl) {
+      avatarEl.innerHTML = `<img src="${profilePicture}" alt="Profile">`;
     } else if (initialsEl) {
       initialsEl.textContent = getInitials(userData.name);
+    }
+    
+    // Listen for profile picture updates from other tabs/windows
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'profilePicture' && avatarEl) {
+        if (event.newValue) {
+          avatarEl.innerHTML = `<img src="${event.newValue}" alt="Profile">`;
+        } else {
+          avatarEl.innerHTML = `<span id="avatarInitials">${getInitials(userData.name)}</span>`;
+        }
+      }
+    });
+
+    // Update streak on first open of the day
+    const today = new Date().toISOString().split('T')[0];
+    if (localStorage.getItem('lastStreakUpdate') !== today) {
+      try {
+        await api.put('/gamification/streak/update', {});
+        localStorage.setItem('lastStreakUpdate', today);
+      } catch (e) { console.warn('Streak update failed:', e); }
     }
 
     // Load all dashboard data
@@ -120,20 +143,60 @@ async function loadRecentExpenses() {
     }
 
     listContainer.innerHTML = expenses.slice(0, 5).map(expense => `
-      <div class="transaction-item">
+      <div class="transaction-item" id="expense-${expense.id}">
         <div class="transaction-icon">${utils.getCategoryIcon(expense.category)}</div>
         <div class="transaction-info">
           <div class="transaction-category">${expense.category}</div>
           <div class="transaction-date">${utils.formatDate(expense.expense_date || expense.date)}</div>
         </div>
-        <div class="transaction-amount">-${utils.formatCurrencyAmount(expense.amount)}</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="transaction-amount">-${utils.formatCurrencyAmount(expense.amount)}</div>
+          <button class="transaction-delete-btn" onclick="deleteTransaction('${expense.id}')" title="Delete transaction" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 16px;">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
       </div>
     `).join('');
+    
+    // Render lucide icons
+    lucide.createIcons();
 
   } catch (error) {
     console.error('Load expenses error:', error);
     document.getElementById('recentExpensesList').innerHTML = 
       '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Failed to load</div>';
+  }
+}
+
+// Delete transaction
+async function deleteTransaction(expenseId) {
+  // Confirm deletion
+  if (!confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
+    return;
+  }
+
+  try {
+    utils.showLoading();
+    await api.deleteExpense(expenseId);
+    
+    utils.hideLoading();
+    utils.showAlert('Transaction deleted successfully ✓', 'success');
+    
+    // Animate deletion
+    const element = document.getElementById(`expense-${expenseId}`);
+    if (element) {
+      element.style.animation = 'slideOut 0.3s ease forwards';
+      setTimeout(() => {
+        element.remove();
+        loadRecentExpenses(); // Reload to ensure consistency
+      }, 300);
+    }
+    
+    // Reload dashboard to update totals
+    await loadFinancialSummary();
+  } catch (error) {
+    utils.hideLoading();
+    utils.showAlert('Failed to delete transaction', 'error');
   }
 }
 
@@ -152,13 +215,15 @@ async function loadBudget() {
       budgetPercentage.textContent = 'Not set';
       budgetSpent.textContent = 'Tap Budget to set';
       budgetRemaining.textContent = '';
+      budgetFill.style.width = '0%';
       return;
     }
 
-    const usage = parseFloat(budgetData.usage_percentage || 0);
-    const spent = budgetData.spent_amount || 0;
-    const total = budgetData.budget_amount || budgetData.amount || 0;
+    // Calculate usage based on spent vs budget amount
+    const spent = parseFloat(budgetData.spent_amount || budgetData.spent || 0);
+    const total = parseFloat(budgetData.budget_amount || budgetData.amount || budgetData.total_budget || 0);
     const remaining = Math.max(0, total - spent);
+    const usage = total > 0 ? (spent / total * 100) : 0;
     
     // Update UI
     budgetPercentage.textContent = `${usage.toFixed(0)}%`;
@@ -175,9 +240,19 @@ async function loadBudget() {
     } else {
       budgetFill.classList.add('safe');
     }
+    
+    // Show budget status message
+    if (usage >= 100) {
+      utils.showAlert('⚠️ Budget exceeded! You\'re over your limit.', 'warning');
+    } else if (usage >= 90) {
+      utils.showAlert('🚨 Budget warning: You\'re at 90% of your budget', 'warning');
+    }
 
   } catch (error) {
     console.error('Load budget error:', error);
+    // Budget is optional - don't show error
+    document.getElementById('budgetPercentage').textContent = 'Not set';
+    document.getElementById('budgetSpent').textContent = 'Tap to set budget';
   }
 }
 
@@ -188,19 +263,30 @@ async function loadGamificationData() {
     const streakResponse = await api.getStreak();
     const streak = streakResponse.data;
     document.getElementById('currentStreak').textContent = `${streak.current_streak || 0} days`;
+    
+    // Celebrate streaks (only once per session)
+    const streakKey = `streakCelebrated_${streak.current_streak}`;
+    if ((streak.current_streak === 7 || streak.current_streak === 30) && !sessionStorage.getItem(streakKey)) {
+      sessionStorage.setItem(streakKey, 'true');
+      celebrateStreak(streak.current_streak);
+    }
 
     // Load XP
     const xpResponse = await api.getXP();
     const xp = xpResponse.data;
     
-    document.getElementById('userLevel').textContent = `Level ${xp.level}`;
-    document.getElementById('levelBadge').textContent = xp.level;
-    document.getElementById('xpProgress').style.width = `${xp.progress_percentage}%`;
-    document.getElementById('xpText').textContent = `${xp.total_xp} / ${xp.next_level_xp} XP`;
+    const level = xp.level || Math.floor((xp.total_xp || 0) / 100) + 1;
+    const nextLevelXp = xp.next_level_xp || (level * 100);
+    const progressPercent = xp.progress_percentage || ((xp.total_xp || 0) % 100) / 100 * 100;
+    
+    document.getElementById('userLevel').textContent = `Level ${level}`;
+    document.getElementById('levelBadge').textContent = level;
+    document.getElementById('xpProgress').style.width = `${Math.min(100, progressPercent)}%`;
+    document.getElementById('xpText').textContent = `${xp.total_xp || 0} / ${nextLevelXp} XP`;
 
-    // Load badges
+    // Load badges with animation
     const badgesResponse = await api.getBadges();
-    const badges = badgesResponse.data;
+    const badges = badgesResponse.data || [];
     
     const badgesContainer = document.getElementById('badgesContainer');
     const badgeEmojis = ['💰', '🎯', '📊', '⭐', '🔥', '💎'];
@@ -210,10 +296,20 @@ async function loadGamificationData() {
         `<span class="badge-item">${emoji}</span>`
       ).join('');
     } else {
-      const earnedBadges = badges.map(b => utils.getBadgeEmoji(b.badge_name));
-      badgesContainer.innerHTML = badgeEmojis.map(emoji => 
-        `<span class="badge-item ${earnedBadges.includes(emoji) ? 'earned' : ''}">${emoji}</span>`
-      ).join('');
+      const earnedBadgeNames = badges.map(b => b.badge_name || b.name);
+      const badgeNamesToemoji = {
+        'Saver': '💰',
+        'Goal Achiever': '🎯',
+        'Analyst': '📊',
+        'Top Performer': '⭐',
+        'Streak Master': '🔥',
+        'Platinum Member': '💎'
+      };
+      
+      badgesContainer.innerHTML = badgeEmojis.map((emoji, idx) => {
+        const isBadgeEarned = badges.length > idx;
+        return `<span class="badge-item ${isBadgeEarned ? 'earned' : ''}" title="${isBadgeEarned ? 'Earned' : 'Locked'}">${emoji}</span>`;
+      }).join('');
     }
 
     // Set motivational message
@@ -231,6 +327,10 @@ async function loadGamificationData() {
 
   } catch (error) {
     console.error('Load gamification error:', error);
+    // Set defaults if gamification API fails
+    document.getElementById('userLevel').textContent = 'Level 1';
+    document.getElementById('levelBadge').textContent = '1';
+    document.getElementById('xpText').textContent = '0 / 100 XP';
   }
 }
 
@@ -279,12 +379,38 @@ function populateIncomeOptions() {
 async function handleAddExpense(event) {
   event.preventDefault();
   
+  // Validate inputs
+  const amount = parseFloat(document.getElementById('expenseAmount').value);
+  const category = document.getElementById('expenseCategory').value;
+  const paymentMethod = document.getElementById('expensePaymentMethod').value;
+  const expenseDate = document.getElementById('expenseDate').value;
+  
+  if (!amount || amount <= 0) {
+    utils.showAlert('Please enter a valid amount', 'error');
+    return;
+  }
+  
+  if (!category) {
+    utils.showAlert('Please select a category', 'error');
+    return;
+  }
+  
+  if (!paymentMethod) {
+    utils.showAlert('Please select a payment method', 'error');
+    return;
+  }
+  
+  if (!expenseDate) {
+    utils.showAlert('Please select a date', 'error');
+    return;
+  }
+  
   const noteValue = document.getElementById('expenseNote').value;
   const expenseData = {
-    amount: parseFloat(document.getElementById('expenseAmount').value),
-    category: document.getElementById('expenseCategory').value,
-    payment_method: document.getElementById('expensePaymentMethod').value,
-    expense_date: document.getElementById('expenseDate').value,
+    amount: amount,
+    category: category,
+    payment_method: paymentMethod,
+    expense_date: expenseDate,
     is_recurring: false
   };
   
@@ -292,13 +418,22 @@ async function handleAddExpense(event) {
   if (noteValue) {
     expenseData.note = noteValue;
   }
+  if (false) { // is_recurring is false, so don't include recurring_frequency
+    expenseData.recurring_frequency = null;
+  }
 
   try {
     utils.showLoading();
-    await api.createExpense(expenseData);
+    const response = await api.createExpense(expenseData);
     
     utils.hideLoading();
-    utils.showAlert('Expense added successfully! +10 XP earned! 🎉', 'success');
+    
+    // Award XP for expense tracking
+    if (typeof addXP === 'function') {
+      addXP(10); // Award 10 XP for tracking expense
+    }
+    
+    showFunToast('Expense added successfully! +10 XP earned! 🎉', '💸', 'success');
     
     closeModal('expenseModal');
     document.getElementById('expenseForm').reset();
@@ -315,11 +450,31 @@ async function handleAddExpense(event) {
 async function handleAddIncome(event) {
   event.preventDefault();
   
+  // Validate inputs
+  const amount = parseFloat(document.getElementById('incomeAmount').value);
+  const source = document.getElementById('incomeSource').value;
+  const incomeDate = document.getElementById('incomeDate').value;
+  
+  if (!amount || amount <= 0) {
+    utils.showAlert('Please enter a valid amount', 'error');
+    return;
+  }
+  
+  if (!source) {
+    utils.showAlert('Please select an income source', 'error');
+    return;
+  }
+  
+  if (!incomeDate) {
+    utils.showAlert('Please select a date', 'error');
+    return;
+  }
+  
   const noteValue = document.getElementById('incomeNote').value;
   const incomeData = {
-    amount: parseFloat(document.getElementById('incomeAmount').value),
-    source: document.getElementById('incomeSource').value,
-    income_date: document.getElementById('incomeDate').value
+    amount: amount,
+    source: source,
+    income_date: incomeDate
   };
   
   // Only include optional fields if they have values
@@ -332,7 +487,7 @@ async function handleAddIncome(event) {
     await api.createIncome(incomeData);
     
     utils.hideLoading();
-    utils.showAlert('Income added successfully! 💰', 'success');
+    showFunToast('Income added successfully! 💰', '💵', 'success');
     
     closeModal('incomeModal');
     document.getElementById('incomeForm').reset();
@@ -348,10 +503,41 @@ async function handleAddIncome(event) {
 async function handleSetBudget(event) {
   event.preventDefault();
   
+  // Validate inputs
+  const period = document.getElementById('budgetPeriod').value;
+  const amount = parseFloat(document.getElementById('budgetAmount').value);
+  const startDate = document.getElementById('budgetStartDate').value;
+  
+  if (!period) {
+    utils.showAlert('Please select a budget period', 'error');
+    return;
+  }
+  
+  if (!amount || amount <= 0) {
+    utils.showAlert('Please enter a valid budget amount', 'error');
+    return;
+  }
+  
+  if (!startDate) {
+    utils.showAlert('Please select a start date', 'error');
+    return;
+  }
+  
+  // Calculate end date based on period
+  const start = new Date(startDate);
+  const end = new Date(start);
+  if (period === 'weekly') {
+    end.setDate(end.getDate() + 7);
+  } else if (period === 'monthly') {
+    end.setMonth(end.getMonth() + 1);
+  }
+  
   const budgetData = {
-    period_type: document.getElementById('budgetPeriod').value,
-    amount: parseFloat(document.getElementById('budgetAmount').value),
-    start_date: document.getElementById('budgetStartDate').value
+    period_type: period,
+    amount: amount,
+    start_date: startDate,
+    end_date: end.toISOString().split('T')[0],
+    is_active: true
   };
 
   try {
@@ -359,7 +545,7 @@ async function handleSetBudget(event) {
     await api.createBudget(budgetData);
     
     utils.hideLoading();
-    utils.showAlert('Budget set successfully! 💼', 'success');
+    showFunToast('Budget set successfully! 💼', '💰', 'success');
     
     closeModal('budgetModal');
     document.getElementById('budgetForm').reset();
@@ -368,6 +554,53 @@ async function handleSetBudget(event) {
   } catch (error) {
     utils.hideLoading();
     utils.showAlert(error.message || 'Failed to set budget', 'error');
+  }
+}
+
+// Add XP to user
+async function addXP(amount) {
+  try {
+    // Call backend to add XP
+    const response = await api.post('/gamification/xp/add', { amount });
+    if (response.success) {
+      // Check if level up occurred
+      if (response.data.level_up) {
+        celebrateAchievement(`Level ${response.data.new_level}`);
+      }
+      // Reload gamification data
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Failed to add XP:', error);
+  }
+}
+
+// Award badge
+async function awardBadge(badgeName) {
+  try {
+    const response = await api.post('/gamification/badges/award', { badge_name: badgeName });
+    if (response.success) {
+      celebrateAchievement(badgeName);
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Failed to award badge:', error);
+  }
+}
+
+// Update streak
+async function updateStreak() {
+  try {
+    const response = await api.put('/gamification/streak/update', {});
+    if (response.success) {
+      const streak = response.data;
+      if (streak.new_milestone) {
+        celebrateStreak(streak.current_streak);
+      }
+      await loadGamificationData();
+    }
+  } catch (error) {
+    console.warn('Failed to update streak:', error);
   }
 }
 
@@ -407,32 +640,186 @@ async function loadWidgets() {
       }
     } catch (e) { /* Achievements API not available */ }
 
-    // Load spending insights
-    try {
-      const insightsResponse = await api.get('/comparisons/insights');
-      if (insightsResponse.success && insightsResponse.data.length > 0) {
-        const insightsCard = document.getElementById('insightsCard');
-        const insightsContainer = document.getElementById('spendingInsights');
-        
-        if (insightsCard && insightsContainer) {
-          insightsCard.style.display = 'block';
-          insightsContainer.innerHTML = insightsResponse.data.map(insight => `
-            <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
-              <span style="font-size: 20px;">${insight.icon}</span>
-              <div>
-                <div style="font-weight: 600; font-size: 12px; color: var(--text-primary);">${insight.title}</div>
-                <div style="font-size: 11px; color: var(--text-secondary);">${insight.message}</div>
-              </div>
-            </div>
-          `).join('');
-        }
-      }
-    } catch (e) { /* Insights API not available */ }
+    // Load spending insights slider
+    loadSpendingInsights();
 
   } catch (error) {
     console.log('Widgets loading skipped:', error.message);
   }
 }
+
+// ================================
+// SPENDING INSIGHTS SLIDER ENGINE
+// ================================
+
+let insightsSliderState = { index: 0, total: 0, autoPlay: null, paused: false };
+
+async function loadSpendingInsights() {
+  const container = document.getElementById('spendingInsights');
+  const countBadge = document.getElementById('insightCount');
+  const greetingEl = document.getElementById('insightsGreeting');
+  const footer = document.getElementById('insightsFooter');
+
+  if (!container) return;
+
+  const loadingMsgs = [
+    'Crunching your numbers... 🧮', 'Analyzing your spending brain... 🧠',
+    'Consulting the money oracle... 🔮', 'Summoning 30 insights... 🪄',
+    'Scanning every cedi and pesewa... 💰'
+  ];
+  if (greetingEl) greetingEl.textContent = loadingMsgs[Math.floor(Math.random() * loadingMsgs.length)];
+
+  container.innerHTML = '<div class="insight-shimmer"></div><div class="insight-shimmer"></div>';
+  if (countBadge) countBadge.textContent = '';
+  if (footer) footer.style.display = 'none';
+
+  try {
+    const response = await api.get('/comparisons/insights?limit=30&all=true');
+
+    if (response.success && response.data && response.data.length > 0) {
+      const insights = response.data;
+      insightsSliderState.total = insights.length;
+      insightsSliderState.index = 0;
+
+      if (countBadge) countBadge.textContent = `${insights.length} 🎯`;
+
+      if (greetingEl) {
+        const hasPositive = insights.some(i => i.type === 'positive');
+        const hasAlert = insights.some(i => i.type === 'alert');
+        const count = insights.length;
+        const greetings = count >= 10
+          ? [`${count} insights about YOUR money! Swipe to explore 👉`, `${count} smart insights ready! Your money has STORIES 📖`]
+          : hasPositive && !hasAlert
+          ? ['You\'re doing amazing! Here\'s why 👇', 'Your money game is strong! 💪']
+          : hasAlert
+          ? ['Heads up! Some things need your attention 👀', 'A few things to keep an eye on 🔍']
+          : ['Here\'s what your money has been up to 👇', 'Fresh insights just for you ✨'];
+        greetingEl.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+      }
+
+      container.innerHTML = insights.map((insight, i) => `
+        <div class="insight-card ${insight.type || 'info'}" data-mood="${insight.mood || 'chill'}" data-index="${i}" style="transition-delay: ${Math.min(i, 3) * 100}ms;">
+          <div class="insight-card-top">
+            <div class="insight-icon-wrap"><i data-lucide="${insight.icon}"></i></div>
+            <div class="insight-title">${insight.title}</div>
+          </div>
+          <div class="insight-msg">${insight.message}</div>
+          ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
+          ${insight.source ? `<div class="insight-source"><i data-lucide="database" style="width:12px;height:12px;"></i> Based on: ${insight.source}</div>` : ''}
+        </div>
+      `).join('');
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        const cards = container.querySelectorAll('.insight-card');
+        cards.forEach((card, i) => { if (i < 3) setTimeout(() => card.classList.add('visible'), i * 120); });
+      });
+
+      if (footer && insights.length > 1) {
+        footer.style.display = 'flex';
+        insightsBuildDots(insights.length);
+        insightsSetupSlider(container, insights.length);
+      }
+    } else {
+      if (greetingEl) greetingEl.textContent = '';
+      if (footer) footer.style.display = 'none';
+      const msgs = [
+        { icon: 'search', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective!' },
+        { icon: 'wand-2', title: '30 Insights Waiting!', desc: 'Add expenses, income, goals & budgets to unlock all 30 money insights!' }
+      ];
+      const msg = msgs[Math.floor(Math.random() * msgs.length)];
+      container.innerHTML = `<div class="insights-empty" style="width:100%;"><div class="insights-empty-icon"><i data-lucide="${msg.icon}" style="width:32px;height:32px;"></i></div><div class="insights-empty-title">${msg.title}</div><div class="insights-empty-desc">${msg.desc}</div></div>`;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+  } catch (e) {
+    console.log('Insights loading:', e.message);
+    if (greetingEl) greetingEl.textContent = '';
+    if (footer) footer.style.display = 'none';
+    container.innerHTML = '<div class="insights-empty" style="width:100%;"><div class="insights-empty-icon"><i data-lucide="bot" style="width:32px;height:32px;"></i></div><div class="insights-empty-title">Insights are napping</div><div class="insights-empty-desc">Add some expenses and check back soon!</div></div>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+}
+
+function insightsBuildDots(total) {
+  const dc = document.getElementById('insightsDots');
+  if (!dc) return;
+  const maxDots = Math.min(total, 8);
+  dc.innerHTML = Array.from({ length: maxDots }, (_, i) => `<div class="insights-dot${i === 0 ? ' active' : ''}" data-dot="${i}"></div>`).join('');
+  dc.querySelectorAll('.insights-dot').forEach(d => d.addEventListener('click', () => {
+    const idx = parseInt(d.dataset.dot);
+    insightsScrollTo(total > 8 ? Math.round(idx / 7 * (total - 1)) : idx);
+  }));
+}
+
+function insightsUpdateDots(cur, total) {
+  const dc = document.getElementById('insightsDots');
+  if (!dc) return;
+  const dots = dc.querySelectorAll('.insights-dot');
+  const active = total > 8 ? Math.round(cur / (total - 1) * 7) : cur;
+  dots.forEach((d, i) => d.classList.toggle('active', i === active));
+}
+
+function insightsScrollTo(index) {
+  const c = document.getElementById('spendingInsights');
+  if (!c) return;
+  const cards = c.querySelectorAll('.insight-card');
+  if (index < 0 || index >= cards.length) return;
+  insightsSliderState.index = index;
+  cards[index].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+  if (!cards[index].classList.contains('visible')) cards[index].classList.add('visible');
+  insightsUpdateDots(index, insightsSliderState.total);
+}
+
+function insightsSetupSlider(container, total) {
+  let st;
+  container.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => {
+    const cards = container.querySelectorAll('.insight-card'), cr = container.getBoundingClientRect();
+    let closest = 0, min = Infinity;
+    cards.forEach((card, i) => { const r = card.getBoundingClientRect(); const d = Math.abs(r.left - cr.left); if (d < min) { min = d; closest = i; } if (r.left < cr.right && r.right > cr.left) card.classList.add('visible'); });
+    insightsSliderState.index = closest;
+    insightsUpdateDots(closest, total);
+  }, 60); }, { passive: true });
+
+  container.addEventListener('touchstart', () => insightsPauseAuto(), { passive: true });
+  container.addEventListener('touchend', () => setTimeout(() => insightsResumeAuto(), 5000), { passive: true });
+  insightsStartAuto(total);
+}
+
+function insightsStartAuto(total) {
+  insightsStopAuto();
+  insightsSliderState.paused = false;
+  insightsSliderState.autoPlay = setInterval(() => {
+    if (insightsSliderState.paused) return;
+    insightsScrollTo((insightsSliderState.index + 1) % total);
+  }, 4000);
+}
+
+function insightsPauseAuto() {
+  insightsSliderState.paused = true;
+}
+
+function insightsResumeAuto() {
+  insightsSliderState.paused = false;
+  if (!insightsSliderState.autoPlay) insightsStartAuto(insightsSliderState.total);
+}
+
+function insightsStopAuto() {
+  if (insightsSliderState.autoPlay) { clearInterval(insightsSliderState.autoPlay); insightsSliderState.autoPlay = null; }
+}
+
+// Refresh insights
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('insightsRefreshBtn');
+  if (btn) btn.addEventListener('click', async () => {
+    btn.classList.add('spinning');
+    insightsStopAuto();
+    const g = document.getElementById('insightsGreeting');
+    if (g) g.textContent = 'Reloading money wisdom... 🧠✨';
+    await loadSpendingInsights();
+    setTimeout(() => btn.classList.remove('spinning'), 600);
+  });
+});
 
 // Close modal on outside click
 window.onclick = function(event) {
