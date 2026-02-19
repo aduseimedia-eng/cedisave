@@ -1499,6 +1499,22 @@
     }
     .insight-tip::before { content: '💡'; font-size: 12px; flex-shrink: 0; margin-top: 0px; }
 
+    .insight-source {
+      font-size: 10px;
+      color: #8899a6;
+      padding: 5px 10px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+      position: relative;
+      z-index: 1;
+    }
+
     /* Insight card entrance animation */
     .insight-card { opacity: 0; transform: translateY(16px) scale(0.97); }
     .insight-card.visible {
@@ -1596,10 +1612,77 @@
       border-radius: 6px;
       background: var(--border-color);
       transition: all 0.3s ease;
+      cursor: pointer;
     }
+    .insights-dot:hover { background: var(--primary-light); }
     .insights-dot.active {
       width: 18px;
       background: var(--primary-color);
+    }
+
+    /* Insights slider controls */
+    .insights-slider-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 2px 0;
+    }
+    .insights-counter {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 44px;
+    }
+    .insights-counter span { color: var(--primary-color); font-weight: 700; }
+    .insights-progress-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .insights-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+      border-radius: 3px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .insights-nav-arrows {
+      display: flex;
+      gap: 4px;
+    }
+    .insights-arrow-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+    .insights-arrow-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+    .insights-arrow-btn:active { transform: scale(0.9); }
+    .insights-arrow-btn svg { width: 12px; height: 12px; }
+    .insights-auto-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      animation: autoPlayPulse 2s ease-in-out infinite;
+      margin-left: 2px;
+    }
+    .insights-auto-indicator.paused { animation: none; opacity: 0.3; }
+    @keyframes autoPlayPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
     }
   </style>
 </head>
@@ -1828,7 +1911,19 @@
         <div class="insight-shimmer"></div>
         <div class="insight-shimmer"></div>
       </div>
-      <div class="insights-dots" id="insightsDots"></div>
+      <div class="insights-slider-footer" id="insightsFooter" style="display: none;">
+        <div class="insights-counter"><span id="insightCurrent">1</span> / <span id="insightTotal">0</span></div>
+        <div class="insights-dots" id="insightsDots"></div>
+        <div class="insights-nav-arrows">
+          <button class="insights-arrow-btn" id="insightPrev" title="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="insights-arrow-btn" id="insightNext" title="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+          <div class="insights-auto-indicator" id="insightAutoIndicator" title="Auto-scrolling"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Budget Progress -->

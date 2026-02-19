@@ -1637,7 +1637,7 @@
       const container = document.getElementById('reportInsights');
       const countEl = document.getElementById('reportInsightCount');
       try {
-        const response = await api.get('/comparisons/insights?limit=8&all=true');
+        const response = await api.get('/comparisons/insights?limit=30&all=true');
         if (response.success && response.data.length > 0) {
           if (countEl) countEl.textContent = response.data.length + ' insights';
           container.innerHTML = response.data.map(insight => `

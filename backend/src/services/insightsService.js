@@ -531,34 +531,615 @@ async function forecastInsight(userId) {
 }
 
 // ─────────────────────────────────────────────
+// 14. MORNING vs EVENING SPENDING
+// ─────────────────────────────────────────────
+async function timeOfDayInsight(userId) {
+  const result = await query(
+    `SELECT 
+      COUNT(CASE WHEN EXTRACT(HOUR FROM created_at) < 12 THEN 1 END) as morning_txns,
+      COALESCE(SUM(CASE WHEN EXTRACT(HOUR FROM created_at) < 12 THEN amount END), 0) as morning_total,
+      COUNT(CASE WHEN EXTRACT(HOUR FROM created_at) >= 17 THEN 1 END) as evening_txns,
+      COALESCE(SUM(CASE WHEN EXTRACT(HOUR FROM created_at) >= 17 THEN amount END), 0) as evening_total,
+      COUNT(*) as total_txns
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const mPct = parseInt(r.total_txns) > 0 ? Math.round(parseInt(r.morning_txns) / parseInt(r.total_txns) * 100) : 0;
+  const ePct = parseInt(r.total_txns) > 0 ? Math.round(parseInt(r.evening_txns) / parseInt(r.total_txns) * 100) : 0;
+
+  if (mPct >= 50) {
+    return {
+      type: 'info', icon: '🌅', priority: 5, mood: 'chill',
+      title: 'Early Bird Spender! 🐦',
+      message: `${mPct}% of your transactions happen before noon. You're out here swiping before lunch! ☀️`,
+      tip: 'Morning spending is often impulsive (coffee, transport). Try a no-spend-before-noon day! 🧘'
+    };
+  } else if (ePct >= 50) {
+    return {
+      type: 'info', icon: '🌙', priority: 5, mood: 'chill',
+      title: 'Night Owl Spender! 🦉',
+      message: `${ePct}% of your money flows out after 5 PM. The evening vibes hit different on your wallet! 🌃`,
+      tip: 'Evening spending = dining out + entertainment. Budget for fun nights separately! 🎯'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 15. BIGGEST SINGLE EXPENSE
+// ─────────────────────────────────────────────
+async function biggestExpenseInsight(userId) {
+  const result = await query(
+    `SELECT amount, category, note, expense_date,
+      (SELECT AVG(amount) FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30) as avg_amount
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30
+     ORDER BY amount DESC LIMIT 1`,
+    [userId]
+  );
+  if (result.rows.length === 0) return null;
+  const r = result.rows[0];
+  const multiplier = parseFloat(r.avg_amount) > 0 ? (parseFloat(r.amount) / parseFloat(r.avg_amount)).toFixed(1) : 0;
+
+  if (multiplier > 3) {
+    return {
+      type: 'warning', icon: '💥', priority: 3, mood: 'nudge',
+      title: 'Monster Expense! 🦖',
+      message: `Your biggest spend was ₵${Math.round(r.amount)} on ${r.category}${r.note ? ` (${r.note})` : ''} — that's ${multiplier}x your average transaction! BOOM! 💣`,
+      tip: 'Big purchases deserve big planning. Next time, sleep on it for 24 hours before spending! 😴'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 16. RECURRING EXPENSE BURDEN
+// ─────────────────────────────────────────────
+async function recurringBurdenInsight(userId) {
+  const result = await query(
+    `SELECT 
+      COALESCE(SUM(CASE WHEN is_recurring = true THEN amount END), 0) as recurring_total,
+      COALESCE(SUM(amount), 0) as total,
+      COUNT(CASE WHEN is_recurring = true THEN 1 END) as recurring_count
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const pct = parseFloat(r.total) > 0 ? Math.round(parseFloat(r.recurring_total) / parseFloat(r.total) * 100) : 0;
+
+  if (pct > 50) {
+    return {
+      type: 'warning', icon: '🔄', priority: 2, mood: 'nudge',
+      title: 'Subscription Overload! 📦',
+      message: `${pct}% of your spending (₵${Math.round(r.recurring_total)}) is recurring expenses! That's ${r.recurring_count} subscriptions eating your cedis on autopilot! 🤖`,
+      tip: 'Time for a subscription audit — cancel what you don\'t use. Your wallet is begging! 🙏'
+    };
+  } else if (parseInt(r.recurring_count) > 0 && pct < 20) {
+    return {
+      type: 'positive', icon: '✅', priority: 5, mood: 'celebrate',
+      title: 'Subscription Ninja! 🥷',
+      message: `Only ${pct}% of spending is recurring. You keep your subscriptions lean and mean! 💪`,
+      tip: 'Low fixed costs = more freedom. That\'s financial flexibility goals! 🎯'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 17. CATEGORY DIVERSITY INDEX
+// ─────────────────────────────────────────────
+async function categoryDiversityInsight(userId) {
+  const result = await query(
+    `SELECT COUNT(DISTINCT category) as cat_count,
+      (SELECT category FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30 
+       GROUP BY category ORDER BY SUM(amount) DESC LIMIT 1) as top_cat,
+      (SELECT ROUND(SUM(amount) / NULLIF((SELECT SUM(amount) FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30), 0) * 100, 1)
+       FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30
+       GROUP BY category ORDER BY SUM(amount) DESC LIMIT 1) as top_pct
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const catCount = parseInt(r.cat_count) || 0;
+  const topPct = parseFloat(r.top_pct) || 0;
+
+  if (catCount >= 6 && topPct < 35) {
+    return {
+      type: 'positive', icon: '🌈', priority: 5, mood: 'celebrate',
+      title: 'Balanced Baller! ⚖️',
+      message: `You spread money across ${catCount} categories and no single one dominates (max ${topPct}%). That's diversified spending! 🎨`,
+      tip: 'Balanced spending = balanced life. You\'re making smart money moves! 🌟'
+    };
+  } else if (catCount <= 2) {
+    return {
+      type: 'info', icon: '🎯', priority: 5, mood: 'chill',
+      title: 'Laser Focused! 🔬',
+      message: `Just ${catCount} spending ${catCount === 1 ? 'category' : 'categories'} this month. You know exactly where your money goes! 🧐`,
+      tip: 'Focused spending is powerful — just make sure essentials are covered! ✅'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 18. EXPENSE FREQUENCY PATTERN
+// ─────────────────────────────────────────────
+async function frequencyInsight(userId) {
+  const result = await query(
+    `SELECT COUNT(*) as total_txns,
+      COUNT(DISTINCT expense_date) as active_days,
+      ROUND(COUNT(*)::numeric / NULLIF(COUNT(DISTINCT expense_date), 0), 1) as txns_per_day
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 14`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const perDay = parseFloat(r.txns_per_day) || 0;
+
+  if (perDay >= 5) {
+    return {
+      type: 'warning', icon: '⚡', priority: 3, mood: 'nudge',
+      title: 'Transaction Machine! 🤖',
+      message: `${perDay} transactions per day?! Your wallet barely gets a chance to close! That's ${r.total_txns} txns in 2 weeks! 😤`,
+      tip: 'Try batching purchases — one trip instead of five. Fewer swipes = fewer temptations! 🛒'
+    };
+  } else if (perDay > 0 && perDay <= 1.5) {
+    return {
+      type: 'positive', icon: '🧘', priority: 5, mood: 'chill',
+      title: 'Thoughtful Spender! 🤓',
+      message: `Only ~${perDay} transactions per day. You think before you spend! Mindful money moves! 🧠`,
+      tip: 'Fewer transactions often mean intentional purchases. Quality over quantity! ✨'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 19. MICRO-SPEND TRACKER (Death by 1000 cuts)
+// ─────────────────────────────────────────────
+async function microSpendInsight(userId) {
+  const result = await query(
+    `SELECT COUNT(*) as small_count,
+      COALESCE(SUM(amount), 0) as small_total,
+      (SELECT COUNT(*) FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30) as total_count
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30 AND amount <= 10`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const smallPct = parseInt(r.total_count) > 0 ? Math.round(parseInt(r.small_count) / parseInt(r.total_count) * 100) : 0;
+
+  if (parseInt(r.small_count) >= 15 && smallPct > 40) {
+    return {
+      type: 'warning', icon: '🐜', priority: 3, mood: 'nudge',
+      title: 'Death by Small Cuts! 🪓',
+      message: `${r.small_count} purchases under ₵10 added up to ₵${Math.round(r.small_total)} this month! Those "tiny" spends are NOT tiny! 😱`,
+      tip: 'Toffees, pure water, snacks... they add up! Track these closely — awareness is power! 🔋'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 20. INCOME vs EXPENSE TIMING
+// ─────────────────────────────────────────────
+async function incomeTimingInsight(userId) {
+  const result = await query(
+    `SELECT 
+      EXTRACT(DAY FROM income_date) as pay_day,
+      amount as income_amount
+     FROM income WHERE user_id = $1 AND income_date >= CURRENT_DATE - 60
+     ORDER BY income_date DESC LIMIT 1`,
+    [userId]
+  );
+  if (result.rows.length === 0) return null;
+  const payDay = parseInt(result.rows[0].pay_day);
+
+  // Check spending in first 7 days after payday
+  const spendResult = await query(
+    `SELECT COALESCE(SUM(amount), 0) as first_week,
+      (SELECT COALESCE(SUM(amount), 0) FROM expenses 
+       WHERE user_id = $1 AND expense_date >= date_trunc('month', CURRENT_DATE)) as month_total
+     FROM expenses 
+     WHERE user_id = $1 
+       AND EXTRACT(DAY FROM expense_date) BETWEEN $2 AND $2 + 7
+       AND expense_date >= CURRENT_DATE - 30`,
+    [userId, payDay]
+  );
+  const s = spendResult.rows[0];
+  const firstWeekPct = parseFloat(s.month_total) > 0 
+    ? Math.round(parseFloat(s.first_week) / parseFloat(s.month_total) * 100) : 0;
+
+  if (firstWeekPct > 50) {
+    return {
+      type: 'warning', icon: '💨', priority: 2, mood: 'nudge',
+      title: 'Payday FOMO! 🏃',
+      message: `${firstWeekPct}% of your monthly spending happens right after payday! The money barely says hello before it bounces! 👋💸`,
+      tip: 'Tip: move savings FIRST on payday, then spend what\'s left. Pay yourself first! 🥇'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 21. GOAL MULTIPLIER (What you could save)
+// ─────────────────────────────────────────────
+async function goalMultiplierInsight(userId) {
+  const result = await query(
+    `SELECT 
+      (SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30 AND category IN ('Entertainment', 'Shopping')) as fun_spending,
+      (SELECT target_amount - current_amount FROM goals WHERE user_id = $1 AND status = 'active' ORDER BY deadline ASC LIMIT 1) as goal_remaining,
+      (SELECT title FROM goals WHERE user_id = $1 AND status = 'active' ORDER BY deadline ASC LIMIT 1) as goal_title`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const fun = parseFloat(r.fun_spending) || 0;
+  const goalLeft = parseFloat(r.goal_remaining);
+  const goalTitle = r.goal_title;
+
+  if (fun > 0 && goalLeft > 0 && goalTitle) {
+    const months = Math.ceil(goalLeft / (fun * 0.5));
+    if (months <= 6) {
+      return {
+        type: 'info', icon: '🧮', priority: 3, mood: 'nudge',
+        title: 'The Math is Mathing! 🤯',
+        message: `If you cut entertainment + shopping by 50%, you'd complete "${goalTitle}" in just ${months} month${months > 1 ? 's' : ''}! That's ₵${Math.round(fun * 0.5)}/month toward your dream! 💭`,
+        tip: 'You don\'t have to stop fun — just halve it! Your future self is counting on you 🤝'
+      };
+    }
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 22. BILL WARNING (Upcoming bills)
+// ─────────────────────────────────────────────
+async function billWarningInsight(userId) {
+  const result = await query(
+    `SELECT title, amount, due_date, 
+      due_date - CURRENT_DATE as days_until
+     FROM bill_reminders 
+     WHERE user_id = $1 AND is_active = true AND is_paid = false
+       AND due_date BETWEEN CURRENT_DATE AND CURRENT_DATE + 7
+     ORDER BY due_date ASC LIMIT 3`,
+    [userId]
+  );
+  if (result.rows.length === 0) return null;
+  const bills = result.rows;
+  const total = bills.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+
+  if (bills.length >= 2) {
+    return {
+      type: 'alert', icon: '📋', priority: 1, mood: 'alert',
+      title: `${bills.length} Bills Coming! 😰`,
+      message: `${bills.length} bills totaling ₵${Math.round(total)} are due this week! ${bills.map(b => `${b.title} (₵${Math.round(b.amount)})`).join(', ')}. Wallet, brace yourself! 🛡️`,
+      tip: 'Set aside the bill money now before it gets spent elsewhere! Lock it in! 🔒'
+    };
+  } else {
+    const b = bills[0];
+    return {
+      type: 'warning', icon: '🔔', priority: 2, mood: 'nudge',
+      title: `Bill Alert: ${b.title}! ⏰`,
+      message: `"${b.title}" (₵${Math.round(b.amount)}) is due in ${b.days_until} day${parseInt(b.days_until) !== 1 ? 's' : ''}! Don't let it sneak up on you! 🥷`,
+      tip: 'Pro tip: mark it paid in Bills page once done. Stay on top of your bills game! 📱'
+    };
+  }
+}
+
+// ─────────────────────────────────────────────
+// 23. SPENDING VELOCITY (Accelerating/Decelerating)
+// ─────────────────────────────────────────────
+async function velocityInsight(userId) {
+  const result = await query(
+    `SELECT 
+      COALESCE(SUM(CASE WHEN expense_date >= CURRENT_DATE - 7 THEN amount END), 0) as last_7,
+      COALESCE(SUM(CASE WHEN expense_date >= CURRENT_DATE - 14 AND expense_date < CURRENT_DATE - 7 THEN amount END), 0) as prev_7,
+      COALESCE(SUM(CASE WHEN expense_date >= CURRENT_DATE - 21 AND expense_date < CURRENT_DATE - 14 THEN amount END), 0) as oldest_7
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 21`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const w1 = parseFloat(r.oldest_7);
+  const w2 = parseFloat(r.prev_7);
+  const w3 = parseFloat(r.last_7);
+
+  if (w1 > 0 && w2 > 0 && w3 > 0) {
+    if (w3 > w2 && w2 > w1) {
+      const accel = Math.round((w3 / w1 - 1) * 100);
+      return {
+        type: 'alert', icon: '🚀', priority: 1, mood: 'alert',
+        title: 'Spending Speeding Up! 🏎️',
+        message: `Your spending has been INCREASING for 3 straight weeks! Up ${accel}% from 3 weeks ago. The pedal is being pushed! 💨`,
+        tip: 'Time to pump the brakes! Review this week\'s expenses and cut the extras 🛑'
+      };
+    } else if (w3 < w2 && w2 < w1) {
+      const decel = Math.round((1 - w3 / w1) * 100);
+      return {
+        type: 'positive', icon: '📉', priority: 2, mood: 'celebrate',
+        title: 'Spending Slowing Down! 🎉',
+        message: `3 weeks of DECREASING spending! Down ${decel}% overall. You're getting tighter with the cedis! 💎`,
+        tip: 'This is how financial freedom starts! Keep the momentum going! 🏃‍♂️💨'
+      };
+    }
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 24. ROUND NUMBER DETECTION
+// ─────────────────────────────────────────────
+async function roundNumberInsight(userId) {
+  const result = await query(
+    `SELECT 
+      COUNT(CASE WHEN amount::int % 10 = 0 THEN 1 END) as round_count,
+      COUNT(*) as total_count
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const pct = parseInt(r.total_count) > 0 ? Math.round(parseInt(r.round_count) / parseInt(r.total_count) * 100) : 0;
+
+  if (pct > 60 && parseInt(r.total_count) >= 10) {
+    return {
+      type: 'info', icon: '🔢', priority: 6, mood: 'chill',
+      title: 'Round Number Lover! 🎱',
+      message: `${pct}% of your expenses are round numbers (₵10, ₵50, etc). You either love neat numbers or you're estimating! 🤔`,
+      tip: 'If you\'re rounding up, try entering exact amounts. Every pesewa counts for accurate tracking! 💰'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 25. CATEGORY LOYALTY (Same category streak)
+// ─────────────────────────────────────────────
+async function categoryLoyaltyInsight(userId) {
+  const result = await query(
+    `SELECT category, COUNT(*) as streak
+     FROM (
+       SELECT category, expense_date,
+         ROW_NUMBER() OVER (ORDER BY created_at DESC) as rn
+       FROM expenses WHERE user_id = $1
+       ORDER BY created_at DESC LIMIT 20
+     ) recent
+     WHERE rn <= 10
+     GROUP BY category ORDER BY streak DESC LIMIT 1`,
+    [userId]
+  );
+  if (result.rows.length === 0) return null;
+  const r = result.rows[0];
+
+  if (parseInt(r.streak) >= 5) {
+    const funReacts = { 'Food': 'Your stomach is running the show! 🍕', 'Transport': 'Going places... literally! 🚌', 'Shopping': 'The shops know you by name! 🛍️', 'Entertainment': 'Living your best life! 🎭' };
+    return {
+      type: 'info', icon: '🔄', priority: 4, mood: 'nudge',
+      title: `${r.category} on Repeat! 🎵`,
+      message: `${r.streak} of your last 10 expenses are ${r.category}. ${funReacts[r.category] || 'That\'s quite the pattern! 🧐'}`,
+      tip: 'Variety is the spice of life — and budgets! Make sure this pattern is intentional 🎯'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 26. EXPENSE-FREE WEEKEND CHECK
+// ─────────────────────────────────────────────
+async function expenseFreeWeekendInsight(userId) {
+  const result = await query(
+    `SELECT COUNT(*) as weekend_expenses
+     FROM expenses 
+     WHERE user_id = $1 
+       AND expense_date >= CURRENT_DATE - (EXTRACT(DOW FROM CURRENT_DATE)::int)
+       AND EXTRACT(DOW FROM expense_date) IN (0, 6)`,
+    [userId]
+  );
+  const count = parseInt(result.rows[0].weekend_expenses) || 0;
+
+  if (count === 0) {
+    const dow = new Date().getDay();
+    if (dow === 0 || dow === 6) {
+      return {
+        type: 'positive', icon: '🏖️', priority: 2, mood: 'celebrate',
+        title: 'Zero-Spend Weekend! 🤑',
+        message: 'This weekend: ₵0 spent! Your wallet is having the time of its life! That\'s elite discipline! 👑',
+        tip: 'Zero-spend weekends are the ultimate flex. Save this streak! 💪'
+      };
+    }
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 27. DAILY AVERAGE INSIGHT
+// ─────────────────────────────────────────────
+async function dailyAverageInsight(userId) {
+  const result = await query(
+    `SELECT 
+      ROUND(AVG(daily_total), 2) as avg_daily,
+      MIN(daily_total) as min_daily,
+      MAX(daily_total) as max_daily
+     FROM (
+       SELECT expense_date, SUM(amount) as daily_total
+       FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30
+       GROUP BY expense_date
+     ) d`,
+    [userId]
+  );
+  if (result.rows.length === 0 || !result.rows[0].avg_daily) return null;
+  const r = result.rows[0];
+  const avg = parseFloat(r.avg_daily);
+  const range = parseFloat(r.max_daily) - parseFloat(r.min_daily);
+
+  if (avg > 0) {
+    const monthProjection = avg * 30;
+    return {
+      type: 'info', icon: '📊', priority: 4, mood: 'chill',
+      title: `₵${Math.round(avg)}/Day Life! 💳`,
+      message: `Your daily spending averages ₵${Math.round(avg)}. Range: ₵${Math.round(r.min_daily)} (chillest) to ₵${Math.round(r.max_daily)} (biggest). Monthly pace: ~₵${Math.round(monthProjection)} 📈`,
+      tip: 'Knowing your daily number is a superpower. Try to beat it tomorrow! 🎯'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 28. MONEY PERSONALITY
+// ─────────────────────────────────────────────
+async function moneyPersonalityInsight(userId) {
+  const result = await query(
+    `SELECT 
+      COALESCE(SUM(CASE WHEN category IN ('Food', 'Transport', 'Bills', 'Health') THEN amount END), 0) as needs,
+      COALESCE(SUM(CASE WHEN category IN ('Entertainment', 'Shopping') THEN amount END), 0) as wants,
+      COALESCE(SUM(amount), 0) as total,
+      COUNT(DISTINCT category) as cat_count
+     FROM expenses WHERE user_id = $1 AND expense_date >= CURRENT_DATE - 30`,
+    [userId]
+  );
+  const r = result.rows[0];
+  const total = parseFloat(r.total);
+  if (total === 0) return null;
+
+  const needsPct = Math.round(parseFloat(r.needs) / total * 100);
+  const wantsPct = Math.round(parseFloat(r.wants) / total * 100);
+
+  let personality, icon, msg;
+  if (needsPct > 70) {
+    personality = 'The Practical One 🧱'; icon = '🏗️';
+    msg = `${needsPct}% of your spending goes to essentials. You're all business, no fluff! Super responsible! 🫡`;
+  } else if (wantsPct > 50) {
+    personality = 'The Fun Seeker 🎢'; icon = '🎉';
+    msg = `${wantsPct}% goes to wants (shopping + entertainment). You live for the vibes! YOLO energy! 🌈`;
+  } else if (parseInt(r.cat_count) >= 5 && needsPct >= 40 && needsPct <= 60) {
+    personality = 'The Balanced One ⚖️'; icon = '🧠';
+    msg = `Needs: ${needsPct}%, Wants: ${wantsPct}%, ${r.cat_count} categories. You've found the sweet spot between fun and responsible! 🌟`;
+  } else {
+    return null;
+  }
+
+  return {
+    type: 'info', icon, priority: 4, mood: 'chill',
+    title: personality,
+    message: msg,
+    tip: 'Your money personality shapes your financial future. Embrace it — but keep it balanced! 💎'
+  };
+}
+
+// ─────────────────────────────────────────────
+// 29. GOAL PROGRESS CELEBRATION
+// ─────────────────────────────────────────────
+async function goalProgressInsight(userId) {
+  const result = await query(
+    `SELECT title, current_amount, target_amount,
+      ROUND(current_amount / NULLIF(target_amount, 0) * 100, 1) as progress
+     FROM goals WHERE user_id = $1 AND status = 'active'
+     ORDER BY (current_amount / NULLIF(target_amount, 0)) DESC LIMIT 1`,
+    [userId]
+  );
+  if (result.rows.length === 0) return null;
+  const g = result.rows[0];
+  const progress = parseFloat(g.progress) || 0;
+
+  if (progress >= 50 && progress < 90) {
+    return {
+      type: 'positive', icon: '🏔️', priority: 3, mood: 'celebrate',
+      title: `Halfway Hero! 🦸`,
+      message: `"${g.title}" is ${progress}% done! You've saved ₵${Math.round(g.current_amount)} of ₵${Math.round(g.target_amount)}. The finish line is in sight! 🏁`,
+      tip: 'You\'ve come too far to quit now! Every cedi gets you closer! 💪'
+    };
+  } else if (progress >= 25 && progress < 50) {
+    return {
+      type: 'info', icon: '🌱', priority: 4, mood: 'chill',
+      title: `Goal Growing! 🌿`,
+      message: `"${g.title}" is ${progress}% funded (₵${Math.round(g.current_amount)} / ₵${Math.round(g.target_amount)}). Your savings seed is sprouting! 🌻`,
+      tip: 'Keep watering your goal! Consistency beats intensity every time 🚿'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
+// 30. XP & LEVEL INSIGHT
+// ─────────────────────────────────────────────
+async function xpLevelInsight(userId) {
+  const result = await query(
+    `SELECT total_xp, level FROM user_xp WHERE user_id = $1`,
+    [userId]
+  );
+  if (result.rows.length === 0) return null;
+  const r = result.rows[0];
+  const xp = parseInt(r.total_xp) || 0;
+  const level = parseInt(r.level) || 1;
+  const nextLevelXP = level * 500;
+  const xpToGo = nextLevelXP - xp;
+
+  if (xpToGo <= 100 && xpToGo > 0) {
+    return {
+      type: 'positive', icon: '⬆️', priority: 2, mood: 'celebrate',
+      title: `Level ${level + 1} is RIGHT THERE! 🎮`,
+      message: `Only ${xpToGo} XP to Level ${level + 1}! You're so close you can taste it! Keep logging and saving! 🏋️`,
+      tip: 'Log expenses, complete challenges, and hit savings milestones for easy XP! 🎯'
+    };
+  } else if (level >= 5) {
+    return {
+      type: 'positive', icon: '👑', priority: 5, mood: 'celebrate',
+      title: `Level ${level} Legend! 🏅`,
+      message: `${xp} total XP and Level ${level}! You're a certified KudiPal power user! Most people don't make it this far! 🌟`,
+      tip: 'Share your level with friends and challenge them to beat it! 🤝'
+    };
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────
 // MASTER: Generate All Insights
 // ─────────────────────────────────────────────
 async function generateInsights(userId, options = {}) {
-  const { limit = 6, includeAll = false } = options;
+  const { limit = 10, includeAll = false } = options;
 
-  // Run all insight generators in parallel
-  const generators = [
-    weeklyChangeInsight(userId),
-    topCategoryInsight(userId),
-    weekendVsWeekdayInsight(userId),
-    noSpendDaysInsight(userId),
-    unusualSpendingInsight(userId),
-    categoryTrendInsight(userId),
-    budgetInsight(userId),
-    savingsGoalInsight(userId),
-    bestDayInsight(userId),
-    streakInsight(userId),
-    savingsRateInsight(userId),
-    paymentMethodInsight(userId),
-    forecastInsight(userId),
+  // Generator names mapped to data source labels
+  const generatorMeta = [
+    { fn: weeklyChangeInsight(userId), source: 'Weekly Expenses' },
+    { fn: topCategoryInsight(userId), source: '30-Day Categories' },
+    { fn: weekendVsWeekdayInsight(userId), source: '30-Day Patterns' },
+    { fn: noSpendDaysInsight(userId), source: 'This Week' },
+    { fn: unusualSpendingInsight(userId), source: 'Daily Spending' },
+    { fn: categoryTrendInsight(userId), source: 'Monthly Trends' },
+    { fn: budgetInsight(userId), source: 'Active Budget' },
+    { fn: savingsGoalInsight(userId), source: 'Savings Goals' },
+    { fn: bestDayInsight(userId), source: '60-Day History' },
+    { fn: streakInsight(userId), source: 'Your Streak' },
+    { fn: savingsRateInsight(userId), source: 'Income vs Expenses' },
+    { fn: paymentMethodInsight(userId), source: 'Payment Methods' },
+    { fn: forecastInsight(userId), source: 'Monthly Forecast' },
+    { fn: timeOfDayInsight(userId), source: '30-Day Timing' },
+    { fn: biggestExpenseInsight(userId), source: '30-Day Expenses' },
+    { fn: recurringBurdenInsight(userId), source: 'Recurring Bills' },
+    { fn: categoryDiversityInsight(userId), source: 'Category Mix' },
+    { fn: frequencyInsight(userId), source: '14-Day Frequency' },
+    { fn: microSpendInsight(userId), source: 'Small Purchases' },
+    { fn: incomeTimingInsight(userId), source: 'Payday Pattern' },
+    { fn: goalMultiplierInsight(userId), source: 'Goals + Spending' },
+    { fn: billWarningInsight(userId), source: 'Upcoming Bills' },
+    { fn: velocityInsight(userId), source: '3-Week Velocity' },
+    { fn: roundNumberInsight(userId), source: 'Expense Amounts' },
+    { fn: categoryLoyaltyInsight(userId), source: 'Recent 10 Txns' },
+    { fn: expenseFreeWeekendInsight(userId), source: 'This Weekend' },
+    { fn: dailyAverageInsight(userId), source: '30-Day Average' },
+    { fn: moneyPersonalityInsight(userId), source: 'Spending Profile' },
+    { fn: goalProgressInsight(userId), source: 'Goal Progress' },
+    { fn: xpLevelInsight(userId), source: 'Your XP & Level' },
   ];
 
-  const results = await Promise.allSettled(generators);
+  // Run all 30 insight generators in parallel
+  const results = await Promise.allSettled(generatorMeta.map(g => g.fn));
 
-  // Collect successful, non-null insights
+  // Collect successful, non-null insights with source tags
   let insights = results
-    .filter(r => r.status === 'fulfilled' && r.value !== null)
-    .map(r => r.value);
+    .map((r, i) => {
+      if (r.status === 'fulfilled' && r.value !== null) {
+        return { ...r.value, source: generatorMeta[i].source };
+      }
+      return null;
+    })
+    .filter(Boolean);
 
   // Sort by priority (lower number = higher priority)
   insights.sort((a, b) => a.priority - b.priority);

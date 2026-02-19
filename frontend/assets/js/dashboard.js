@@ -694,14 +694,16 @@ window.onclick = function(event) {
 }
 
 // ================================
-// SPENDING INSIGHTS ENGINE
+// SPENDING INSIGHTS SLIDER ENGINE
 // ================================
+
+let insightsSliderState = { index: 0, total: 0, autoPlay: null, paused: false };
 
 async function loadSpendingInsights() {
   const container = document.getElementById('spendingInsights');
   const countBadge = document.getElementById('insightCount');
-  const dotsContainer = document.getElementById('insightsDots');
   const greetingEl = document.getElementById('insightsGreeting');
+  const footer = document.getElementById('insightsFooter');
 
   if (!container) return;
 
@@ -711,7 +713,9 @@ async function loadSpendingInsights() {
     'Analyzing your spending brain... 🧠',
     'Consulting the money oracle... 🔮',
     'Teaching your cedis some tricks... 🎪',
-    'Reading your financial fortune... ⭐'
+    'Reading your financial fortune... ⭐',
+    'Summoning 30 insights... 🪄',
+    'Scanning every cedi and pesewa... 💰'
   ];
 
   if (greetingEl) {
@@ -724,21 +728,27 @@ async function loadSpendingInsights() {
     <div class="insight-shimmer"></div>
   `;
   if (countBadge) countBadge.textContent = '';
-  if (dotsContainer) dotsContainer.innerHTML = '';
+  if (footer) footer.style.display = 'none';
 
   try {
-    const response = await api.get('/comparisons/insights?limit=6');
+    // Fetch ALL insights (up to 30)
+    const response = await api.get('/comparisons/insights?limit=30&all=true');
 
     if (response.success && response.data && response.data.length > 0) {
       const insights = response.data;
+      insightsSliderState.total = insights.length;
+      insightsSliderState.index = 0;
 
       if (countBadge) countBadge.textContent = `${insights.length} 🎯`;
 
-      // Fun greeting based on insight mix
+      // Fun greeting based on insight count & mix
       if (greetingEl) {
         const hasPositive = insights.some(i => i.type === 'positive');
         const hasAlert = insights.some(i => i.type === 'alert');
-        const greetings = hasPositive && !hasAlert
+        const count = insights.length;
+        const greetings = count >= 10
+          ? [`${count} insights about YOUR money! Swipe to explore 👉`, `Loaded ${count} smart insights! Your money has STORIES 📖`, `${count} insights ready! Slide through your financial storybook ✨`]
+          : hasPositive && !hasAlert
           ? ['You\'re doing amazing! Here\'s why 👇', 'Look at you go! 🌟 Your highlights:', 'Your money game is strong! 💪 Check it:']
           : hasAlert
           ? ['Heads up! Some things need your attention 👀', 'Let\'s talk about your money moves 💬', 'A few things to keep an eye on 🔍']
@@ -746,8 +756,9 @@ async function loadSpendingInsights() {
         greetingEl.textContent = greetings[Math.floor(Math.random() * greetings.length)];
       }
 
+      // Render all cards
       container.innerHTML = insights.map((insight, i) => `
-        <div class="insight-card ${insight.type || 'info'}" data-mood="${insight.mood || 'chill'}" style="transition-delay: ${i * 100}ms;">
+        <div class="insight-card ${insight.type || 'info'}" data-mood="${insight.mood || 'chill'}" data-index="${i}" style="transition-delay: ${Math.min(i, 3) * 100}ms;">
           <div class="insight-card-top">
             <div class="insight-icon-wrap">
               <span>${insight.icon}</span>
@@ -756,44 +767,35 @@ async function loadSpendingInsights() {
           </div>
           <div class="insight-msg">${insight.message}</div>
           ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
+          ${insight.source ? `<div class="insight-source">📊 Based on: ${insight.source}</div>` : ''}
         </div>
       `).join('');
 
-      // Animate cards in with playful stagger
+      // Animate first visible cards in
       requestAnimationFrame(() => {
-        container.querySelectorAll('.insight-card').forEach((card, i) => {
-          setTimeout(() => card.classList.add('visible'), i * 120);
+        const cards = container.querySelectorAll('.insight-card');
+        cards.forEach((card, i) => {
+          if (i < 3) setTimeout(() => card.classList.add('visible'), i * 120);
         });
       });
 
-      // Build scroll dots
-      if (dotsContainer && insights.length > 1) {
-        dotsContainer.innerHTML = insights.map((_, i) =>
-          `<div class="insights-dot${i === 0 ? ' active' : ''}"></div>`
-        ).join('');
-
-        // Update dots on scroll
-        let scrollTimeout;
-        container.addEventListener('scroll', () => {
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            const scrollLeft = container.scrollLeft;
-            const cardWidth = 280;
-            const activeIdx = Math.round(scrollLeft / cardWidth);
-            dotsContainer.querySelectorAll('.insights-dot').forEach((dot, i) => {
-              dot.classList.toggle('active', i === activeIdx);
-            });
-          }, 50);
-        }, { passive: true });
+      // Show footer with controls
+      if (footer && insights.length > 1) {
+        footer.style.display = 'flex';
+        buildInsightsDots(insights.length);
+        updateInsightsCounter(0, insights.length);
+        setupInsightsSlider(container, insights.length);
       }
 
     } else {
       // Fun empty state
       if (greetingEl) greetingEl.textContent = '';
+      if (footer) footer.style.display = 'none';
       const emptyMsgs = [
         { icon: '🕵️', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective! 🔍' },
         { icon: '🌱', title: 'Plant your first expense!', desc: 'Your insights garden is empty. Add expenses and watch brilliant insights bloom! 🌸' },
-        { icon: '🎮', title: 'Level 0: No Data', desc: 'Log some expenses to unlock your spending insights. It\'s like a game — but with real money! 💰' }
+        { icon: '🎮', title: 'Level 0: No Data', desc: 'Log some expenses to unlock 30 smart insights. It\'s like a game — but with real money! 💰' },
+        { icon: '🪄', title: '30 Insights Waiting!', desc: 'Add expenses, income, goals & budgets to unlock all 30 money insights! Magic awaits! ✨' }
       ];
       const msg = emptyMsgs[Math.floor(Math.random() * emptyMsgs.length)];
       container.innerHTML = `
@@ -807,6 +809,7 @@ async function loadSpendingInsights() {
   } catch (e) {
     console.log('Insights loading:', e.message);
     if (greetingEl) greetingEl.textContent = '';
+    if (footer) footer.style.display = 'none';
     container.innerHTML = `
       <div class="insights-empty" style="width: 100%;">
         <div class="insights-empty-icon">🤖</div>
@@ -817,15 +820,167 @@ async function loadSpendingInsights() {
   }
 }
 
+function buildInsightsDots(total) {
+  const dotsContainer = document.getElementById('insightsDots');
+  if (!dotsContainer) return;
+  // Show max 8 dots, collapse the rest
+  const maxDots = Math.min(total, 8);
+  dotsContainer.innerHTML = Array.from({ length: maxDots }, (_, i) =>
+    `<div class="insights-dot${i === 0 ? ' active' : ''}" data-dot="${i}"></div>`
+  ).join('');
+  // Click on dot to navigate
+  dotsContainer.querySelectorAll('.insights-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const dotIdx = parseInt(dot.dataset.dot);
+      const mappedIdx = total > 8 ? Math.round(dotIdx / 7 * (total - 1)) : dotIdx;
+      scrollToInsight(mappedIdx);
+    });
+  });
+}
+
+function updateInsightsCounter(current, total) {
+  const currentEl = document.getElementById('insightCurrent');
+  const totalEl = document.getElementById('insightTotal');
+  if (currentEl) currentEl.textContent = current + 1;
+  if (totalEl) totalEl.textContent = total;
+}
+
+function updateInsightsDots(current, total) {
+  const dotsContainer = document.getElementById('insightsDots');
+  if (!dotsContainer) return;
+  const dots = dotsContainer.querySelectorAll('.insights-dot');
+  const maxDots = dots.length;
+  const activeDot = total > 8 ? Math.round(current / (total - 1) * 7) : current;
+  dots.forEach((d, i) => d.classList.toggle('active', i === activeDot));
+}
+
+function scrollToInsight(index) {
+  const container = document.getElementById('spendingInsights');
+  if (!container) return;
+  const cards = container.querySelectorAll('.insight-card');
+  if (index < 0 || index >= cards.length) return;
+
+  insightsSliderState.index = index;
+  cards[index].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+
+  // Make card visible if not already
+  if (!cards[index].classList.contains('visible')) {
+    cards[index].classList.add('visible');
+  }
+
+  updateInsightsCounter(index, insightsSliderState.total);
+  updateInsightsDots(index, insightsSliderState.total);
+}
+
+function setupInsightsSlider(container, total) {
+  const prevBtn = document.getElementById('insightPrev');
+  const nextBtn = document.getElementById('insightNext');
+  const autoIndicator = document.getElementById('insightAutoIndicator');
+
+  // Arrow navigation
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      pauseAutoPlay();
+      const newIdx = (insightsSliderState.index - 1 + total) % total;
+      scrollToInsight(newIdx);
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      pauseAutoPlay();
+      const newIdx = (insightsSliderState.index + 1) % total;
+      scrollToInsight(newIdx);
+    });
+  }
+
+  // Scroll-based index tracking
+  let scrollTimeout;
+  container.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const cards = container.querySelectorAll('.insight-card');
+      const containerRect = container.getBoundingClientRect();
+      let closest = 0, minDist = Infinity;
+      cards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect();
+        const dist = Math.abs(rect.left - containerRect.left);
+        if (dist < minDist) { minDist = dist; closest = i; }
+        // Make scrolled-into-view cards visible
+        if (rect.left < containerRect.right && rect.right > containerRect.left) {
+          card.classList.add('visible');
+        }
+      });
+      insightsSliderState.index = closest;
+      updateInsightsCounter(closest, total);
+      updateInsightsDots(closest, total);
+    }, 60);
+  }, { passive: true });
+
+  // Touch pause (pause on touch, resume after)
+  container.addEventListener('touchstart', () => pauseAutoPlay(), { passive: true });
+  container.addEventListener('touchend', () => {
+    setTimeout(() => resumeAutoPlay(), 5000);
+  }, { passive: true });
+
+  // Start auto-play (every 4 seconds)
+  startAutoPlay(total);
+
+  // Toggle auto-play on indicator click
+  if (autoIndicator) {
+    autoIndicator.addEventListener('click', () => {
+      if (insightsSliderState.paused) {
+        resumeAutoPlay();
+      } else {
+        pauseAutoPlay();
+      }
+    });
+  }
+}
+
+function startAutoPlay(total) {
+  stopAutoPlayTimer();
+  insightsSliderState.paused = false;
+  const indicator = document.getElementById('insightAutoIndicator');
+  if (indicator) indicator.classList.remove('paused');
+
+  insightsSliderState.autoPlay = setInterval(() => {
+    if (insightsSliderState.paused) return;
+    const newIdx = (insightsSliderState.index + 1) % total;
+    scrollToInsight(newIdx);
+  }, 4000);
+}
+
+function pauseAutoPlay() {
+  insightsSliderState.paused = true;
+  const indicator = document.getElementById('insightAutoIndicator');
+  if (indicator) indicator.classList.add('paused');
+}
+
+function resumeAutoPlay() {
+  insightsSliderState.paused = false;
+  const indicator = document.getElementById('insightAutoIndicator');
+  if (indicator) indicator.classList.remove('paused');
+  if (!insightsSliderState.autoPlay) {
+    startAutoPlay(insightsSliderState.total);
+  }
+}
+
+function stopAutoPlayTimer() {
+  if (insightsSliderState.autoPlay) {
+    clearInterval(insightsSliderState.autoPlay);
+    insightsSliderState.autoPlay = null;
+  }
+}
+
 // Refresh insights button handler
 document.addEventListener('DOMContentLoaded', () => {
   const refreshBtn = document.getElementById('insightsRefreshBtn');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', async () => {
       refreshBtn.classList.add('spinning');
-      // Fun refresh toast
+      stopAutoPlayTimer();
       const greetingEl = document.getElementById('insightsGreeting');
-      const refreshMsgs = ['Shuffling your insights... 🎲', 'Getting fresh data... 🍃', 'Recalculating genius... 🧠✨'];
+      const refreshMsgs = ['Shuffling your insights... 🎲', 'Getting fresh data... 🍃', 'Recalculating genius... 🧠✨', 'Reloading 30 money wisdom bombs... 💣'];
       if (greetingEl) greetingEl.textContent = refreshMsgs[Math.floor(Math.random() * refreshMsgs.length)];
       await loadSpendingInsights();
       setTimeout(() => refreshBtn.classList.remove('spinning'), 600);
