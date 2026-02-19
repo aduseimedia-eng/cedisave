@@ -2148,6 +2148,16 @@
       // Re-render icons inside menu
       if (menu.classList.contains('active')) {
         lucide.createIcons({ node: menu });
+        // Highlight active page
+        const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+        menu.querySelectorAll('.mobile-menu-link').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && href.includes(currentPage)) {
+            link.classList.add('active-page');
+          } else {
+            link.classList.remove('active-page');
+          }
+        });
       }
     }
 
