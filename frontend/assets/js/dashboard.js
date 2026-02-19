@@ -690,9 +690,22 @@ async function loadSpendingInsights() {
   const container = document.getElementById('spendingInsights');
   const countBadge = document.getElementById('insightCount');
   const dotsContainer = document.getElementById('insightsDots');
-  const refreshBtn = document.getElementById('insightsRefreshBtn');
+  const greetingEl = document.getElementById('insightsGreeting');
 
   if (!container) return;
+
+  // Fun loading messages
+  const loadingMsgs = [
+    'Crunching your numbers... 🧮',
+    'Analyzing your spending brain... 🧠',
+    'Consulting the money oracle... 🔮',
+    'Teaching your cedis some tricks... 🎪',
+    'Reading your financial fortune... ⭐'
+  ];
+
+  if (greetingEl) {
+    greetingEl.textContent = loadingMsgs[Math.floor(Math.random() * loadingMsgs.length)];
+  }
 
   // Show loading shimmer
   container.innerHTML = `
@@ -708,10 +721,22 @@ async function loadSpendingInsights() {
     if (response.success && response.data && response.data.length > 0) {
       const insights = response.data;
 
-      if (countBadge) countBadge.textContent = `${insights.length}`;
+      if (countBadge) countBadge.textContent = `${insights.length} 🎯`;
+
+      // Fun greeting based on insight mix
+      if (greetingEl) {
+        const hasPositive = insights.some(i => i.type === 'positive');
+        const hasAlert = insights.some(i => i.type === 'alert');
+        const greetings = hasPositive && !hasAlert
+          ? ['You\'re doing amazing! Here\'s why 👇', 'Look at you go! 🌟 Your highlights:', 'Your money game is strong! 💪 Check it:']
+          : hasAlert
+          ? ['Heads up! Some things need your attention 👀', 'Let\'s talk about your money moves 💬', 'A few things to keep an eye on 🔍']
+          : ['Here\'s what your money has been up to 👇', 'Your spending story this week 📖', 'Fresh insights just for you ✨'];
+        greetingEl.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+      }
 
       container.innerHTML = insights.map((insight, i) => `
-        <div class="insight-card ${insight.type || 'info'}" style="transition-delay: ${i * 80}ms;">
+        <div class="insight-card ${insight.type || 'info'}" data-mood="${insight.mood || 'chill'}" style="transition-delay: ${i * 100}ms;">
           <div class="insight-card-top">
             <div class="insight-icon-wrap">
               <span>${insight.icon}</span>
@@ -723,10 +748,10 @@ async function loadSpendingInsights() {
         </div>
       `).join('');
 
-      // Animate cards in with stagger
+      // Animate cards in with playful stagger
       requestAnimationFrame(() => {
         container.querySelectorAll('.insight-card').forEach((card, i) => {
-          setTimeout(() => card.classList.add('visible'), i * 80);
+          setTimeout(() => card.classList.add('visible'), i * 120);
         });
       });
 
@@ -737,34 +762,45 @@ async function loadSpendingInsights() {
         ).join('');
 
         // Update dots on scroll
+        let scrollTimeout;
         container.addEventListener('scroll', () => {
-          const scrollLeft = container.scrollLeft;
-          const cardWidth = 270; // approx card width + gap
-          const activeIdx = Math.round(scrollLeft / cardWidth);
-          dotsContainer.querySelectorAll('.insights-dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === activeIdx);
-          });
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            const scrollLeft = container.scrollLeft;
+            const cardWidth = 280;
+            const activeIdx = Math.round(scrollLeft / cardWidth);
+            dotsContainer.querySelectorAll('.insights-dot').forEach((dot, i) => {
+              dot.classList.toggle('active', i === activeIdx);
+            });
+          }, 50);
         }, { passive: true });
       }
 
     } else {
-      // Empty state — no insights available
+      // Fun empty state
+      if (greetingEl) greetingEl.textContent = '';
+      const emptyMsgs = [
+        { icon: '🕵️', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective! 🔍' },
+        { icon: '🌱', title: 'Plant your first expense!', desc: 'Your insights garden is empty. Add expenses and watch brilliant insights bloom! 🌸' },
+        { icon: '🎮', title: 'Level 0: No Data', desc: 'Log some expenses to unlock your spending insights. It\'s like a game — but with real money! 💰' }
+      ];
+      const msg = emptyMsgs[Math.floor(Math.random() * emptyMsgs.length)];
       container.innerHTML = `
         <div class="insights-empty" style="width: 100%;">
-          <div class="insights-empty-icon">📊</div>
-          <div class="insights-empty-title">No insights yet</div>
-          <div class="insights-empty-desc">Start tracking your expenses and we'll generate smart spending insights for you.</div>
+          <div class="insights-empty-icon">${msg.icon}</div>
+          <div class="insights-empty-title">${msg.title}</div>
+          <div class="insights-empty-desc">${msg.desc}</div>
         </div>
       `;
     }
   } catch (e) {
     console.log('Insights loading:', e.message);
-    // Show friendly empty state on error
+    if (greetingEl) greetingEl.textContent = '';
     container.innerHTML = `
       <div class="insights-empty" style="width: 100%;">
-        <div class="insights-empty-icon">💡</div>
-        <div class="insights-empty-title">Insights coming soon</div>
-        <div class="insights-empty-desc">Add some expenses and check back — your smart insights will appear here.</div>
+        <div class="insights-empty-icon">🤖</div>
+        <div class="insights-empty-title">Insights are napping 😴</div>
+        <div class="insights-empty-desc">Our insight engine is taking a quick break. Add some expenses and check back soon!</div>
       </div>
     `;
   }
@@ -776,6 +812,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (refreshBtn) {
     refreshBtn.addEventListener('click', async () => {
       refreshBtn.classList.add('spinning');
+      // Fun refresh toast
+      const greetingEl = document.getElementById('insightsGreeting');
+      const refreshMsgs = ['Shuffling your insights... 🎲', 'Getting fresh data... 🍃', 'Recalculating genius... 🧠✨'];
+      if (greetingEl) greetingEl.textContent = refreshMsgs[Math.floor(Math.random() * refreshMsgs.length)];
       await loadSpendingInsights();
       setTimeout(() => refreshBtn.classList.remove('spinning'), 600);
     });
