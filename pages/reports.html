@@ -1130,17 +1130,17 @@
       period2: { income: 0, expenses: 0, savings: 0, transactions: 0 }
     };
 
-    // Category icons mapping
+    // Category icons mapping (Lucide icon names)
     const categoryIcons = {
-      'Food / Chop Bar': '🍛',
-      'Transport (Trotro / Bolt)': '🚌',
-      'Data / Airtime': '📱',
-      'Entertainment': '🎬',
-      'Shopping': '🛍️',
-      'Bills & Utilities': '💡',
-      'Health': '💊',
-      'Education': '📚',
-      'Other': '📦'
+      'Food / Chop Bar': 'utensils',
+      'Transport (Trotro / Bolt)': 'bus',
+      'Data / Airtime': 'smartphone',
+      'Entertainment': 'clapperboard',
+      'Shopping': 'shopping-bag',
+      'Bills & Utilities': 'lightbulb',
+      'Health': 'heart-pulse',
+      'Education': 'book-open',
+      'Other': 'package'
     };
 
     function setMode(mode) {
@@ -1692,7 +1692,7 @@
 
       container.innerHTML = reportData.categories.map(cat => `
         <div class="category-item">
-          <div class="category-icon">${categoryIcons[cat.name] || '📦'}</div>
+          <div class="category-icon"><i data-lucide="${categoryIcons[cat.name] || 'package'}" style="width:18px;height:18px;"></i></div>
           <div class="category-info">
             <div class="category-name">${cat.name}</div>
             <div class="category-bar">
@@ -1705,6 +1705,7 @@
           </div>
         </div>
       `).join('');
+      if (typeof lucide !== 'undefined') lucide.createIcons({ node: container });
     }
 
     function renderTopExpenses() {
