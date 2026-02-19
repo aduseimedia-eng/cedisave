@@ -700,14 +700,16 @@ async function loadSpendingInsights() {
       container.innerHTML = insights.map((insight, i) => `
         <div class="insight-card ${insight.type || 'info'}" data-mood="${insight.mood || 'chill'}" data-index="${i}" style="transition-delay: ${Math.min(i, 3) * 100}ms;">
           <div class="insight-card-top">
-            <div class="insight-icon-wrap"><span>${insight.icon}</span></div>
+            <div class="insight-icon-wrap"><i data-lucide="${insight.icon}"></i></div>
             <div class="insight-title">${insight.title}</div>
           </div>
           <div class="insight-msg">${insight.message}</div>
           ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
-          ${insight.source ? `<div class="insight-source">📊 Based on: ${insight.source}</div>` : ''}
+          ${insight.source ? `<div class="insight-source"><i data-lucide="database" style="width:12px;height:12px;"></i> Based on: ${insight.source}</div>` : ''}
         </div>
       `).join('');
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
 
       requestAnimationFrame(() => {
         const cards = container.querySelectorAll('.insight-card');
@@ -717,24 +719,25 @@ async function loadSpendingInsights() {
       if (footer && insights.length > 1) {
         footer.style.display = 'flex';
         insightsBuildDots(insights.length);
-        insightsUpdateCounter(0, insights.length);
         insightsSetupSlider(container, insights.length);
       }
     } else {
       if (greetingEl) greetingEl.textContent = '';
       if (footer) footer.style.display = 'none';
       const msgs = [
-        { icon: '🕵️', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective! 🔍' },
-        { icon: '🪄', title: '30 Insights Waiting!', desc: 'Add expenses, income, goals & budgets to unlock all 30 money insights! ✨' }
+        { icon: 'search', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective!' },
+        { icon: 'wand-2', title: '30 Insights Waiting!', desc: 'Add expenses, income, goals & budgets to unlock all 30 money insights!' }
       ];
       const msg = msgs[Math.floor(Math.random() * msgs.length)];
-      container.innerHTML = `<div class="insights-empty" style="width:100%;"><div class="insights-empty-icon">${msg.icon}</div><div class="insights-empty-title">${msg.title}</div><div class="insights-empty-desc">${msg.desc}</div></div>`;
+      container.innerHTML = `<div class="insights-empty" style="width:100%;"><div class="insights-empty-icon"><i data-lucide="${msg.icon}" style="width:32px;height:32px;"></i></div><div class="insights-empty-title">${msg.title}</div><div class="insights-empty-desc">${msg.desc}</div></div>`;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
   } catch (e) {
     console.log('Insights loading:', e.message);
     if (greetingEl) greetingEl.textContent = '';
     if (footer) footer.style.display = 'none';
-    container.innerHTML = '<div class="insights-empty" style="width:100%;"><div class="insights-empty-icon">🤖</div><div class="insights-empty-title">Insights are napping 😴</div><div class="insights-empty-desc">Add some expenses and check back soon!</div></div>';
+    container.innerHTML = '<div class="insights-empty" style="width:100%;"><div class="insights-empty-icon"><i data-lucide="bot" style="width:32px;height:32px;"></i></div><div class="insights-empty-title">Insights are napping</div><div class="insights-empty-desc">Add some expenses and check back soon!</div></div>';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 }
 
@@ -747,11 +750,6 @@ function insightsBuildDots(total) {
     const idx = parseInt(d.dataset.dot);
     insightsScrollTo(total > 8 ? Math.round(idx / 7 * (total - 1)) : idx);
   }));
-}
-
-function insightsUpdateCounter(cur, total) {
-  const c = document.getElementById('insightCurrent'), t = document.getElementById('insightTotal');
-  if (c) c.textContent = cur + 1; if (t) t.textContent = total;
 }
 
 function insightsUpdateDots(cur, total) {
@@ -770,37 +768,27 @@ function insightsScrollTo(index) {
   insightsSliderState.index = index;
   cards[index].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
   if (!cards[index].classList.contains('visible')) cards[index].classList.add('visible');
-  insightsUpdateCounter(index, insightsSliderState.total);
   insightsUpdateDots(index, insightsSliderState.total);
 }
 
 function insightsSetupSlider(container, total) {
-  const prev = document.getElementById('insightPrev'), next = document.getElementById('insightNext');
-  const auto = document.getElementById('insightAutoIndicator');
-  if (prev) prev.addEventListener('click', () => { insightsPauseAuto(); insightsScrollTo((insightsSliderState.index - 1 + total) % total); });
-  if (next) next.addEventListener('click', () => { insightsPauseAuto(); insightsScrollTo((insightsSliderState.index + 1) % total); });
-
   let st;
   container.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => {
     const cards = container.querySelectorAll('.insight-card'), cr = container.getBoundingClientRect();
     let closest = 0, min = Infinity;
     cards.forEach((card, i) => { const r = card.getBoundingClientRect(); const d = Math.abs(r.left - cr.left); if (d < min) { min = d; closest = i; } if (r.left < cr.right && r.right > cr.left) card.classList.add('visible'); });
     insightsSliderState.index = closest;
-    insightsUpdateCounter(closest, total);
     insightsUpdateDots(closest, total);
   }, 60); }, { passive: true });
 
   container.addEventListener('touchstart', () => insightsPauseAuto(), { passive: true });
   container.addEventListener('touchend', () => setTimeout(() => insightsResumeAuto(), 5000), { passive: true });
   insightsStartAuto(total);
-  if (auto) auto.addEventListener('click', () => insightsSliderState.paused ? insightsResumeAuto() : insightsPauseAuto());
 }
 
 function insightsStartAuto(total) {
   insightsStopAuto();
   insightsSliderState.paused = false;
-  const ind = document.getElementById('insightAutoIndicator');
-  if (ind) ind.classList.remove('paused');
   insightsSliderState.autoPlay = setInterval(() => {
     if (insightsSliderState.paused) return;
     insightsScrollTo((insightsSliderState.index + 1) % total);
@@ -809,14 +797,10 @@ function insightsStartAuto(total) {
 
 function insightsPauseAuto() {
   insightsSliderState.paused = true;
-  const ind = document.getElementById('insightAutoIndicator');
-  if (ind) ind.classList.add('paused');
 }
 
 function insightsResumeAuto() {
   insightsSliderState.paused = false;
-  const ind = document.getElementById('insightAutoIndicator');
-  if (ind) ind.classList.remove('paused');
   if (!insightsSliderState.autoPlay) insightsStartAuto(insightsSliderState.total);
 }
 

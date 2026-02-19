@@ -31,21 +31,21 @@ async function weeklyChangeInsight(userId) {
 
   if (parseFloat(r.change) < -10) {
     return {
-      type: 'positive', icon: '🎉', priority: 2, mood: 'celebrate',
+      type: 'positive', icon: 'party-popper', priority: 2, mood: 'celebrate',
       title: 'Money Saver Alert! 🏆',
       message: `Yoooo! You spent ${Math.abs(r.change)}% LESS than last week. That's some serious willpower right there! 💪`,
       tip: 'You\'re on fire! Why not slide those savings into a goal? Future you will throw a party.'
     };
   } else if (parseFloat(r.change) > 25) {
     return {
-      type: 'warning', icon: '😅', priority: 1, mood: 'nudge',
+      type: 'warning', icon: 'alert-triangle', priority: 1, mood: 'nudge',
       title: 'Wallet Says Ouch!',
       message: `Spending jumped ${r.change}% from last week (₵${Math.round(r.current)} vs ₵${Math.round(r.previous)}). Your wallet felt that one!`,
       tip: 'Deep breath! Check your recent expenses — anything you can pause or cancel?'
     };
   } else if (parseFloat(r.change) > 0) {
     return {
-      type: 'info', icon: '📊', priority: 4, mood: 'chill',
+      type: 'info', icon: 'bar-chart-3', priority: 4, mood: 'chill',
       title: 'Slight Creep Up',
       message: `Spending nudged up ${r.change}% from last week. Nothing wild, but keep an eye on it!`,
       tip: 'Small drips fill the bucket. Stay sharp this week! 👀'
@@ -72,7 +72,7 @@ async function topCategoryInsight(userId) {
   const funNames = { 'Food': '🍔 Food', 'Transport': '🚗 Transport', 'Shopping': '🛍️ Shopping', 'Entertainment': '🎬 Entertainment', 'Bills': '📱 Bills', 'Health': '💊 Health', 'Education': '📚 Education' };
   const catName = funNames[cat.category] || cat.category;
   return {
-    type: 'info', icon: '🏷️', priority: 3, mood: cat.pct > 40 ? 'nudge' : 'chill',
+    type: 'info', icon: 'tag', priority: 3, mood: cat.pct > 40 ? 'nudge' : 'chill',
     title: `#1 Spending: ${catName}`,
     message: `${cat.category} is your main squeeze this month — ${cat.pct}% of all spending (₵${Math.round(cat.total)}, ${cat.txn_count} txns). ${cat.pct > 50 ? 'It\'s living rent-free in your wallet! 😂' : ''}`,
     tip: cat.pct > 40 ? 'Time to set a budget cap for this category — your wallet will thank you! 🙏' : 'Nice balance! Keep spreading the love across categories 📊'
@@ -101,14 +101,14 @@ async function weekendVsWeekdayInsight(userId) {
 
   if (weekendAvg > weekdayAvg * 1.5) {
     return {
-      type: 'warning', icon: '🥳', priority: 3, mood: 'nudge',
+      type: 'warning', icon: 'calendar-heart', priority: 3, mood: 'nudge',
       title: 'Weekend Warrior! 🎊',
       message: `The vibes are great on weekends but so is the spending — ${Math.round((weekendAvg / Math.max(weekdayAvg, 1) - 1) * 100)}% more than weekdays! (₵${Math.round(weekendAvg)}/day vs ₵${Math.round(weekdayAvg)}/day)`,
       tip: 'Pro move: plan your weekend fun in advance. Free activities exist too! 🌳'
     };
   } else if (weekdayAvg > weekendAvg * 1.5) {
     return {
-      type: 'positive', icon: '💼', priority: 5, mood: 'chill',
+      type: 'positive', icon: 'briefcase', priority: 5, mood: 'chill',
       title: 'Chill Weekends 🧘',
       message: `You're a weekday spender (₵${Math.round(weekdayAvg)}/day) but weekends are super chill (₵${Math.round(weekendAvg)}/day). Love that!`,
       tip: 'Weekday costs often = commute + food. Try meal-prepping on Sundays! 🍱'
@@ -138,14 +138,14 @@ async function noSpendDaysInsight(userId) {
 
   if (noSpendDays >= 3) {
     return {
-      type: 'positive', icon: '✨', priority: 2, mood: 'celebrate',
+      type: 'positive', icon: 'sparkles', priority: 2, mood: 'celebrate',
       title: `${noSpendDays} Zero-Spend Days! 🤑`,
       message: `${noSpendDays} days of ZERO spending this week?! You're built different! 🏅`,
       tip: 'Can you beat this next week? Challenge accepted? 💪'
     };
   } else if (noSpendDays === 0 && parseInt(r.total_days) >= 3) {
     return {
-      type: 'info', icon: '🤔', priority: 4, mood: 'nudge',
+      type: 'info', icon: 'help-circle', priority: 4, mood: 'nudge',
       title: 'Money Goes Brrrr',
       message: `You've spent money every single day this week. Your wallet hasn't had a day off! 😅`,
       tip: 'Fun challenge: pick one day and spend absolutely NOTHING. Can you do it? 🎯'
@@ -192,7 +192,7 @@ async function unusualSpendingInsight(userId) {
 
   if (avg > 0 && std > 0 && checkAmount > avg + (std * 1.5)) {
     return {
-      type: 'alert', icon: '�', priority: 1, mood: 'alert',
+      type: 'alert', icon: 'shield-alert', priority: 1, mood: 'alert',
       title: 'Whoa, Big Spender! 💸',
       message: `${checkLabel}'s spending (₵${Math.round(checkAmount)}) is WAY above your usual ₵${Math.round(avg)}/day. Something special going on?`,
       tip: 'No judgment! Just check if it was a one-off or the start of a pattern 🔍'
@@ -234,14 +234,14 @@ async function categoryTrendInsight(userId) {
 
   if (change > 30) {
     return {
-      type: 'warning', icon: '📈', priority: 2, mood: 'nudge',
+      type: 'warning', icon: 'trending-up', priority: 2, mood: 'nudge',
       title: `${cat.category} Going Up! 🆙`,
       message: `${cat.category} spending shot up ${change}% this month (₵${Math.round(cat.current_total)} vs ₵${Math.round(cat.previous_total)} last month). It's having a growth spurt! 😬`,
       tip: 'Time to set a spending cap for this category before it gets wild 🎪'
     };
   } else if (change < -30) {
     return {
-      type: 'positive', icon: '📉', priority: 3, mood: 'celebrate',
+      type: 'positive', icon: 'trending-down', priority: 3, mood: 'celebrate',
       title: `${cat.category} Tamed! 🦁`,
       message: `You crushed it! ${cat.category} is down ${Math.abs(change)}% from last month. That's real progress!`,
       tip: 'You\'re proving you can control your spending. Legend! 🌟'
@@ -273,21 +273,21 @@ async function budgetInsight(userId) {
 
   if (usage >= 100) {
     return {
-      type: 'alert', icon: '�', priority: 0, mood: 'alert',
+      type: 'alert', icon: 'shield-alert', priority: 0, mood: 'alert',
       title: 'Budget: Game Over! 🎮',
       message: `Uh oh! You went ₵${Math.round(Math.abs(remaining))} over your ${b.period_type} budget. The budget said "I'm out!" 😵`,
       tip: 'Time for damage control — review your expenses and tighten up for the rest of the period!'
     };
   } else if (usage >= 80) {
     return {
-      type: 'warning', icon: '⏰', priority: 1, mood: 'nudge',
+      type: 'warning', icon: 'clock', priority: 1, mood: 'nudge',
       title: 'Budget Getting Thin! 🫣',
       message: `${usage}% of your ${b.period_type} budget is gone! Only ₵${Math.round(remaining)} left. It's getting spicy!`,
       tip: 'Easy does it — skip the "treat yourself" moments for now 🧘'
     };
   } else if (usage <= 40) {
     return {
-      type: 'positive', icon: '💰', priority: 5, mood: 'celebrate',
+      type: 'positive', icon: 'wallet', priority: 5, mood: 'celebrate',
       title: 'Budget Boss! 😎',
       message: `Only ${usage}% used and ₵${Math.round(remaining)} still in the tank. You're running this budget like a CEO!`,
       tip: 'Look at you go! Maybe slide some of that extra into a savings goal? 🎯'
@@ -317,21 +317,21 @@ async function savingsGoalInsight(userId) {
 
   if (daysLeft <= 0 && progress < 100) {
     return {
-      type: 'warning', icon: '⏳', priority: 1, mood: 'nudge',
+      type: 'warning', icon: 'hourglass', priority: 1, mood: 'nudge',
       title: 'Goal Deadline Passed 😬',
       message: `"${g.title}" deadline has passed at ${progress}%. Still ₵${Math.round(remaining)} to go... but it's not over!`,
       tip: 'Extend the deadline — progress beats perfection every time! 💪'
     };
   } else if (daysLeft > 0 && daysLeft <= 7 && progress < 90) {
     return {
-      type: 'warning', icon: '🎯', priority: 1, mood: 'nudge',
+      type: 'warning', icon: 'target', priority: 1, mood: 'nudge',
       title: 'Crunch Time! ⏱️',
       message: `"${g.title}" is due in ${daysLeft} days and you're at ${progress}%. Time to sprint!`,
       tip: `Save ₵${Math.round(remaining / daysLeft)}/day and you'll make it. Let's goooo! 🏃`
     };
   } else if (progress >= 90 && progress < 100) {
     return {
-      type: 'positive', icon: '🏁', priority: 2, mood: 'celebrate',
+      type: 'positive', icon: 'flag', priority: 2, mood: 'celebrate',
       title: 'SO Close! 🤩',
       message: `"${g.title}" is ${progress}% done! Just ₵${Math.round(remaining)} more and you're a LEGEND!`,
       tip: 'You can taste it! One more push and this goal is CRUSHED! 💥'
@@ -360,7 +360,7 @@ async function bestDayInsight(userId) {
   if (result.rows.length === 0) return null;
   const r = result.rows[0];
   return {
-    type: 'info', icon: '📅', priority: 5, mood: 'chill',
+    type: 'info', icon: 'calendar', priority: 5, mood: 'chill',
     title: `${r.day_name.trim()} = Chill Day 🧊`,
     message: `${r.day_name.trim()} is when your wallet gets to relax — only ₵${Math.round(r.avg_amount)} on average. It's your money's favorite day!`,
     tip: 'Fun hack: schedule big purchases on your cheapest day of the week 🧠'
@@ -382,21 +382,21 @@ async function streakInsight(userId) {
 
   if (current >= 7 && current === longest) {
     return {
-      type: 'positive', icon: '🔥', priority: 2, mood: 'celebrate',
+      type: 'positive', icon: 'flame', priority: 2, mood: 'celebrate',
       title: `${current}-Day RECORD! 🏅`,
       message: `YOOO! ${current} days straight — your LONGEST streak EVER! You're absolutely unstoppable! 🚀`,
       tip: 'DON\'T STOP NOW! Log today\'s expenses and keep the fire burning! 🔥🔥🔥'
     };
   } else if (current >= 7) {
     return {
-      type: 'positive', icon: '🔥', priority: 3, mood: 'celebrate',
+      type: 'positive', icon: 'flame', priority: 3, mood: 'celebrate',
       title: `${current}-Day Streak! 💪`,
       message: `${current} days of consistent tracking! You're on a roll! Record is ${longest} days.`,
       tip: `Only ${longest - current} more days to smash your record! You got this! 🎯`
     };
   } else if (current === 0) {
     return {
-      type: 'info', icon: '😴', priority: 4, mood: 'nudge',
+      type: 'info', icon: 'moon', priority: 4, mood: 'nudge',
       title: 'Streak: Sleeping 💤',
       message: 'Your tracking streak is taking a nap! Wake it up by logging an expense today.',
       tip: 'Fun fact: people who track daily save 2x more! Let\'s go! 🚀'
@@ -424,21 +424,21 @@ async function savingsRateInsight(userId) {
 
   if (rate >= 30) {
     return {
-      type: 'positive', icon: '🏆', priority: 2, mood: 'celebrate',
+      type: 'positive', icon: 'trophy', priority: 2, mood: 'celebrate',
       title: `${Math.round(rate)}% Saved! KING! 👑`,
       message: `You're stacking ${Math.round(rate)}% of your income this month. That's absolutely elite status! 💎`,
       tip: 'Experts say save 20%. You\'re ABOVE that! Future millionaire in the making 💸'
     };
   } else if (rate < 0) {
     return {
-      type: 'alert', icon: '🚩', priority: 0, mood: 'alert',
+      type: 'alert', icon: 'alert-circle', priority: 0, mood: 'alert',
       title: 'Houston, We Have a Problem! 🫠',
       message: `Expenses beat income by ₵${Math.round(Math.abs(income - expenses))} this month. Your bank account is doing the struggle dance! 😅`,
       tip: 'Real talk: cut one non-essential expense TODAY. Every cedi counts! 💪'
     };
   } else if (rate < 10) {
     return {
-      type: 'warning', icon: '📉', priority: 2, mood: 'nudge',
+      type: 'warning', icon: 'trending-down', priority: 2, mood: 'nudge',
       title: 'Savings on Life Support 🏥',
       message: `Only ${Math.round(rate)}% saved this month. Your savings account is looking lonely! 😢`,
       tip: 'Quick win: reduce your top spending category by 20%. Small moves, big results! 🎯'
@@ -465,7 +465,7 @@ async function paymentMethodInsight(userId) {
   const r = result.rows[0];
   if (parseFloat(r.pct) > 70) {
     return {
-      type: 'info', icon: '💳', priority: 5, mood: 'chill',
+      type: 'info', icon: 'credit-card', priority: 5, mood: 'chill',
       title: `${r.payment_method} Fan! 📱`,
       message: `${parseFloat(r.pct)}% of your money flows through ${r.payment_method}. It's your ride-or-die payment method! 🤝`,
       tip: r.payment_method === 'Cash' 
@@ -514,7 +514,7 @@ async function forecastInsight(userId) {
     const budget = parseFloat(budgetResult.rows[0].amount);
     if (projected > budget * 1.1) {
       return {
-        type: 'warning', icon: '🔮', priority: 1, mood: 'nudge',
+        type: 'warning', icon: 'scan-eye', priority: 1, mood: 'nudge',
         title: 'Crystal Ball Says... 🔮',
         message: `If you keep this pace, you'll hit ₵${Math.round(projected)} this month — that's ₵${Math.round(projected - budget)} OVER budget! The math ain't mathing! 😬`,
         tip: `Mission: spend max ₵${Math.round((budget - spent) / Math.max(daysLeft, 1))}/day for the rest of the month. You can do it! 💪`
@@ -523,7 +523,7 @@ async function forecastInsight(userId) {
   }
 
   return {
-    type: 'info', icon: '🔮', priority: 4, mood: 'chill',
+    type: 'info', icon: 'scan-eye', priority: 4, mood: 'chill',
     title: 'Future Vision 🔮',
     message: `My crystal ball says you'll spend ~₵${Math.round(projected)} this month at this pace. That's ₵${Math.round(projected / parseInt(r.days_in_month))}/day.`,
     tip: 'Knowledge is power! Now you can plan ahead like a boss 🧠'
@@ -550,14 +550,14 @@ async function timeOfDayInsight(userId) {
 
   if (mPct >= 50) {
     return {
-      type: 'info', icon: '🌅', priority: 5, mood: 'chill',
+      type: 'info', icon: 'sunrise', priority: 5, mood: 'chill',
       title: 'Early Bird Spender! 🐦',
       message: `${mPct}% of your transactions happen before noon. You're out here swiping before lunch! ☀️`,
       tip: 'Morning spending is often impulsive (coffee, transport). Try a no-spend-before-noon day! 🧘'
     };
   } else if (ePct >= 50) {
     return {
-      type: 'info', icon: '🌙', priority: 5, mood: 'chill',
+      type: 'info', icon: 'moon-star', priority: 5, mood: 'chill',
       title: 'Night Owl Spender! 🦉',
       message: `${ePct}% of your money flows out after 5 PM. The evening vibes hit different on your wallet! 🌃`,
       tip: 'Evening spending = dining out + entertainment. Budget for fun nights separately! 🎯'
@@ -583,7 +583,7 @@ async function biggestExpenseInsight(userId) {
 
   if (multiplier > 3) {
     return {
-      type: 'warning', icon: '💥', priority: 3, mood: 'nudge',
+      type: 'warning', icon: 'zap', priority: 3, mood: 'nudge',
       title: 'Monster Expense! 🦖',
       message: `Your biggest spend was ₵${Math.round(r.amount)} on ${r.category}${r.note ? ` (${r.note})` : ''} — that's ${multiplier}x your average transaction! BOOM! 💣`,
       tip: 'Big purchases deserve big planning. Next time, sleep on it for 24 hours before spending! 😴'
@@ -609,14 +609,14 @@ async function recurringBurdenInsight(userId) {
 
   if (pct > 50) {
     return {
-      type: 'warning', icon: '🔄', priority: 2, mood: 'nudge',
+      type: 'warning', icon: 'refresh-cw', priority: 2, mood: 'nudge',
       title: 'Subscription Overload! 📦',
       message: `${pct}% of your spending (₵${Math.round(r.recurring_total)}) is recurring expenses! That's ${r.recurring_count} subscriptions eating your cedis on autopilot! 🤖`,
       tip: 'Time for a subscription audit — cancel what you don\'t use. Your wallet is begging! 🙏'
     };
   } else if (parseInt(r.recurring_count) > 0 && pct < 20) {
     return {
-      type: 'positive', icon: '✅', priority: 5, mood: 'celebrate',
+      type: 'positive', icon: 'check-circle', priority: 5, mood: 'celebrate',
       title: 'Subscription Ninja! 🥷',
       message: `Only ${pct}% of spending is recurring. You keep your subscriptions lean and mean! 💪`,
       tip: 'Low fixed costs = more freedom. That\'s financial flexibility goals! 🎯'
@@ -645,14 +645,14 @@ async function categoryDiversityInsight(userId) {
 
   if (catCount >= 6 && topPct < 35) {
     return {
-      type: 'positive', icon: '🌈', priority: 5, mood: 'celebrate',
+      type: 'positive', icon: 'rainbow', priority: 5, mood: 'celebrate',
       title: 'Balanced Baller! ⚖️',
       message: `You spread money across ${catCount} categories and no single one dominates (max ${topPct}%). That's diversified spending! 🎨`,
       tip: 'Balanced spending = balanced life. You\'re making smart money moves! 🌟'
     };
   } else if (catCount <= 2) {
     return {
-      type: 'info', icon: '🎯', priority: 5, mood: 'chill',
+      type: 'info', icon: 'target', priority: 5, mood: 'chill',
       title: 'Laser Focused! 🔬',
       message: `Just ${catCount} spending ${catCount === 1 ? 'category' : 'categories'} this month. You know exactly where your money goes! 🧐`,
       tip: 'Focused spending is powerful — just make sure essentials are covered! ✅'
@@ -677,14 +677,14 @@ async function frequencyInsight(userId) {
 
   if (perDay >= 5) {
     return {
-      type: 'warning', icon: '⚡', priority: 3, mood: 'nudge',
+      type: 'warning', icon: 'bolt', priority: 3, mood: 'nudge',
       title: 'Transaction Machine! 🤖',
       message: `${perDay} transactions per day?! Your wallet barely gets a chance to close! That's ${r.total_txns} txns in 2 weeks! 😤`,
       tip: 'Try batching purchases — one trip instead of five. Fewer swipes = fewer temptations! 🛒'
     };
   } else if (perDay > 0 && perDay <= 1.5) {
     return {
-      type: 'positive', icon: '🧘', priority: 5, mood: 'chill',
+      type: 'positive', icon: 'heart-pulse', priority: 5, mood: 'chill',
       title: 'Thoughtful Spender! 🤓',
       message: `Only ~${perDay} transactions per day. You think before you spend! Mindful money moves! 🧠`,
       tip: 'Fewer transactions often mean intentional purchases. Quality over quantity! ✨'
@@ -709,7 +709,7 @@ async function microSpendInsight(userId) {
 
   if (parseInt(r.small_count) >= 15 && smallPct > 40) {
     return {
-      type: 'warning', icon: '🐜', priority: 3, mood: 'nudge',
+      type: 'warning', icon: 'coins', priority: 3, mood: 'nudge',
       title: 'Death by Small Cuts! 🪓',
       message: `${r.small_count} purchases under ₵10 added up to ₵${Math.round(r.small_total)} this month! Those "tiny" spends are NOT tiny! 😱`,
       tip: 'Toffees, pure water, snacks... they add up! Track these closely — awareness is power! 🔋'
@@ -750,7 +750,7 @@ async function incomeTimingInsight(userId) {
 
   if (firstWeekPct > 50) {
     return {
-      type: 'warning', icon: '💨', priority: 2, mood: 'nudge',
+      type: 'warning', icon: 'wind', priority: 2, mood: 'nudge',
       title: 'Payday FOMO! 🏃',
       message: `${firstWeekPct}% of your monthly spending happens right after payday! The money barely says hello before it bounces! 👋💸`,
       tip: 'Tip: move savings FIRST on payday, then spend what\'s left. Pay yourself first! 🥇'
@@ -779,7 +779,7 @@ async function goalMultiplierInsight(userId) {
     const months = Math.ceil(goalLeft / (fun * 0.5));
     if (months <= 6) {
       return {
-        type: 'info', icon: '🧮', priority: 3, mood: 'nudge',
+        type: 'info', icon: 'calculator', priority: 3, mood: 'nudge',
         title: 'The Math is Mathing! 🤯',
         message: `If you cut entertainment + shopping by 50%, you'd complete "${goalTitle}" in just ${months} month${months > 1 ? 's' : ''}! That's ₵${Math.round(fun * 0.5)}/month toward your dream! 💭`,
         tip: 'You don\'t have to stop fun — just halve it! Your future self is counting on you 🤝'
@@ -808,7 +808,7 @@ async function billWarningInsight(userId) {
 
   if (bills.length >= 2) {
     return {
-      type: 'alert', icon: '📋', priority: 1, mood: 'alert',
+      type: 'alert', icon: 'clipboard-list', priority: 1, mood: 'alert',
       title: `${bills.length} Bills Coming! 😰`,
       message: `${bills.length} bills totaling ₵${Math.round(total)} are due this week! ${bills.map(b => `${b.title} (₵${Math.round(b.amount)})`).join(', ')}. Wallet, brace yourself! 🛡️`,
       tip: 'Set aside the bill money now before it gets spent elsewhere! Lock it in! 🔒'
@@ -816,7 +816,7 @@ async function billWarningInsight(userId) {
   } else {
     const b = bills[0];
     return {
-      type: 'warning', icon: '🔔', priority: 2, mood: 'nudge',
+      type: 'warning', icon: 'bell', priority: 2, mood: 'nudge',
       title: `Bill Alert: ${b.title}! ⏰`,
       message: `"${b.title}" (₵${Math.round(b.amount)}) is due in ${b.days_until} day${parseInt(b.days_until) !== 1 ? 's' : ''}! Don't let it sneak up on you! 🥷`,
       tip: 'Pro tip: mark it paid in Bills page once done. Stay on top of your bills game! 📱'
@@ -845,7 +845,7 @@ async function velocityInsight(userId) {
     if (w3 > w2 && w2 > w1) {
       const accel = Math.round((w3 / w1 - 1) * 100);
       return {
-        type: 'alert', icon: '🚀', priority: 1, mood: 'alert',
+        type: 'alert', icon: 'rocket', priority: 1, mood: 'alert',
         title: 'Spending Speeding Up! 🏎️',
         message: `Your spending has been INCREASING for 3 straight weeks! Up ${accel}% from 3 weeks ago. The pedal is being pushed! 💨`,
         tip: 'Time to pump the brakes! Review this week\'s expenses and cut the extras 🛑'
@@ -853,7 +853,7 @@ async function velocityInsight(userId) {
     } else if (w3 < w2 && w2 < w1) {
       const decel = Math.round((1 - w3 / w1) * 100);
       return {
-        type: 'positive', icon: '📉', priority: 2, mood: 'celebrate',
+        type: 'positive', icon: 'trending-down', priority: 2, mood: 'celebrate',
         title: 'Spending Slowing Down! 🎉',
         message: `3 weeks of DECREASING spending! Down ${decel}% overall. You're getting tighter with the cedis! 💎`,
         tip: 'This is how financial freedom starts! Keep the momentum going! 🏃‍♂️💨'
@@ -879,7 +879,7 @@ async function roundNumberInsight(userId) {
 
   if (pct > 60 && parseInt(r.total_count) >= 10) {
     return {
-      type: 'info', icon: '🔢', priority: 6, mood: 'chill',
+      type: 'info', icon: 'hash', priority: 6, mood: 'chill',
       title: 'Round Number Lover! 🎱',
       message: `${pct}% of your expenses are round numbers (₵10, ₵50, etc). You either love neat numbers or you're estimating! 🤔`,
       tip: 'If you\'re rounding up, try entering exact amounts. Every pesewa counts for accurate tracking! 💰'
@@ -910,7 +910,7 @@ async function categoryLoyaltyInsight(userId) {
   if (parseInt(r.streak) >= 5) {
     const funReacts = { 'Food': 'Your stomach is running the show! 🍕', 'Transport': 'Going places... literally! 🚌', 'Shopping': 'The shops know you by name! 🛍️', 'Entertainment': 'Living your best life! 🎭' };
     return {
-      type: 'info', icon: '🔄', priority: 4, mood: 'nudge',
+      type: 'info', icon: 'refresh-cw', priority: 4, mood: 'nudge',
       title: `${r.category} on Repeat! 🎵`,
       message: `${r.streak} of your last 10 expenses are ${r.category}. ${funReacts[r.category] || 'That\'s quite the pattern! 🧐'}`,
       tip: 'Variety is the spice of life — and budgets! Make sure this pattern is intentional 🎯'
@@ -937,7 +937,7 @@ async function expenseFreeWeekendInsight(userId) {
     const dow = new Date().getDay();
     if (dow === 0 || dow === 6) {
       return {
-        type: 'positive', icon: '🏖️', priority: 2, mood: 'celebrate',
+        type: 'positive', icon: 'palmtree', priority: 2, mood: 'celebrate',
         title: 'Zero-Spend Weekend! 🤑',
         message: 'This weekend: ₵0 spent! Your wallet is having the time of its life! That\'s elite discipline! 👑',
         tip: 'Zero-spend weekends are the ultimate flex. Save this streak! 💪'
@@ -971,7 +971,7 @@ async function dailyAverageInsight(userId) {
   if (avg > 0) {
     const monthProjection = avg * 30;
     return {
-      type: 'info', icon: '📊', priority: 4, mood: 'chill',
+      type: 'info', icon: 'bar-chart-3', priority: 4, mood: 'chill',
       title: `₵${Math.round(avg)}/Day Life! 💳`,
       message: `Your daily spending averages ₵${Math.round(avg)}. Range: ₵${Math.round(r.min_daily)} (chillest) to ₵${Math.round(r.max_daily)} (biggest). Monthly pace: ~₵${Math.round(monthProjection)} 📈`,
       tip: 'Knowing your daily number is a superpower. Try to beat it tomorrow! 🎯'
@@ -1002,13 +1002,13 @@ async function moneyPersonalityInsight(userId) {
 
   let personality, icon, msg;
   if (needsPct > 70) {
-    personality = 'The Practical One 🧱'; icon = '🏗️';
+    personality = 'The Practical One 🧱'; icon = 'hard-hat';
     msg = `${needsPct}% of your spending goes to essentials. You're all business, no fluff! Super responsible! 🫡`;
   } else if (wantsPct > 50) {
-    personality = 'The Fun Seeker 🎢'; icon = '🎉';
+    personality = 'The Fun Seeker 🎢'; icon = 'party-popper';
     msg = `${wantsPct}% goes to wants (shopping + entertainment). You live for the vibes! YOLO energy! 🌈`;
   } else if (parseInt(r.cat_count) >= 5 && needsPct >= 40 && needsPct <= 60) {
-    personality = 'The Balanced One ⚖️'; icon = '🧠';
+    personality = 'The Balanced One ⚖️'; icon = 'brain';
     msg = `Needs: ${needsPct}%, Wants: ${wantsPct}%, ${r.cat_count} categories. You've found the sweet spot between fun and responsible! 🌟`;
   } else {
     return null;
@@ -1039,14 +1039,14 @@ async function goalProgressInsight(userId) {
 
   if (progress >= 50 && progress < 90) {
     return {
-      type: 'positive', icon: '🏔️', priority: 3, mood: 'celebrate',
+      type: 'positive', icon: 'mountain', priority: 3, mood: 'celebrate',
       title: `Halfway Hero! 🦸`,
       message: `"${g.title}" is ${progress}% done! You've saved ₵${Math.round(g.current_amount)} of ₵${Math.round(g.target_amount)}. The finish line is in sight! 🏁`,
       tip: 'You\'ve come too far to quit now! Every cedi gets you closer! 💪'
     };
   } else if (progress >= 25 && progress < 50) {
     return {
-      type: 'info', icon: '🌱', priority: 4, mood: 'chill',
+      type: 'info', icon: 'sprout', priority: 4, mood: 'chill',
       title: `Goal Growing! 🌿`,
       message: `"${g.title}" is ${progress}% funded (₵${Math.round(g.current_amount)} / ₵${Math.round(g.target_amount)}). Your savings seed is sprouting! 🌻`,
       tip: 'Keep watering your goal! Consistency beats intensity every time 🚿'
@@ -1072,14 +1072,14 @@ async function xpLevelInsight(userId) {
 
   if (xpToGo <= 100 && xpToGo > 0) {
     return {
-      type: 'positive', icon: '⬆️', priority: 2, mood: 'celebrate',
+      type: 'positive', icon: 'arrow-up-circle', priority: 2, mood: 'celebrate',
       title: `Level ${level + 1} is RIGHT THERE! 🎮`,
       message: `Only ${xpToGo} XP to Level ${level + 1}! You're so close you can taste it! Keep logging and saving! 🏋️`,
       tip: 'Log expenses, complete challenges, and hit savings milestones for easy XP! 🎯'
     };
   } else if (level >= 5) {
     return {
-      type: 'positive', icon: '👑', priority: 5, mood: 'celebrate',
+      type: 'positive', icon: 'crown', priority: 5, mood: 'celebrate',
       title: `Level ${level} Legend! 🏅`,
       message: `${xp} total XP and Level ${level}! You're a certified KudiPal power user! Most people don't make it this far! 🌟`,
       tip: 'Share your level with friends and challenge them to beat it! 🤝'

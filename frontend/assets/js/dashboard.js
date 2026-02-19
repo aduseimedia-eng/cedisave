@@ -761,15 +761,18 @@ async function loadSpendingInsights() {
         <div class="insight-card ${insight.type || 'info'}" data-mood="${insight.mood || 'chill'}" data-index="${i}" style="transition-delay: ${Math.min(i, 3) * 100}ms;">
           <div class="insight-card-top">
             <div class="insight-icon-wrap">
-              <span>${insight.icon}</span>
+              <i data-lucide="${insight.icon}"></i>
             </div>
             <div class="insight-title">${insight.title}</div>
           </div>
           <div class="insight-msg">${insight.message}</div>
           ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
-          ${insight.source ? `<div class="insight-source">📊 Based on: ${insight.source}</div>` : ''}
+          ${insight.source ? `<div class="insight-source"><i data-lucide="database" style="width:12px;height:12px;"></i> Based on: ${insight.source}</div>` : ''}
         </div>
       `).join('');
+
+      // Initialize Lucide icons inside insight cards
+      if (typeof lucide !== 'undefined') lucide.createIcons();
 
       // Animate first visible cards in
       requestAnimationFrame(() => {
@@ -779,11 +782,10 @@ async function loadSpendingInsights() {
         });
       });
 
-      // Show footer with controls
+      // Show footer with dots only
       if (footer && insights.length > 1) {
         footer.style.display = 'flex';
         buildInsightsDots(insights.length);
-        updateInsightsCounter(0, insights.length);
         setupInsightsSlider(container, insights.length);
       }
 
@@ -792,19 +794,20 @@ async function loadSpendingInsights() {
       if (greetingEl) greetingEl.textContent = '';
       if (footer) footer.style.display = 'none';
       const emptyMsgs = [
-        { icon: '🕵️', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective! 🔍' },
-        { icon: '🌱', title: 'Plant your first expense!', desc: 'Your insights garden is empty. Add expenses and watch brilliant insights bloom! 🌸' },
-        { icon: '🎮', title: 'Level 0: No Data', desc: 'Log some expenses to unlock 30 smart insights. It\'s like a game — but with real money! 💰' },
-        { icon: '🪄', title: '30 Insights Waiting!', desc: 'Add expenses, income, goals & budgets to unlock all 30 money insights! Magic awaits! ✨' }
+        { icon: 'search', title: 'Nothing to report... yet!', desc: 'Start logging expenses and I\'ll become your personal money detective!' },
+        { icon: 'sprout', title: 'Plant your first expense!', desc: 'Your insights garden is empty. Add expenses and watch brilliant insights bloom!' },
+        { icon: 'gamepad-2', title: 'Level 0: No Data', desc: 'Log some expenses to unlock 30 smart insights. It\'s like a game — but with real money!' },
+        { icon: 'wand-2', title: '30 Insights Waiting!', desc: 'Add expenses, income, goals & budgets to unlock all 30 money insights! Magic awaits!' }
       ];
       const msg = emptyMsgs[Math.floor(Math.random() * emptyMsgs.length)];
       container.innerHTML = `
         <div class="insights-empty" style="width: 100%;">
-          <div class="insights-empty-icon">${msg.icon}</div>
+          <div class="insights-empty-icon"><i data-lucide="${msg.icon}" style="width:32px;height:32px;"></i></div>
           <div class="insights-empty-title">${msg.title}</div>
           <div class="insights-empty-desc">${msg.desc}</div>
         </div>
       `;
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
   } catch (e) {
     console.log('Insights loading:', e.message);
@@ -812,11 +815,12 @@ async function loadSpendingInsights() {
     if (footer) footer.style.display = 'none';
     container.innerHTML = `
       <div class="insights-empty" style="width: 100%;">
-        <div class="insights-empty-icon">🤖</div>
-        <div class="insights-empty-title">Insights are napping 😴</div>
+        <div class="insights-empty-icon"><i data-lucide="bot" style="width:32px;height:32px;"></i></div>
+        <div class="insights-empty-title">Insights are napping</div>
         <div class="insights-empty-desc">Our insight engine is taking a quick break. Add some expenses and check back soon!</div>
       </div>
     `;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
   }
 }
 
@@ -836,13 +840,6 @@ function buildInsightsDots(total) {
       scrollToInsight(mappedIdx);
     });
   });
-}
-
-function updateInsightsCounter(current, total) {
-  const currentEl = document.getElementById('insightCurrent');
-  const totalEl = document.getElementById('insightTotal');
-  if (currentEl) currentEl.textContent = current + 1;
-  if (totalEl) totalEl.textContent = total;
 }
 
 function updateInsightsDots(current, total) {
@@ -868,31 +865,10 @@ function scrollToInsight(index) {
     cards[index].classList.add('visible');
   }
 
-  updateInsightsCounter(index, insightsSliderState.total);
   updateInsightsDots(index, insightsSliderState.total);
 }
 
 function setupInsightsSlider(container, total) {
-  const prevBtn = document.getElementById('insightPrev');
-  const nextBtn = document.getElementById('insightNext');
-  const autoIndicator = document.getElementById('insightAutoIndicator');
-
-  // Arrow navigation
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      pauseAutoPlay();
-      const newIdx = (insightsSliderState.index - 1 + total) % total;
-      scrollToInsight(newIdx);
-    });
-  }
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      pauseAutoPlay();
-      const newIdx = (insightsSliderState.index + 1) % total;
-      scrollToInsight(newIdx);
-    });
-  }
-
   // Scroll-based index tracking
   let scrollTimeout;
   container.addEventListener('scroll', () => {
@@ -905,13 +881,11 @@ function setupInsightsSlider(container, total) {
         const rect = card.getBoundingClientRect();
         const dist = Math.abs(rect.left - containerRect.left);
         if (dist < minDist) { minDist = dist; closest = i; }
-        // Make scrolled-into-view cards visible
         if (rect.left < containerRect.right && rect.right > containerRect.left) {
           card.classList.add('visible');
         }
       });
       insightsSliderState.index = closest;
-      updateInsightsCounter(closest, total);
       updateInsightsDots(closest, total);
     }, 60);
   }, { passive: true });
@@ -924,24 +898,11 @@ function setupInsightsSlider(container, total) {
 
   // Start auto-play (every 4 seconds)
   startAutoPlay(total);
-
-  // Toggle auto-play on indicator click
-  if (autoIndicator) {
-    autoIndicator.addEventListener('click', () => {
-      if (insightsSliderState.paused) {
-        resumeAutoPlay();
-      } else {
-        pauseAutoPlay();
-      }
-    });
-  }
 }
 
 function startAutoPlay(total) {
   stopAutoPlayTimer();
   insightsSliderState.paused = false;
-  const indicator = document.getElementById('insightAutoIndicator');
-  if (indicator) indicator.classList.remove('paused');
 
   insightsSliderState.autoPlay = setInterval(() => {
     if (insightsSliderState.paused) return;
@@ -952,14 +913,10 @@ function startAutoPlay(total) {
 
 function pauseAutoPlay() {
   insightsSliderState.paused = true;
-  const indicator = document.getElementById('insightAutoIndicator');
-  if (indicator) indicator.classList.add('paused');
 }
 
 function resumeAutoPlay() {
   insightsSliderState.paused = false;
-  const indicator = document.getElementById('insightAutoIndicator');
-  if (indicator) indicator.classList.remove('paused');
   if (!insightsSliderState.autoPlay) {
     startAutoPlay(insightsSliderState.total);
   }
