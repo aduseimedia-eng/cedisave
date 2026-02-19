@@ -19,7 +19,7 @@ pool.query('SELECT NOW()', (err, res) => {
     console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║          🏦 KudiPal API Server Running           ║
+║          🏦 KudiSave API Server Running           ║
 ║                                                           ║
 ║  Environment: ${process.env.NODE_ENV?.toUpperCase().padEnd(15, ' ')} Port: ${PORT.toString().padStart(5, ' ')}          ║
 ║                                                           ║

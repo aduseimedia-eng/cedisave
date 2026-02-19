@@ -1,4 +1,4 @@
--- KudiPal Database Schema
+-- KudiSave Database Schema
 -- PostgreSQL 14+
 
 -- Enable UUID extension

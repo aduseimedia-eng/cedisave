@@ -1,4 +1,4 @@
-// KudiPal Configuration
+// KudiSave Configuration
 // Smart environment detection - works on GitHub Pages AND with Render backend
 
 (function() {
@@ -10,32 +10,32 @@
   const isFileProtocol = window.location.protocol === 'file:';
   
   // PRODUCTION: Set your Render backend URL here after deployment
-  // Example: 'https://kudipal-api.onrender.com/api/v1'
+  // Example: 'https://kudisave-api.onrender.com/api/v1'
   const RENDER_API_URL = null; // Change to your Render URL when deployed
   
   // Configure API URL and Demo Mode
   if (RENDER_API_URL) {
     // Production mode - backend deployed to Render
-    window.KUDIPAL_API_URL = RENDER_API_URL;
-    window.KUDIPAL_DEMO_MODE = false;
-    console.log('🚀 KudiPal: Production mode - using Render backend');
+    window.KUDISAVE_API_URL = RENDER_API_URL;
+    window.KUDISAVE_DEMO_MODE = false;
+    console.log('🚀 KudiSave: Production mode - using Render backend');
   } else if (isLocalhost && !isFileProtocol) {
     // Local development with backend
-    window.KUDIPAL_API_URL = 'http://localhost:5000/api/v1';
-    window.KUDIPAL_DEMO_MODE = false;
-    console.log('💻 KudiPal: Local development mode');
+    window.KUDISAVE_API_URL = 'http://localhost:5000/api/v1';
+    window.KUDISAVE_DEMO_MODE = false;
+    console.log('💻 KudiSave: Local development mode');
   } else {
     // GitHub Pages or file:// - use demo mode
-    window.KUDIPAL_API_URL = null;
-    window.KUDIPAL_DEMO_MODE = true;
-    console.log('🎮 KudiPal: Demo mode - data stored locally');
+    window.KUDISAVE_API_URL = null;
+    window.KUDISAVE_DEMO_MODE = true;
+    console.log('🎮 KudiSave: Demo mode - data stored locally');
   }
   
   // Log configuration
   console.log('Config:', {
     hostname,
-    apiUrl: window.KUDIPAL_API_URL,
-    demoMode: window.KUDIPAL_DEMO_MODE
+    apiUrl: window.KUDISAVE_API_URL,
+    demoMode: window.KUDISAVE_DEMO_MODE
   });
 })();
 

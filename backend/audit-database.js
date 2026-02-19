@@ -1,7 +1,7 @@
 const { query } = require('./src/config/database');
 
 async function auditDatabase() {
-  console.log('🔍 KudiPal Database Audit - Checking all tables\n');
+  console.log('🔍 KudiSave Database Audit - Checking all tables\n');
   
   try {
     // Get all tables

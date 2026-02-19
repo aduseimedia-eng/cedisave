@@ -1,13 +1,13 @@
 # Gmail OAuth2 Setup Guide
 
-This guide explains how to set up Gmail OAuth2 for KudiPal so users can connect their Gmail accounts to send email notifications.
+This guide explains how to set up Gmail OAuth2 for KudiSave so users can connect their Gmail accounts to send email notifications.
 
 ## Step 1: Create a Google Cloud Project
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click "Select a project" at the top
 3. Click "New Project"
-4. Enter a project name (e.g., "KudiPal Gmail Integration")
+4. Enter a project name (e.g., "KudiSave Gmail Integration")
 5. Click "Create"
 
 ## Step 2: Enable Gmail API
@@ -22,7 +22,7 @@ This guide explains how to set up Gmail OAuth2 for KudiPal so users can connect 
 1. Go to "APIs & Services" > "OAuth consent screen"
 2. Choose "External" (for testing with any Google account)
 3. Fill in the required information:
-   - **App name**: KudiPal
+   - **App name**: KudiSave
    - **User support email**: Your email address
    - **Developer email**: Your email address
 4. Click "Save and Continue"
@@ -39,7 +39,7 @@ This guide explains how to set up Gmail OAuth2 for KudiPal so users can connect 
 1. Go to "APIs & Services" > "Credentials"
 2. Click "Create Credentials" > "OAuth client ID"
 3. Select "Web application" as the application type
-4. Enter a name (e.g., "KudiPal Web Client")
+4. Enter a name (e.g., "KudiSave Web Client")
 5. Under "Authorized redirect URIs", add:
    - For development: `http://localhost:5000/api/v1/gmail/callback`
    - For production: `https://your-domain.com/api/v1/gmail/callback`

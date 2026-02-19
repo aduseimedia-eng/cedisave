@@ -1,8 +1,8 @@
-// KudiPal - Utility Functions
+// KudiSave - Utility Functions
 
 // Demo mode indicator - shows on all pages when in demo mode
 function showDemoModeIndicator() {
-  if (window.KUDIPAL_DEMO_MODE && !document.getElementById('demo-indicator')) {
+  if (window.KUDISAVE_DEMO_MODE && !document.getElementById('demo-indicator')) {
     const indicator = document.createElement('div');
     indicator.id = 'demo-indicator';
     indicator.innerHTML = '🎮 Demo Mode';
@@ -16,7 +16,7 @@ function showDemoModeIndicator() {
 // Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
   // Always read from localStorage first for instant persistence
-  const savedTheme = localStorage.getItem('kudipal_theme') || 'dark';
+  const savedTheme = localStorage.getItem('kudisave_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
 }
@@ -25,11 +25,11 @@ function initTheme() {
 function initThemeFromPreferences() {
   // If user has a API preference but localStorage differs, sync it
   const apiTheme = (typeof getUserPreference === 'function') ? getUserPreference('theme') : null;
-  const localTheme = localStorage.getItem('kudipal_theme');
+  const localTheme = localStorage.getItem('kudisave_theme');
   
   // API takes priority if user logged in, otherwise use localStorage
   const theme = apiTheme || localTheme || 'dark';
-  localStorage.setItem('kudipal_theme', theme);
+  localStorage.setItem('kudisave_theme', theme);
   document.documentElement.setAttribute('data-theme', theme);
   updateThemeIcon(theme);
 }
@@ -39,7 +39,7 @@ async function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   
   // Save to localStorage FIRST for instant persistence
-  localStorage.setItem('kudipal_theme', newTheme);
+  localStorage.setItem('kudisave_theme', newTheme);
   document.documentElement.setAttribute('data-theme', newTheme);
   updateThemeIcon(newTheme);
   

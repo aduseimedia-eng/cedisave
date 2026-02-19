@@ -42,7 +42,7 @@ const sendOTP = async (phone, otp) => {
       throw new Error('SMS service not configured');
     }
 
-    const message = `Your KudiPal verification code is: ${otp}. Valid for 10 minutes.`;
+    const message = `Your KudiSave verification code is: ${otp}. Valid for 10 minutes.`;
 
     const response = await axios.post(
       `${ARKESEL_API_BASE}/sms/send`,

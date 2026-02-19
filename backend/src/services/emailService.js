@@ -22,7 +22,7 @@ const sendPasswordResetEmail = async (email, name, resetToken) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: 'Reset Your Password - KudiPal',
+      subject: 'Reset Your Password - KudiSave',
       html: `
         <!DOCTYPE html>
         <html>
@@ -40,7 +40,7 @@ const sendPasswordResetEmail = async (email, name, resetToken) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🏦 KudiPal</h1>
+              <h1>🏦 KudiSave</h1>
             </div>
             <div class="content">
               <h2>Hello ${name}!</h2>
@@ -51,7 +51,7 @@ const sendPasswordResetEmail = async (email, name, resetToken) => {
               <p><strong>This link will expire in 1 hour.</strong></p>
               <p>If you didn't request this password reset, please ignore this email. Your password will remain unchanged.</p>
               <div class="footer">
-                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>© ${new Date().getFullYear()} KudiSave. All rights reserved.</p>
                 <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
               </div>
             </div>
@@ -78,7 +78,7 @@ const sendWelcomeEmail = async (email, name) => {
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: 'Welcome to KudiPal! 🎉',
+      subject: 'Welcome to KudiSave! 🎉',
       html: `
         <!DOCTYPE html>
         <html>
@@ -96,7 +96,7 @@ const sendWelcomeEmail = async (email, name) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🏦 Welcome to KudiPal!</h1>
+              <h1>🏦 Welcome to KudiSave!</h1>
             </div>
             <div class="content">
               <h2>Akwaaba ${name}! 👋</h2>
@@ -121,7 +121,7 @@ const sendWelcomeEmail = async (email, name) => {
               <p>Log your first expense today and begin your streak! 🔥</p>
               
               <div class="footer">
-                <p>© ${new Date().getFullYear()} KudiPal</p>
+                <p>© ${new Date().getFullYear()} KudiSave</p>
                 <p>Building financial literacy, one Ghanaian at a time 💚💛❤️</p>
               </div>
             </div>
@@ -144,9 +144,9 @@ const sendWelcomeEmail = async (email, name) => {
 const sendTestEmail = async (email) => {
   try {
     const mailOptions = {
-      from: `"KudiPal" <${process.env.EMAIL_FROM || 'noreply@kudipal.gh'}>`,
+      from: `"KudiSave" <${process.env.EMAIL_FROM || 'noreply@kudisave.gh'}>`,
       to: email,
-      subject: '🔔 KudiPal - Notifications Working!',
+      subject: '🔔 KudiSave - Notifications Working!',
       html: `
         <!DOCTYPE html>
         <html>
@@ -175,7 +175,7 @@ const sendTestEmail = async (email) => {
             </div>
             <div class="content">
               <p class="message">
-                Great news! Your email notifications for <strong>KudiPal</strong> are working perfectly.
+                Great news! Your email notifications for <strong>KudiSave</strong> are working perfectly.
               </p>
               <p class="message">
                 You'll now receive important updates including:
@@ -193,11 +193,11 @@ const sendTestEmail = async (email) => {
                 <span class="flag-stripe green"></span>
               </div>
               <p class="message" style="text-align: center; color: #888;">
-                KudiPal, Smart Future 🇬🇭
+                KudiSave, Smart Future 🇬🇭
               </p>
             </div>
             <div class="footer">
-              <p>© ${new Date().getFullYear()} KudiPal</p>
+              <p>© ${new Date().getFullYear()} KudiSave</p>
             </div>
           </div>
         </body>
@@ -218,7 +218,7 @@ const sendTestEmail = async (email) => {
 const sendBillReminderEmail = async (email, billName, amount, dueDate) => {
   try {
     const mailOptions = {
-      from: `"KudiPal" <${process.env.EMAIL_FROM || 'noreply@kudipal.gh'}>`,
+      from: `"KudiSave" <${process.env.EMAIL_FROM || 'noreply@kudisave.gh'}>`,
       to: email,
       subject: `🔔 Bill Reminder: ${billName} due soon!`,
       html: `
@@ -257,7 +257,7 @@ const sendBillReminderEmail = async (email, billName, amount, dueDate) => {
               </p>
             </div>
             <div class="footer">
-              <p>© ${new Date().getFullYear()} KudiPal</p>
+              <p>© ${new Date().getFullYear()} KudiSave</p>
             </div>
           </div>
         </body>
@@ -278,7 +278,7 @@ const sendBillReminderEmail = async (email, billName, amount, dueDate) => {
 const sendGoalMilestoneEmail = async (email, goalName, progress, milestone) => {
   try {
     const mailOptions = {
-      from: `"KudiPal" <${process.env.EMAIL_FROM || 'noreply@kudipal.gh'}>`,
+      from: `"KudiSave" <${process.env.EMAIL_FROM || 'noreply@kudisave.gh'}>`,
       to: email,
       subject: `🎯 Goal Milestone: ${goalName} - ${milestone}% reached!`,
       html: `
@@ -320,7 +320,7 @@ const sendGoalMilestoneEmail = async (email, goalName, progress, milestone) => {
               </p>
             </div>
             <div class="footer">
-              <p>© ${new Date().getFullYear()} KudiPal</p>
+              <p>© ${new Date().getFullYear()} KudiSave</p>
             </div>
           </div>
         </body>
@@ -392,7 +392,7 @@ const sendBudgetAlertEmail = async (email, userName, spent, budget, percentage, 
               <p>Review your recent expenses and adjust your spending patterns if necessary.</p>
               <a href="${process.env.FRONTEND_URL}/dashboard.html" class="button">View Dashboard</a>
               <div class="footer">
-                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>© ${new Date().getFullYear()} KudiSave. All rights reserved.</p>
                 <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
               </div>
             </div>
@@ -421,7 +421,7 @@ const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: '📊 Your Weekly Financial Summary - KudiPal',
+      subject: '📊 Your Weekly Financial Summary - KudiSave',
       html: `
         <!DOCTYPE html>
         <html>
@@ -495,7 +495,7 @@ const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings
               <a href="${process.env.FRONTEND_URL}/dashboard.html" class="button">View Full Dashboard</a>
               
               <div class="footer">
-                <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+                <p>© ${new Date().getFullYear()} KudiSave. All rights reserved.</p>
                 <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
               </div>
             </div>
@@ -520,7 +520,7 @@ const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings
 const sendVerificationEmail = async (email, verificationToken) => {
   try {
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
-    const subject = 'Verify Your Email Address - KudiPal';
+    const subject = 'Verify Your Email Address - KudiSave';
     
     const htmlContent = `
       <!DOCTYPE html>
@@ -547,7 +547,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
           </div>
           <div class="content">
             <p>Hi there! 👋</p>
-            <p>Thank you for signing up for KudiPal. To complete your registration, please verify your email by clicking the button below:</p>
+            <p>Thank you for signing up for KudiSave. To complete your registration, please verify your email by clicking the button below:</p>
             <a href="${verificationLink}" class="button">Verify Email Address</a>
             <p>Or copy and paste this link into your browser:</p>
             <p style="background: #f9f9f9; padding: 10px; border-radius: 5px;">
@@ -555,13 +555,13 @@ const sendVerificationEmail = async (email, verificationToken) => {
             </p>
             <p><strong>This link will expire in 24 hours.</strong></p>
             <div class="warning">
-              <strong>⏰ Important:</strong> If you didn't sign up for KudiPal, please ignore this email and your account will not be created.
+              <strong>⏰ Important:</strong> If you didn't sign up for KudiSave, please ignore this email and your account will not be created.
             </div>
             <p style="color: #999; font-size: 14px;">
-              If you have any questions, contact us at support@kudipal.com
+              If you have any questions, contact us at support@kudisave.com
             </p>
             <div class="footer">
-              <p>© ${new Date().getFullYear()} KudiPal. All rights reserved.</p>
+              <p>© ${new Date().getFullYear()} KudiSave. All rights reserved.</p>
               <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
             </div>
           </div>

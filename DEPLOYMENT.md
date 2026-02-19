@@ -1,4 +1,4 @@
-# KudiPal - Deployment Guide
+# KudiSave - Deployment Guide
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
@@ -169,9 +169,9 @@ EMAIL_PORT=587
 EMAIL_USER=apikey
 EMAIL_PASSWORD=your_sendgrid_api_key
 
-APP_URL=https://api.kudipal.com
-FRONTEND_URL=https://app.kudipal.com
-CORS_ORIGIN=https://app.kudipal.com
+APP_URL=https://api.kudisave.com
+FRONTEND_URL=https://app.kudisave.com
+CORS_ORIGIN=https://app.kudisave.com
 ```
 
 ---
@@ -291,12 +291,12 @@ npx cap open android
 Edit `capacitor.config.json`:
 ```json
 {
-  "appId": "com.kudipal.app",
-  "appName": "KudiPal",
+  "appId": "com.kudisave.app",
+  "appName": "KudiSave",
   "webDir": "dist",
   "server": {
     "androidScheme": "https",
-    "url": "https://api.kudipal.com",
+    "url": "https://api.kudisave.com",
     "cleartext": false
   }
 }
@@ -487,7 +487,7 @@ kill -9 <PID>
 
 ### Community
 - GitHub Issues
-- KudiPal Discord
+- KudiSave Discord
 - Stack Overflow
 
 ---
@@ -496,4 +496,4 @@ kill -9 <PID>
 MIT License - See LICENSE file for details
 
 ## Contact
-For deployment support: support@kudipal.com
+For deployment support: support@kudisave.com

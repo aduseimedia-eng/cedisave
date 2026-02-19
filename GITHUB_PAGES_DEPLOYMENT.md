@@ -1,4 +1,4 @@
-# KudiPal - GitHub Pages Deployment Guide
+# KudiSave - GitHub Pages Deployment Guide
 
 ## Quick Fix for Current Issues
 
@@ -94,7 +94,7 @@ Push this file, and GitHub Actions will automatically deploy the frontend folder
 
 ### 2. Try Demo Should Work
 - Click "Try Demo" button
-- You should see "🎮 KudiPal: Demo mode" in console
+- You should see "🎮 KudiSave: Demo mode" in console
 - Demo data is stored in localStorage
 
 ### 3. Login Should Work
@@ -139,7 +139,7 @@ Demo mode will automatically disable once `RENDER_API_URL` is set.
 - **Check case sensitivity**: GitHub Pages is case-sensitive on Linux
 
 ### Try Demo Not Working
-- **Check console**: Should say "🎮 KudiPal: Demo mode"
+- **Check console**: Should say "🎮 KudiSave: Demo mode"
 - **Clear localStorage**: `localStorage.clear()` in console
 - **Check config.js loads**: Should be before api.js in HTML
 

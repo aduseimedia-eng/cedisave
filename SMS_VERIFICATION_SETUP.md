@@ -1,7 +1,7 @@
 # SMS Verification Setup Guide
 
 ## Overview
-KudiPal uses **Arkesel** for affordable SMS OTP verification. Arkesel is Ghana-based with very competitive rates (~GHS 0.01-0.05 per SMS).
+KudiSave uses **Arkesel** for affordable SMS OTP verification. Arkesel is Ghana-based with very competitive rates (~GHS 0.01-0.05 per SMS).
 
 ## Setup Steps
 

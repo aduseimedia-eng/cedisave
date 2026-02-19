@@ -114,7 +114,7 @@ const sendEmailWithUserGmail = async (tokens, userEmail, mailOptions) => {
     const transporter = createGmailTransporter(tokens, userEmail);
     
     const result = await transporter.sendMail({
-      from: `"KudiPal" <${userEmail}>`,
+      from: `"KudiSave" <${userEmail}>`,
       ...mailOptions
     });
     
@@ -169,7 +169,7 @@ const emailTemplates = {
    * Test notification email
    */
   testEmail: (userName) => ({
-    subject: '🔔 KudiPal Gmail Connected!',
+    subject: '🔔 KudiSave Gmail Connected!',
     html: `
       <!DOCTYPE html>
       <html>
@@ -198,7 +198,7 @@ const emailTemplates = {
           </div>
           <div class="content">
             <p class="message">
-              Hello ${userName}! Your Gmail account has been successfully connected to <strong>KudiPal</strong>.
+              Hello ${userName}! Your Gmail account has been successfully connected to <strong>KudiSave</strong>.
             </p>
             <p class="message">
               All email notifications will now be sent from your own Gmail account. This includes:
@@ -216,11 +216,11 @@ const emailTemplates = {
               <span class="flag-stripe green"></span>
             </div>
             <p class="message" style="text-align: center; color: #888;">
-              KudiPal - Smart Money, Smart Future 🇬🇭
+              KudiSave - Smart Money, Smart Future 🇬🇭
             </p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} KudiPal</p>
+            <p>© ${new Date().getFullYear()} KudiSave</p>
             <p>You can disconnect your Gmail at any time in Settings</p>
           </div>
         </div>
@@ -270,7 +270,7 @@ const emailTemplates = {
             </p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} KudiPal</p>
+            <p>© ${new Date().getFullYear()} KudiSave</p>
           </div>
         </div>
       </body>
@@ -322,7 +322,7 @@ const emailTemplates = {
             </p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} KudiPal</p>
+            <p>© ${new Date().getFullYear()} KudiSave</p>
           </div>
         </div>
       </body>
@@ -334,7 +334,7 @@ const emailTemplates = {
    * Weekly summary email template
    */
   weeklySummary: (userName, summaryData) => ({
-    subject: '📊 Your Weekly Financial Summary - KudiPal',
+    subject: '📊 Your Weekly Financial Summary - KudiSave',
     html: `
       <!DOCTYPE html>
       <html>
@@ -385,7 +385,7 @@ const emailTemplates = {
             </p>
           </div>
           <div class="footer">
-            <p>© ${new Date().getFullYear()} KudiPal</p>
+            <p>© ${new Date().getFullYear()} KudiSave</p>
           </div>
         </div>
       </body>

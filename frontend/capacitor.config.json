@@ -1,6 +1,6 @@
 {
-  "appId": "com.kudipal.app",
-  "appName": "KudiPal",
+  "appId": "com.kudisave.app",
+  "appName": "KudiSave",
   "webDir": ".",
   "plugins": {
     "SplashScreen": {

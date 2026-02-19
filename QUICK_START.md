@@ -1,4 +1,4 @@
-# 🚀 KudiPal - Quick Start Guide
+# 🚀 KudiSave - Quick Start Guide
 
 ## ⚡ Get Up and Running in 5 Minutes
 
@@ -64,7 +64,7 @@ npm run dev
 You should see:
 ```
 ╔═══════════════════════════════════════════════════════════╗
-║          🏦 KudiPal API Server Running           ║
+║          🏦 KudiSave API Server Running           ║
 ║  Environment: DEVELOPMENT    Port:  5000                 ║
 ║  🚀 Server:     http://localhost:5000                    ║
 ╚═══════════════════════════════════════════════════════════╝
@@ -83,7 +83,7 @@ Expected response:
 ```json
 {
   "success": true,
-  "message": "KudiPal API is running"
+  "message": "KudiSave API is running"
 }
 ```
 
@@ -334,7 +334,7 @@ LEFT JOIN user_xp x ON u.id = x.user_id;
 
 - Check the [README.md](README.md) for detailed documentation
 - Review [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for endpoint details
-- Email: support@kudipal.com
+- Email: support@kudisave.com
 
 ---
 

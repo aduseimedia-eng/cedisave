@@ -1,4 +1,4 @@
--- KudiPal Database Schema V2
+-- KudiSave Database Schema V2
 -- New Features: Bill Reminders, Multi-Currency, Challenges, Achievements, Backup
 -- PostgreSQL 14+
 

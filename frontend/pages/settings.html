@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
-  <title>Settings - KudiPal</title>
+  <title>Settings - KudiSave</title>
   <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -603,7 +603,7 @@
           <span class="settings-icon"><i data-lucide="smartphone" class="icon"></i></span>
           <div class="settings-item-info">
             <h4>App Version</h4>
-            <p>KudiPal v1.0.0</p>
+            <p>KudiSave v1.0.0</p>
           </div>
         </div>
       </div>
@@ -1307,7 +1307,7 @@
 
     // Low Data Mode Functions
     function initLowDataMode() {
-      const isEnabled = localStorage.getItem('kudipal_low_data_mode') === 'true';
+      const isEnabled = localStorage.getItem('kudisave_low_data_mode') === 'true';
       const toggle = document.getElementById('lowDataToggle');
       if (toggle) toggle.checked = isEnabled;
       updateLowDataDisplay(isEnabled);
@@ -1320,9 +1320,9 @@
 
     function toggleLowDataMode() {
       const toggle = document.getElementById('lowDataToggle');
-      const isEnabled = toggle ? toggle.checked : localStorage.getItem('kudipal_low_data_mode') !== 'true';
+      const isEnabled = toggle ? toggle.checked : localStorage.getItem('kudisave_low_data_mode') !== 'true';
       
-      localStorage.setItem('kudipal_low_data_mode', isEnabled);
+      localStorage.setItem('kudisave_low_data_mode', isEnabled);
       if (toggle) toggle.checked = isEnabled;
       updateLowDataDisplay(isEnabled);
       
@@ -1564,7 +1564,7 @@
     };
 
     // Email Notification Settings
-    let notificationSettings = JSON.parse(localStorage.getItem('kudipal_notifications')) || {
+    let notificationSettings = JSON.parse(localStorage.getItem('kudisave_notifications')) || {
       weekly: true,
       bills: true,
       goals: true,
@@ -1594,7 +1594,7 @@
         budget: document.getElementById('notifBudget').checked,
         tips: document.getElementById('notifTips').checked
       };
-      localStorage.setItem('kudipal_notifications', JSON.stringify(notificationSettings));
+      localStorage.setItem('kudisave_notifications', JSON.stringify(notificationSettings));
       updateNotificationStatusText();
       
       // Debounce the backend save
@@ -1620,7 +1620,7 @@
 
     async function testEmailNotification() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const email = user.email || 'demo@kudipal.gh';
+      const email = user.email || 'demo@kudisave.gh';
       
       // Check if Gmail is connected first
       const gmailStatus = await checkGmailStatus();

@@ -75,7 +75,7 @@ app.use('/api/', apiLimiter);
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'KudiPal API is running',
+    message: 'KudiSave API is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
   });
@@ -109,7 +109,7 @@ app.use(`${API_VERSION}/gmail`, gmailRoutes);
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Welcome to KudiPal API',
+    message: 'Welcome to KudiSave API',
     version: '2.0.0',
     documentation: '/api/v1/docs',
     endpoints: {

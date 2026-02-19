@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
-  <title>Bills Due - KudiPal</title>
+  <title>Bills Due - KudiSave</title>
   <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -723,7 +723,7 @@
     utils.requireAuth();
     lucide.createIcons();
 
-    let bills = JSON.parse(localStorage.getItem('kudipal_bills')) || [];
+    let bills = JSON.parse(localStorage.getItem('kudisave_bills')) || [];
     let currentFilter = 'all';
     let selectedCategory = '';
     let selectedFrequency = 'monthly';
@@ -829,7 +829,7 @@
         utils.showAlert('Bill added!', 'success');
       }
 
-      localStorage.setItem('kudipal_bills', JSON.stringify(bills));
+      localStorage.setItem('kudisave_bills', JSON.stringify(bills));
       closeModal('billModal');
       renderBills();
       updateSummary();
@@ -1031,7 +1031,7 @@
       if (index !== -1) {
         bills[index].status = 'paid';
         bills[index].paidDate = new Date().toISOString();
-        localStorage.setItem('kudipal_bills', JSON.stringify(bills));
+        localStorage.setItem('kudisave_bills', JSON.stringify(bills));
         closeModal('billDetailsModal');
         renderBills();
         updateSummary();
@@ -1044,7 +1044,7 @@
       if (index !== -1) {
         bills[index].status = 'pending';
         delete bills[index].paidDate;
-        localStorage.setItem('kudipal_bills', JSON.stringify(bills));
+        localStorage.setItem('kudisave_bills', JSON.stringify(bills));
         closeModal('billDetailsModal');
         renderBills();
         updateSummary();
@@ -1060,7 +1060,7 @@
     function deleteBill(billId) {
       if (confirm('Are you sure you want to delete this bill?')) {
         bills = bills.filter(b => b.id !== billId);
-        localStorage.setItem('kudipal_bills', JSON.stringify(bills));
+        localStorage.setItem('kudisave_bills', JSON.stringify(bills));
         closeModal('billDetailsModal');
         renderBills();
         updateSummary();

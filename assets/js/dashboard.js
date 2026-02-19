@@ -1,4 +1,4 @@
-// KudiPal - Dashboard Logic
+// KudiSave - Dashboard Logic
 
 utils.requireAuth();
 

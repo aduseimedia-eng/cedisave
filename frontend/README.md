@@ -1,4 +1,4 @@
-# KudiPal - Frontend
+# KudiSave - Frontend
 
 A Ghana-themed mobile-first web app for expense tracking, budgeting, and financial management.
 
@@ -84,7 +84,7 @@ npm install @capacitor/core @capacitor/cli @capacitor/android
 ### Initialize Capacitor
 
 ```bash
-npx cap init "KudiPal" "com.kudipal.app"
+npx cap init "KudiSave" "com.kudisave.app"
 ```
 
 ### Add Android Platform

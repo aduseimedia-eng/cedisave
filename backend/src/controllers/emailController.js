@@ -164,7 +164,7 @@ const verifyEmailToken = async (req, res) => {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Email Verified - KudiPal</title>
+          <title>Email Verified - KudiSave</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
@@ -228,7 +228,7 @@ const verifyEmailToken = async (req, res) => {
           <div class="container">
             <div class="icon">✓</div>
             <h1>Email Verified!</h1>
-            <p>Your email has been verified successfully. You can now login to your KudiPal account.</p>
+            <p>Your email has been verified successfully. You can now login to your KudiSave account.</p>
             <a href="${process.env.FRONTEND_URL}/index.html?verified=true" class="button">Go to Login</a>
           </div>
         </body>

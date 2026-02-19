@@ -1,9 +1,9 @@
-# KudiPal API Documentation
+# KudiSave API Documentation
 
 ## Base URL
 ```
 Development: http://localhost:5000/api/v1
-Production: https://api.kudipal.com/api/v1
+Production: https://api.kudisave.com/api/v1
 ```
 
 ## Authentication

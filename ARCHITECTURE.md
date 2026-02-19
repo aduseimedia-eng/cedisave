@@ -1,8 +1,8 @@
-# 🏗️ KudiPal - System Architecture
+# 🏗️ KudiSave - System Architecture
 
 ## Overview
 
-KudiPal is built on a modern, scalable architecture designed for performance, security, and maintainability.
+KudiSave is built on a modern, scalable architecture designed for performance, security, and maintainability.
 
 ---
 
@@ -526,7 +526,7 @@ Day 4: Log expense → Streak = 1
 
 ## Conclusion
 
-KudiPal is built on a solid, scalable foundation ready for growth. The architecture supports:
+KudiSave is built on a solid, scalable foundation ready for growth. The architecture supports:
 - Easy maintenance
 - Horizontal scaling
 - Feature additions

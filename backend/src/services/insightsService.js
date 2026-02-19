@@ -1,7 +1,7 @@
 const { query } = require('../config/database');
 
 /**
- * KudiPal Spending Insights Engine
+ * KudiSave Spending Insights Engine
  * Generates smart, contextual, actionable insights from user spending data.
  */
 
@@ -1081,7 +1081,7 @@ async function xpLevelInsight(userId) {
     return {
       type: 'positive', icon: 'crown', priority: 5, mood: 'celebrate',
       title: `Level ${level} Legend! 🏅`,
-      message: `${xp} total XP and Level ${level}! You're a certified KudiPal power user! Most people don't make it this far! 🌟`,
+      message: `${xp} total XP and Level ${level}! You're a certified KudiSave power user! Most people don't make it this far! 🌟`,
       tip: 'Share your level with friends and challenge them to beat it! 🤝'
     };
   }

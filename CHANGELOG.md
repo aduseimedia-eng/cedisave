@@ -38,7 +38,7 @@
 ### 🚀 Repository Migration
 - **New Repository**: Migrated to `https://github.com/aduseimedia-eng/cedisave`
 - **Branch**: `main` (contains all latest changes)
-- **Commit**: `4be2edd - Complete KudiPal financial app with database integration`
+- **Commit**: `4be2edd - Complete KudiSave financial app with database integration`
 
 ### 📋 Testing Instructions
 1. **Backend**: Run `node server.js` in `backend/` directory

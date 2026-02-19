@@ -1,8 +1,8 @@
-# KudiPal JavaScript Logic Implementation Guide
+# KudiSave JavaScript Logic Implementation Guide
 
 ## Overview
 
-This document provides a comprehensive overview of the JavaScript logic, backend API integration, and gamification systems implemented in KudiPal.
+This document provides a comprehensive overview of the JavaScript logic, backend API integration, and gamification systems implemented in KudiSave.
 
 ---
 
@@ -693,7 +693,7 @@ EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
-EMAIL_FROM=noreply@kudipal.com
+EMAIL_FROM=noreply@kudisave.com
 FRONTEND_URL=https://your-domain.com
 ```
 
@@ -843,7 +843,7 @@ All gamification, budget, and transaction endpoints require:
 
 ## Summary
 
-KudiPal now includes a comprehensive transaction management system with:
+KudiSave now includes a comprehensive transaction management system with:
 - ✅ Full expense/income tracking
 - ✅ Budget monitoring with alerts
 - ✅ Gamification (XP, levels, badges, streaks)

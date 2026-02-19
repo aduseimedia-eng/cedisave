@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
-  <title>KudiPal - Login</title>
+  <title>KudiSave - Login</title>
   <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -267,7 +267,7 @@
   <!-- Splash Overlay - Hidden by default -->
   <div class="splash-overlay hidden" id="splashOverlay">
     <div class="splash-logo"><i data-lucide="landmark"></i></div>
-    <h1 class="splash-title">KudiPal</h1>
+    <h1 class="splash-title">KudiSave</h1>
     <p class="splash-subtitle">Welcome back!</p>
     <div class="splash-loader">
       <div class="splash-dot"></div>
@@ -280,7 +280,7 @@
     <div class="auth-card">
       <div class="auth-header">
         <div class="auth-logo"><i data-lucide="landmark" style="width:44px;height:44px;color:var(--primary-light);"></i></div>
-        <h1 class="auth-title">KudiPal</h1>
+        <h1 class="auth-title">KudiSave</h1>
         <p class="auth-subtitle">Master your finances, one cedi at a time 🇬🇭</p>
       </div>
 
@@ -416,12 +416,12 @@
   <script>
     // Redirect first-time visitors to splash screen
     (function() {
-      const hasVisited = localStorage.getItem('kudipal_visited');
+      const hasVisited = localStorage.getItem('kudisave_visited');
       const isLoggedIn = localStorage.getItem('token');
       
       // If never visited before and not logged in, show splash first
       if (!hasVisited && !isLoggedIn) {
-        localStorage.setItem('kudipal_visited', 'true');
+        localStorage.setItem('kudisave_visited', 'true');
         window.location.href = 'splash.html';
         return;
       }

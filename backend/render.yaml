@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: kudipal-api
+    name: kudisave-api
     runtime: node
     region: oregon
     plan: free
@@ -20,12 +20,12 @@ services:
         value: 12
       - key: DATABASE_URL
         fromDatabase:
-          name: kudipal-db
+          name: kudisave-db
           property: connectionString
 
 databases:
-  - name: kudipal-db
+  - name: kudisave-db
     plan: free
-    databaseName: kudipal
-    user: kudipal_user
+    databaseName: kudisave
+    user: kudisave_user
     region: oregon

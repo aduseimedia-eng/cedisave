@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
-  <title>Savings Challenges - KudiPal</title>
+  <title>Savings Challenges - KudiSave</title>
   <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -585,7 +585,7 @@
     <div class="header-content">
       <a class="logo" href="dashboard.html" style="text-decoration:none;">
         <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiPal</span>
+        <span>KudiSave</span>
       </a>
       <nav class="nav">
         <a href="dashboard.html" class="nav-link">Dashboard</a>
@@ -858,8 +858,8 @@
 
     function loadChallenges() {
       // Load from localStorage
-      let storedChallenges = JSON.parse(localStorage.getItem('kudipal_challenges')) || [];
-      let storedActive = JSON.parse(localStorage.getItem('kudipal_active_challenges')) || [];
+      let storedChallenges = JSON.parse(localStorage.getItem('kudisave_challenges')) || [];
+      let storedActive = JSON.parse(localStorage.getItem('kudisave_active_challenges')) || [];
 
       // Merge with defaults
       challenges = [...defaultChallenges];
@@ -872,7 +872,7 @@
       activeChallenges = storedActive;
 
       // Update stats from badges data
-      const badgesData = JSON.parse(localStorage.getItem('kudipal_badges')) || { xp: 0 };
+      const badgesData = JSON.parse(localStorage.getItem('kudisave_badges')) || { xp: 0 };
       document.getElementById('totalXP').textContent = badgesData.xp || 0;
 
       updateStats();
@@ -1014,7 +1014,7 @@
       };
 
       activeChallenges.push(activeChallenge);
-      localStorage.setItem('kudipal_active_challenges', JSON.stringify(activeChallenges));
+      localStorage.setItem('kudisave_active_challenges', JSON.stringify(activeChallenges));
 
       closeModal('challengeModal');
       loadChallenges();
@@ -1051,16 +1051,16 @@
         currentProgressChallenge.completedDate = new Date().toISOString();
 
         // Award XP
-        const badgesData = JSON.parse(localStorage.getItem('kudipal_badges')) || { xp: 0, unlocked: [], recentUnlocks: [] };
+        const badgesData = JSON.parse(localStorage.getItem('kudisave_badges')) || { xp: 0, unlocked: [], recentUnlocks: [] };
         badgesData.xp += challenge?.xp || 0;
-        localStorage.setItem('kudipal_badges', JSON.stringify(badgesData));
+        localStorage.setItem('kudisave_badges', JSON.stringify(badgesData));
 
         showToast(`🎉 Challenge completed! +${challenge?.xp || 0} XP`);
       } else {
         showToast('Progress updated!');
       }
 
-      localStorage.setItem('kudipal_active_challenges', JSON.stringify(activeChallenges));
+      localStorage.setItem('kudisave_active_challenges', JSON.stringify(activeChallenges));
       closeModal('progressModal');
       loadChallenges();
       currentProgressChallenge = null;
@@ -1070,7 +1070,7 @@
       if (!confirm('Are you sure you want to abandon this challenge?')) return;
 
       activeChallenges = activeChallenges.filter(c => c.id !== id);
-      localStorage.setItem('kudipal_active_challenges', JSON.stringify(activeChallenges));
+      localStorage.setItem('kudisave_active_challenges', JSON.stringify(activeChallenges));
       loadChallenges();
       showToast('Challenge abandoned');
     }
@@ -1096,9 +1096,9 @@
         custom: true
       };
 
-      const customChallenges = JSON.parse(localStorage.getItem('kudipal_challenges')) || [];
+      const customChallenges = JSON.parse(localStorage.getItem('kudisave_challenges')) || [];
       customChallenges.push(newChallenge);
-      localStorage.setItem('kudipal_challenges', JSON.stringify(customChallenges));
+      localStorage.setItem('kudisave_challenges', JSON.stringify(customChallenges));
 
       closeModal('addModal');
       loadChallenges();

@@ -1,11 +1,11 @@
-# KudiPal Deployment Guide
+# KudiSave Deployment Guide
 
 ## Option 1: Deploy Backend to Render (Recommended - Free)
 
 ### Step 1: Create GitHub Repository
 
 1. Go to [github.com](https://github.com) and create a new repository
-2. Name it `kudipal` (or any name you prefer)
+2. Name it `kudisave` (or any name you prefer)
 3. Keep it public for free hosting
 
 ### Step 2: Push Code to GitHub
@@ -21,10 +21,10 @@ git init
 git add .
 
 # Commit
-git commit -m "Initial commit - KudiPal expense tracker"
+git commit -m "Initial commit - KudiSave expense tracker"
 
 # Add your GitHub repo as remote
-git remote add origin https://github.com/YOUR_USERNAME/kudipal.git
+git remote add origin https://github.com/YOUR_USERNAME/kudisave.git
 
 # Push to GitHub
 git branch -M main
@@ -36,9 +36,9 @@ git push -u origin main
 1. Go to [render.com](https://render.com) and sign up (free)
 2. Click **New** → **Web Service**
 3. Connect your GitHub account
-4. Select your `kudipal` repository
+4. Select your `kudisave` repository
 5. Configure:
-   - **Name**: `kudipal-api`
+   - **Name**: `kudisave-api`
    - **Root Directory**: `backend`
    - **Runtime**: Node
    - **Build Command**: `npm install`
@@ -59,7 +59,7 @@ git push -u origin main
 
 1. In Render dashboard, click **New** → **PostgreSQL**
 2. Configure:
-   - **Name**: `kudipal-db`
+   - **Name**: `kudisave-db`
    - **Plan**: Free
 3. Copy the **Internal Database URL**
 4. Go to your Web Service → Environment → Add:
@@ -84,7 +84,7 @@ Or connect to the database from your local machine using the External Database U
 
 1. Update `frontend/assets/js/config.js`:
 ```javascript
-window.KUDIPAL_API_URL = 'https://kudipal-api.onrender.com/api/v1';
+window.KUDISAVE_API_URL = 'https://kudisave-api.onrender.com/api/v1';
 ```
 
 2. In your GitHub repo settings:
@@ -95,7 +95,7 @@ window.KUDIPAL_API_URL = 'https://kudipal-api.onrender.com/api/v1';
    - Click **Save**
 
 3. Your frontend will be live at:
-   `https://YOUR_USERNAME.github.io/kudipal/`
+   `https://YOUR_USERNAME.github.io/kudisave/`
 
 ---
 
@@ -104,10 +104,10 @@ window.KUDIPAL_API_URL = 'https://kudipal-api.onrender.com/api/v1';
 Test your deployed API:
 ```bash
 # Health check
-curl https://kudipal-api.onrender.com/health
+curl https://kudisave-api.onrender.com/health
 
 # Register test user
-curl -X POST https://kudipal-api.onrender.com/api/v1/auth/register \
+curl -X POST https://kudisave-api.onrender.com/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name":"Test","email":"test@example.com","phone":"233501234567","password":"Test123!"}'
 ```

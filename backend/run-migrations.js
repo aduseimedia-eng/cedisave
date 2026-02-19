@@ -1,5 +1,5 @@
 /**
- * KudiPal Database Migration Runner
+ * KudiSave Database Migration Runner
  * Runs all SQL schema files against the PostgreSQL database in order.
  * Safe to re-run — uses IF NOT EXISTS and ON CONFLICT where possible.
  */
@@ -77,7 +77,7 @@ function splitStatements(sql) {
 }
 
 async function runMigrations() {
-  console.log('\n🚀 KudiPal Database Migration Runner');
+  console.log('\n🚀 KudiSave Database Migration Runner');
   console.log('═'.repeat(50));
   
   const client = await pool.connect();

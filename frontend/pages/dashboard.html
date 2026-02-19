@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
-  <title>Dashboard - KudiPal</title>
+  <title>Dashboard - KudiSave</title>
   <!-- Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1636,7 +1636,7 @@
     <div class="mtn-topbar">
       <a class="mtn-logo" href="dashboard.html">
         <div class="mtn-logo-icon"><i data-lucide="landmark"></i></div>
-        <span class="mtn-logo-text">KudiPal</span>
+        <span class="mtn-logo-text">KudiSave</span>
       </a>
       <div class="mtn-topbar-actions">
         <button class="hamburger" onclick="toggleMobileMenu()" title="Menu">
@@ -1747,7 +1747,7 @@
 
     <!-- Footer -->
     <div class="menu-footer">
-      <span class="menu-footer-brand">KudiPal</span>
+      <span class="menu-footer-brand">KudiSave</span>
       <span class="menu-footer-version">v2.0</span>
     </div>
   </div>
@@ -2217,7 +2217,7 @@
       ratesLoading = true;
 
       // Check cached rates (valid for 1 hour)
-      const cached = localStorage.getItem('kudipal_exchange_rates');
+      const cached = localStorage.getItem('kudisave_exchange_rates');
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
@@ -2252,7 +2252,7 @@
           ratesLastUpdated = new Date();
 
           // Cache the rates
-          localStorage.setItem('kudipal_exchange_rates', JSON.stringify({
+          localStorage.setItem('kudisave_exchange_rates', JSON.stringify({
             rates: exchangeRates,
             timestamp: Date.now()
           }));
@@ -2289,7 +2289,7 @@
       const el = document.querySelector('.last-updated');
       if (el) el.innerHTML = '<i data-lucide="loader" style="width:10px;height:10px;vertical-align:middle;animation:spin 1s linear infinite"></i> Fetching live rates...';
       // Clear cache to force fresh fetch
-      localStorage.removeItem('kudipal_exchange_rates');
+      localStorage.removeItem('kudisave_exchange_rates');
       ratesLoading = false;
       await fetchLiveRates();
       // Re-convert if there's already a value

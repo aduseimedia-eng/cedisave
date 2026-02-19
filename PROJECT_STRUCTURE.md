@@ -1,4 +1,4 @@
-# KudiPal - Complete Project Structure
+# KudiSave - Complete Project Structure
 
 ```
 smart-money-gh/
