@@ -597,34 +597,7 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Demo button */
-    .demo-btn {
-      width: 100%;
-      padding: 13px 20px;
-      background: #f9fafb;
-      border: 1.5px dashed #d1d5db;
-      border-radius: 14px;
-      color: #6b7280;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      font-family: inherit;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
 
-    .demo-btn:hover {
-      background: #f3f4f6;
-      color: #374151;
-      border-color: #9ca3af;
-    }
-
-    .demo-btn:active {
-      transform: scale(0.98);
-    }
 
     /* ===== Footer ===== */
     .auth-footer {
@@ -782,31 +755,7 @@
       50% { transform: scale(1.2); opacity: 1; }
     }
 
-    /* ===== Demo mode indicator ===== */
-    .demo-indicator {
-      position: fixed;
-      top: calc(12px + env(safe-area-inset-top, 0px));
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 107, 63, 0.08);
-      border: 1px solid rgba(0, 107, 63, 0.15);
-      color: #006B3F;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      z-index: 9998;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: opacity 0.5s ease;
-    }
 
-    .demo-indicator i {
-      width: 14px;
-      height: 14px;
-      stroke-width: 2;
-    }
 
     /* ===== Responsive ===== */
     @media (max-width: 440px) {
@@ -939,12 +888,6 @@
           <div class="btn-spinner"></div>
         </button>
 
-        <div class="divider"><span>or</span></div>
-
-        <button type="button" class="demo-btn" onclick="demoLogin()">
-          <i data-lucide="gamepad-2" style="width:16px;height:16px;stroke-width:2;"></i>
-          Try Demo Mode
-        </button>
       </form>
 
       <!-- ==================== REGISTER FORM ==================== -->
@@ -1215,8 +1158,8 @@
           }
         });
       } else {
-        console.log('Google SDK not loaded - using demo mode');
-        handleGoogleDemoLogin();
+        console.log('Google SDK not loaded');
+        showToast('Google Sign-In is not available right now', 'error');
       }
     }
 
@@ -1263,39 +1206,7 @@
       setTimeout(() => { window.location.href = 'pages/dashboard.html'; }, 500);
     }
 
-    function handleGoogleDemoLogin() {
-      const demoGoogleUser = {
-        name: 'Google User',
-        email: 'user@gmail.com',
-        picture: null,
-        provider: 'google'
-      };
-      localStorage.setItem('token', 'google-demo-token');
-      localStorage.setItem('user', JSON.stringify(demoGoogleUser));
-      localStorage.setItem('onboardingComplete', 'true');
-      showToast('Signed in with Google (Demo)');
-      setTimeout(() => { window.location.href = 'pages/dashboard.html'; }, 500);
-    }
 
-    // ===== Demo Login =====
-    async function demoLogin() {
-      console.log('Demo login clicked!');
-      try {
-        const result = await api.login({ identifier: 'demo@kudipal.com', password: 'Demo123!' });
-        if (result.success) {
-          showToast('Welcome to KudiPal demo!');
-          setTimeout(() => { window.location.href = 'pages/dashboard.html'; }, 500);
-        }
-      } catch (error) {
-        try {
-          await api.register({ name: 'Demo User', email: 'demo@kudipal.com', phone: '233501234567', password: 'Demo123!' });
-          showToast('Demo account created! Welcome!');
-          setTimeout(() => { window.location.href = 'pages/dashboard.html'; }, 500);
-        } catch (regError) {
-          showToast('Demo login failed', 'error');
-        }
-      }
-    }
 
     // ===== Handle Login =====
     async function handleLogin(event) {
@@ -1378,16 +1289,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       console.log('DOM loaded');
       lucide.createIcons();
-
-      // Demo mode indicator
-      if (window.KUDIPAL_DEMO_MODE) {
-        const indicator = document.createElement('div');
-        indicator.className = 'demo-indicator';
-        indicator.innerHTML = '<i data-lucide="gamepad-2"></i> Demo Mode';
-        document.body.appendChild(indicator);
-        lucide.createIcons({ nodes: [indicator] });
-        setTimeout(() => { indicator.style.opacity = '0'; setTimeout(() => indicator.remove(), 500); }, 4000);
-      }
 
       // Already logged in? Go to dashboard
       const token = localStorage.getItem('token');

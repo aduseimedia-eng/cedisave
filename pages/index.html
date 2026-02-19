@@ -332,13 +332,6 @@
           Login 🚀
         </button>
 
-        <div class="divider">
-          <span>or</span>
-        </div>
-
-        <button type="button" class="btn btn-secondary" style="width: 100%;" onclick="demoLogin()">
-          🎮 Try Demo Mode
-        </button>
       </form>
 
       <!-- Register Form -->
@@ -434,17 +427,7 @@
       }
     })();
     
-    // Show demo mode indicator if enabled
-    document.addEventListener('DOMContentLoaded', () => {
-      if (window.KUDIPAL_DEMO_MODE) {
-        const indicator = document.createElement('div');
-        indicator.innerHTML = '🎮 Demo Mode - Data stored locally';
-        indicator.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#2B5A34;color:white;padding:8px 16px;border-radius:20px;font-size:12px;z-index:9999;opacity:0.9;';
-        document.body.appendChild(indicator);
-        // Hide after 3 seconds
-        setTimeout(() => { indicator.style.opacity = '0'; setTimeout(() => indicator.remove(), 500); }, 3000);
-      }
-    });
+
     
     console.log('Login page loaded successfully!');
 
@@ -482,9 +465,8 @@
           }
         });
       } else {
-        // Fallback for demo mode - simulate Google login
-        console.log('Google SDK not loaded - using demo mode');
-        handleGoogleDemoLogin();
+        console.log('Google SDK not loaded');
+        showToast('Google Sign-In is not available right now', 'error');
       }
     }
 
@@ -548,25 +530,7 @@
       }, 500);
     }
 
-    // Demo mode Google login (when SDK not available)
-    function handleGoogleDemoLogin() {
-      const demoGoogleUser = {
-        name: 'Google User',
-        email: 'user@gmail.com',
-        picture: null,
-        provider: 'google'
-      };
-      
-      localStorage.setItem('token', 'google-demo-token');
-      localStorage.setItem('user', JSON.stringify(demoGoogleUser));
-      localStorage.setItem('onboardingComplete', 'true');
-      
-      showToast('Signed in with Google (Demo)');
-      
-      setTimeout(() => {
-        window.location.href = 'pages/dashboard.html';
-      }, 500);
-    }
+
 
     // Show toast notification
     function showToast(message, type = 'success') {
@@ -604,38 +568,7 @@
       }
     }
 
-    // Demo login - use test account
-    async function demoLogin() {
-      console.log('Demo login clicked!');
-      try {
-        const result = await api.login({ 
-          identifier: 'demo@kudipal.com', 
-          password: 'Demo123!' 
-        });
-        if (result.success) {
-          showToast('Welcome to KudiPal demo!');
-          setTimeout(() => {
-            window.location.href = 'pages/dashboard.html';
-          }, 500);
-        }
-      } catch (error) {
-        // Fallback: create demo account if it doesn't exist
-        try {
-          await api.register({
-            name: 'Demo User',
-            email: 'demo@kudipal.com',
-            phone: '233501234567',
-            password: 'Demo123!'
-          });
-          showToast('Demo account created! Welcome!');
-          setTimeout(() => {
-            window.location.href = 'pages/dashboard.html';
-          }, 500);
-        } catch (regError) {
-          showToast('Demo login failed', 'error');
-        }
-      }
-    }
+
 
     // Handle login form
     async function handleLogin(event) {
