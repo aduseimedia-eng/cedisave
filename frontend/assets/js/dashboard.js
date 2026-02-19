@@ -668,29 +668,7 @@ async function loadWidgets() {
     } catch (e) { /* Achievements API not available */ }
 
     // Load spending insights
-    try {
-      const insightsResponse = await api.get('/comparisons/insights?limit=6');
-      if (insightsResponse.success && insightsResponse.data.length > 0) {
-        const insightsCard = document.getElementById('insightsCard');
-        const insightsContainer = document.getElementById('spendingInsights');
-        const insightCount = document.getElementById('insightCount');
-        
-        if (insightsCard && insightsContainer) {
-          insightsCard.style.display = 'block';
-          if (insightCount) insightCount.textContent = `${insightsResponse.data.length} insights`;
-          insightsContainer.innerHTML = insightsResponse.data.map(insight => `
-            <div class="insight-card ${insight.type || 'info'}">
-              <span class="insight-icon">${insight.icon}</span>
-              <div class="insight-body">
-                <div class="insight-title">${insight.title}</div>
-                <div class="insight-msg">${insight.message}</div>
-                ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
-              </div>
-            </div>
-          `).join('');
-        }
-      }
-    } catch (e) { /* Insights API not available */ }
+    loadSpendingInsights();
 
   } catch (error) {
     console.log('Widgets loading skipped:', error.message);
@@ -703,6 +681,106 @@ window.onclick = function(event) {
     event.target.classList.remove('active');
   }
 }
+
+// ================================
+// SPENDING INSIGHTS ENGINE
+// ================================
+
+async function loadSpendingInsights() {
+  const container = document.getElementById('spendingInsights');
+  const countBadge = document.getElementById('insightCount');
+  const dotsContainer = document.getElementById('insightsDots');
+  const refreshBtn = document.getElementById('insightsRefreshBtn');
+
+  if (!container) return;
+
+  // Show loading shimmer
+  container.innerHTML = `
+    <div class="insight-shimmer"></div>
+    <div class="insight-shimmer"></div>
+  `;
+  if (countBadge) countBadge.textContent = '';
+  if (dotsContainer) dotsContainer.innerHTML = '';
+
+  try {
+    const response = await api.get('/comparisons/insights?limit=6');
+
+    if (response.success && response.data && response.data.length > 0) {
+      const insights = response.data;
+
+      if (countBadge) countBadge.textContent = `${insights.length}`;
+
+      container.innerHTML = insights.map((insight, i) => `
+        <div class="insight-card ${insight.type || 'info'}" style="transition-delay: ${i * 80}ms;">
+          <div class="insight-card-top">
+            <div class="insight-icon-wrap">
+              <span>${insight.icon}</span>
+            </div>
+            <div class="insight-title">${insight.title}</div>
+          </div>
+          <div class="insight-msg">${insight.message}</div>
+          ${insight.tip ? `<div class="insight-tip">${insight.tip}</div>` : ''}
+        </div>
+      `).join('');
+
+      // Animate cards in with stagger
+      requestAnimationFrame(() => {
+        container.querySelectorAll('.insight-card').forEach((card, i) => {
+          setTimeout(() => card.classList.add('visible'), i * 80);
+        });
+      });
+
+      // Build scroll dots
+      if (dotsContainer && insights.length > 1) {
+        dotsContainer.innerHTML = insights.map((_, i) =>
+          `<div class="insights-dot${i === 0 ? ' active' : ''}"></div>`
+        ).join('');
+
+        // Update dots on scroll
+        container.addEventListener('scroll', () => {
+          const scrollLeft = container.scrollLeft;
+          const cardWidth = 270; // approx card width + gap
+          const activeIdx = Math.round(scrollLeft / cardWidth);
+          dotsContainer.querySelectorAll('.insights-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === activeIdx);
+          });
+        }, { passive: true });
+      }
+
+    } else {
+      // Empty state — no insights available
+      container.innerHTML = `
+        <div class="insights-empty" style="width: 100%;">
+          <div class="insights-empty-icon">📊</div>
+          <div class="insights-empty-title">No insights yet</div>
+          <div class="insights-empty-desc">Start tracking your expenses and we'll generate smart spending insights for you.</div>
+        </div>
+      `;
+    }
+  } catch (e) {
+    console.log('Insights loading:', e.message);
+    // Show friendly empty state on error
+    container.innerHTML = `
+      <div class="insights-empty" style="width: 100%;">
+        <div class="insights-empty-icon">💡</div>
+        <div class="insights-empty-title">Insights coming soon</div>
+        <div class="insights-empty-desc">Add some expenses and check back — your smart insights will appear here.</div>
+      </div>
+    `;
+  }
+}
+
+// Refresh insights button handler
+document.addEventListener('DOMContentLoaded', () => {
+  const refreshBtn = document.getElementById('insightsRefreshBtn');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', async () => {
+      refreshBtn.classList.add('spinning');
+      await loadSpendingInsights();
+      setTimeout(() => refreshBtn.classList.remove('spinning'), 600);
+    });
+  }
+});
 
 // ================================
 // FUN & LIVELY INTERACTIONS 🎉
