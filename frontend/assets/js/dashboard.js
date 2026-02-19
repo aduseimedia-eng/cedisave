@@ -87,6 +87,15 @@ async function initDashboard() {
       });
     }
 
+    // Update streak on first open of the day
+    const today = new Date().toISOString().split('T')[0];
+    if (localStorage.getItem('lastStreakUpdate') !== today) {
+      try {
+        await api.put('/gamification/streak/update', {});
+        localStorage.setItem('lastStreakUpdate', today);
+      } catch (e) { console.warn('Streak update failed:', e); }
+    }
+
     // Load all dashboard data
     await Promise.all([
       loadFinancialSummary(),
