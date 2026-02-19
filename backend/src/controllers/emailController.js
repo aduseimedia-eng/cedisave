@@ -1,5 +1,5 @@
 const { query } = require('../config/database');
-const { sendVerificationEmail } = require('../services/emailService');
+const { sendVerificationEmail, sendVerificationOTP } = require('../services/emailService');
 const crypto = require('crypto');
 
 /**
@@ -7,6 +7,13 @@ const crypto = require('crypto');
  */
 const generateVerificationToken = () => {
   return crypto.randomBytes(32).toString('hex');
+};
+
+/**
+ * Generate cryptographically random 6-digit OTP
+ */
+const generateOTP = () => {
+  return crypto.randomInt(100000, 999999).toString();
 };
 
 /**
@@ -339,8 +346,260 @@ const resendEmailVerification = async (req, res) => {
   }
 };
 
+/**
+ * Send email OTP (6-digit code)
+ * POST /api/v1/email/send-otp
+ */
+const sendEmailOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format'
+      });
+    }
+
+    // Check if already verified
+    const userCheck = await query(
+      'SELECT id, email_verified FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (userCheck.rows.length > 0 && userCheck.rows[0].email_verified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already verified. You can login now.'
+      });
+    }
+
+    // Clean up expired OTPs
+    await query(
+      'DELETE FROM email_verification WHERE email = $1 AND expires_at < NOW()',
+      [email]
+    );
+
+    // Rate limiting (1 per minute)
+    const existingOTP = await query(
+      'SELECT * FROM email_verification WHERE email = $1 AND expires_at > NOW() AND is_verified = false ORDER BY created_at DESC LIMIT 1',
+      [email]
+    );
+
+    if (existingOTP.rows.length > 0) {
+      const timeSinceCreation = Date.now() - new Date(existingOTP.rows[0].created_at).getTime();
+      if (timeSinceCreation < 60000) {
+        return res.status(429).json({
+          success: false,
+          message: 'Please wait 1 minute before requesting a new code'
+        });
+      }
+    }
+
+    // Generate 6-digit OTP
+    const otp = generateOTP();
+
+    // Save to database (10-minute expiry)
+    await query(
+      `INSERT INTO email_verification (email, otp, verification_type, expires_at) 
+       VALUES ($1, $2, 'otp', NOW() + INTERVAL '10 minutes') 
+       RETURNING id, email, expires_at`,
+      [email, otp]
+    );
+
+    // Log OTP in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`📧 Email OTP for ${email}: ${otp}`);
+      console.log(`${'='.repeat(60)}\n`);
+    }
+
+    // Send OTP email
+    const emailSent = await sendVerificationOTP(email, otp);
+
+    if (!emailSent) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send verification email. Please try again.',
+        ...(process.env.NODE_ENV === 'development' && { otp })
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Verification code sent to ' + email,
+      data: {
+        email,
+        expiresIn: '10 minutes'
+      }
+    });
+  } catch (error) {
+    console.error('Send email OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send verification code',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+/**
+ * Verify email OTP
+ * POST /api/v1/email/verify-otp
+ */
+const verifyEmailOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and verification code are required'
+      });
+    }
+
+    // Check OTP against database
+    console.log(`🔍 Verifying email OTP for ${email}...`);
+    const result = await query(
+      `SELECT * FROM email_verification 
+       WHERE email = $1 AND otp = $2 AND expires_at > NOW() AND is_verified = false
+       ORDER BY created_at DESC LIMIT 1`,
+      [email, otp]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification code'
+      });
+    }
+
+    // Mark verification record as verified
+    await query(
+      `UPDATE email_verification 
+       SET is_verified = true, verified_at = NOW() 
+       WHERE id = $1`,
+      [result.rows[0].id]
+    );
+
+    // Mark user's email as verified
+    await query(
+      `UPDATE users 
+       SET email_verified = true, updated_at = NOW() 
+       WHERE email = $1`,
+      [email]
+    );
+
+    console.log(`✅ Email verified for ${email}`);
+
+    res.json({
+      success: true,
+      message: 'Email verified successfully!',
+      data: {
+        email,
+        verified: true,
+        message: 'You can now login to your account'
+      }
+    });
+  } catch (error) {
+    console.error('Verify email OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify code',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+/**
+ * Resend email OTP
+ * POST /api/v1/email/resend-otp
+ */
+const resendEmailOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    // Check if user exists
+    const userCheck = await query(
+      'SELECT id, email_verified FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account found with this email'
+      });
+    }
+
+    if (userCheck.rows[0].email_verified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already verified. You can login now.'
+      });
+    }
+
+    // Delete old unverified OTPs
+    await query(
+      'DELETE FROM email_verification WHERE email = $1 AND is_verified = false',
+      [email]
+    );
+
+    // Generate new OTP
+    const otp = generateOTP();
+
+    await query(
+      `INSERT INTO email_verification (email, otp, verification_type, expires_at) 
+       VALUES ($1, $2, 'otp', NOW() + INTERVAL '10 minutes')`,
+      [email, otp]
+    );
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`📧 Email OTP (resend) for ${email}: ${otp}`);
+      console.log(`${'='.repeat(60)}\n`);
+    }
+
+    const emailSent = await sendVerificationOTP(email, otp);
+
+    if (!emailSent) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to resend verification email.',
+        ...(process.env.NODE_ENV === 'development' && { otp })
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Verification code resent to ' + email,
+      data: {
+        email,
+        expiresIn: '10 minutes'
+      }
+    });
+  } catch (error) {
+    console.error('Resend email OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to resend verification code',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   sendEmailVerification,
   verifyEmailToken,
-  resendEmailVerification
+  resendEmailVerification,
+  sendEmailOTP,
+  verifyEmailOTP,
+  resendEmailOTP
 };

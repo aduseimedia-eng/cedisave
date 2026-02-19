@@ -19,16 +19,21 @@
     window.KUDISAVE_API_URL = RENDER_API_URL;
     window.KUDISAVE_DEMO_MODE = false;
     console.log('🚀 KudiSave: Production mode - using Render backend');
-  } else if (isLocalhost && !isFileProtocol) {
-    // Local development with backend
+  } else if (isLocalhost || isFileProtocol) {
+    // Local development with backend (localhost or file:// protocol)
     window.KUDISAVE_API_URL = 'http://localhost:5000/api/v1';
     window.KUDISAVE_DEMO_MODE = false;
     console.log('💻 KudiSave: Local development mode');
-  } else {
-    // GitHub Pages or file:// - use demo mode
+  } else if (isGitHubPages) {
+    // GitHub Pages without Render backend - use demo mode
     window.KUDISAVE_API_URL = null;
     window.KUDISAVE_DEMO_MODE = true;
     console.log('🎮 KudiSave: Demo mode - data stored locally');
+  } else {
+    // Unknown environment - try localhost backend
+    window.KUDISAVE_API_URL = 'http://localhost:5000/api/v1';
+    window.KUDISAVE_DEMO_MODE = false;
+    console.log('💻 KudiSave: Fallback to local backend');
   }
   
   // Log configuration

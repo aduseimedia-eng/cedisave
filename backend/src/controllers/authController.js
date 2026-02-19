@@ -50,11 +50,10 @@ const register = async (req, res) => {
       [user.id]
     );
 
-    // Registration successful but phone verification required
-    // Frontend should redirect to verify-phone.html with phone number
+    // Registration successful — email verification required
     res.status(201).json({
       success: true,
-      message: 'Registration successful. Phone verification required.',
+      message: 'Registration successful. Email verification required.',
       data: {
         user: {
           id: user.id,
@@ -62,9 +61,9 @@ const register = async (req, res) => {
           email: user.email,
           phone: user.phone,
           created_at: user.created_at,
-          phone_verified: false
+          email_verified: false
         },
-        requiresPhoneVerification: true
+        requiresEmailVerification: true
       }
     });
   } catch (error) {
@@ -109,21 +108,21 @@ const login = async (req, res) => {
       });
     }
 
-    // Check if phone is verified
-    const phoneVerificationResult = await query(
-      'SELECT phone_verified FROM users WHERE id = $1',
+    // Check if email is verified
+    const emailVerificationResult = await query(
+      'SELECT email_verified FROM users WHERE id = $1',
       [user.id]
     );
 
-    const phoneVerified = phoneVerificationResult.rows[0]?.phone_verified || false;
+    const emailVerified = emailVerificationResult.rows[0]?.email_verified || false;
 
-    if (!phoneVerified) {
+    if (!emailVerified) {
       return res.status(403).json({
         success: false,
-        message: 'Phone number verification required. Please verify your phone first.',
+        message: 'Email verification required. Please verify your email first.',
         data: {
-          requiresPhoneVerification: true,
-          phone: user.phone
+          requiresEmailVerification: true,
+          email: user.email
         }
       });
     }
@@ -147,7 +146,7 @@ const login = async (req, res) => {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          phone_verified: true
+          email_verified: true
         },
         token,
         refreshToken

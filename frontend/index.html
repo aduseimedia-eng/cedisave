@@ -981,6 +981,12 @@
             <div class="strength-bar" id="str4"></div>
           </div>
           <span class="strength-text" id="strengthText"></span>
+          <div id="passwordHints" style="margin-top: 4px; display: flex; flex-direction: column; gap: 2px;">
+            <small id="hint-length" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ At least 8 characters</small>
+            <small id="hint-upper" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ One uppercase letter (A-Z)</small>
+            <small id="hint-lower" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ One lowercase letter (a-z)</small>
+            <small id="hint-number" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ One number (0-9)</small>
+          </div>
         </div>
 
         <!-- Submit -->
@@ -1080,6 +1086,21 @@
       const container = document.getElementById('passwordStrength');
       const text = document.getElementById('strengthText');
       const bars = [document.getElementById('str1'), document.getElementById('str2'), document.getElementById('str3'), document.getElementById('str4')];
+
+      // Update requirement hints
+      const checks = [
+        { id: 'hint-length', pass: value.length >= 8 },
+        { id: 'hint-upper', pass: /[A-Z]/.test(value) },
+        { id: 'hint-lower', pass: /[a-z]/.test(value) },
+        { id: 'hint-number', pass: /[0-9]/.test(value) }
+      ];
+      checks.forEach(c => {
+        const el = document.getElementById(c.id);
+        if (el) {
+          el.style.color = c.pass ? '#34d399' : 'rgba(255,255,255,0.4)';
+          el.textContent = (c.pass ? '✓ ' : '✕ ') + el.textContent.substring(2);
+        }
+      });
 
       if (!value) {
         container.style.display = 'none';
@@ -1228,11 +1249,11 @@
         }
       } catch (error) {
         console.error('Login error:', error);
-        if (error.status === 403 && error.response?.data?.requiresPhoneVerification) {
-          showToast('Phone verification required. Redirecting...', 'warning');
-          const phone = error.response.data.phone;
-          sessionStorage.setItem('pendingPhoneVerification', phone);
-          setTimeout(() => { window.location.href = 'verify-phone.html'; }, 1000);
+        if (error.status === 403 && error.response?.data?.requiresEmailVerification) {
+          showToast('Email verification required. Redirecting...', 'warning');
+          const email = error.response.data.email;
+          sessionStorage.setItem('pendingEmailVerification', email);
+          setTimeout(() => { window.location.href = 'verify-email.html'; }, 1000);
         } else {
           showToast(error.message || 'Login failed. Check your credentials.', 'error');
         }
@@ -1264,14 +1285,27 @@
         return;
       }
 
+      if (!/[A-Z]/.test(password)) {
+        showToast('Password needs at least one uppercase letter (A-Z)', 'error');
+        return;
+      }
+      if (!/[a-z]/.test(password)) {
+        showToast('Password needs at least one lowercase letter (a-z)', 'error');
+        return;
+      }
+      if (!/[0-9]/.test(password)) {
+        showToast('Password needs at least one number (0-9)', 'error');
+        return;
+      }
+
       setLoading('registerBtn', true);
       try {
         const result = await api.register({ name, email, phone, password });
         if (result.success) {
-          if (result.data.requiresPhoneVerification) {
-            showToast('Account created! Verify your phone.');
-            sessionStorage.setItem('pendingPhoneVerification', phone);
-            setTimeout(() => { window.location.href = 'verify-phone.html'; }, 500);
+          if (result.data.requiresEmailVerification) {
+            showToast('Account created! Verify your email.');
+            sessionStorage.setItem('pendingEmailVerification', email);
+            setTimeout(() => { window.location.href = 'verify-email.html'; }, 500);
           } else {
             showToast('Account created successfully!');
             setTimeout(() => { window.location.href = 'pages/dashboard.html'; }, 500);
@@ -1279,7 +1313,12 @@
         }
       } catch (error) {
         console.error('Registration error:', error);
-        showToast(error.message || 'Registration failed', 'error');
+        const fieldErrors = error.response?.data?.errors;
+        if (fieldErrors && fieldErrors.length > 0) {
+          showToast(fieldErrors[0].message, 'error');
+        } else {
+          showToast(error.message || 'Registration failed', 'error');
+        }
       } finally {
         setLoading('registerBtn', false);
       }

@@ -395,8 +395,14 @@
             placeholder="Min. 8 characters"
             minlength="8"
             required
+            oninput="updatePasswordHints(this.value)"
           >
-          <small style="color: rgba(255,255,255,0.6);">Must include uppercase, lowercase, and number</small>
+          <div id="passwordHints" style="margin-top: 6px; display: flex; flex-direction: column; gap: 3px;">
+            <small id="hint-length" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ At least 8 characters</small>
+            <small id="hint-upper" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ One uppercase letter (A-Z)</small>
+            <small id="hint-lower" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ One lowercase letter (a-z)</small>
+            <small id="hint-number" style="color: rgba(255,255,255,0.4); font-size: 11px; transition: color 0.2s;">✕ One number (0-9)</small>
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -533,6 +539,25 @@
 
 
     // Show toast notification
+    function updatePasswordHints(pw) {
+      const checks = [
+        { id: 'hint-length', pass: pw.length >= 8 },
+        { id: 'hint-upper', pass: /[A-Z]/.test(pw) },
+        { id: 'hint-lower', pass: /[a-z]/.test(pw) },
+        { id: 'hint-number', pass: /[0-9]/.test(pw) }
+      ];
+      checks.forEach(c => {
+        const el = document.getElementById(c.id);
+        if (c.pass) {
+          el.style.color = '#34d399';
+          el.textContent = '✓ ' + el.textContent.substring(2);
+        } else {
+          el.style.color = 'rgba(255,255,255,0.4)';
+          el.textContent = '✕ ' + el.textContent.substring(2);
+        }
+      });
+    }
+
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
       toast.style.cssText = `
@@ -594,12 +619,12 @@
         console.error('Login error:', error);
         
         // Check if error is about phone verification
-        if (error.status === 403 && error.response?.data?.requiresPhoneVerification) {
-          showToast('Phone verification required. Redirecting...', 'warning');
-          const phone = error.response.data.phone;
-          sessionStorage.setItem('pendingPhoneVerification', phone);
+        if (error.status === 403 && error.response?.data?.requiresEmailVerification) {
+          showToast('Email verification required. Redirecting...', 'warning');
+          const email = error.response.data.email;
+          sessionStorage.setItem('pendingEmailVerification', email);
           setTimeout(() => {
-            window.location.href = 'verify-phone.html';
+            window.location.href = 'verify-email.html';
           }, 1000);
         } else {
           showToast(error.message || 'Login failed', 'error');
@@ -626,17 +651,35 @@
         showToast('Phone must be Ghana format: 233XXXXXXXXX', 'error');
         return;
       }
+
+      // Validate password strength client-side
+      if (password.length < 8) {
+        showToast('Password must be at least 8 characters', 'error');
+        return;
+      }
+      if (!/[A-Z]/.test(password)) {
+        showToast('Password needs at least one uppercase letter (A-Z)', 'error');
+        return;
+      }
+      if (!/[a-z]/.test(password)) {
+        showToast('Password needs at least one lowercase letter (a-z)', 'error');
+        return;
+      }
+      if (!/[0-9]/.test(password)) {
+        showToast('Password needs at least one number (0-9)', 'error');
+        return;
+      }
       
       try {
         const result = await api.register({ name, email, phone, password });
         if (result.success) {
-          // Check if phone verification is required
-          if (result.data.requiresPhoneVerification) {
-            showToast('Registration successful! Please verify your phone.');
-            // Store phone for verification page
-            sessionStorage.setItem('pendingPhoneVerification', phone);
+          // Check if email verification is required
+          if (result.data.requiresEmailVerification) {
+            showToast('Registration successful! Please verify your email.');
+            // Store email for verification page
+            sessionStorage.setItem('pendingEmailVerification', email);
             setTimeout(() => {
-              window.location.href = 'verify-phone.html';
+              window.location.href = 'verify-email.html';
             }, 500);
           } else {
             showToast('Registration successful!');
@@ -647,7 +690,13 @@
         }
       } catch (error) {
         console.error('Registration error:', error);
-        showToast(error.message || 'Registration failed', 'error');
+        // Extract field-level errors if available
+        const fieldErrors = error.response?.data?.errors;
+        if (fieldErrors && fieldErrors.length > 0) {
+          showToast(fieldErrors[0].message, 'error');
+        } else {
+          showToast(error.message || 'Registration failed', 'error');
+        }
       }
     }
 

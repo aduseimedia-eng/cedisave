@@ -9,6 +9,9 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -586,6 +589,74 @@ const sendVerificationEmail = async (email, verificationToken) => {
   }
 };
 
+/**
+ * Send email verification OTP (6-digit code)
+ */
+const sendVerificationOTP = async (email, otp) => {
+  try {
+    const subject = 'Your KudiSave Verification Code';
+    
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: 'Inter', Arial, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #006B3F 0%, #00a05e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .content { background: white; padding: 40px 30px; border-radius: 0 0 10px 10px; }
+          .otp-code { font-size: 36px; letter-spacing: 8px; font-weight: 700; color: #006B3F; background: #f0faf5; padding: 20px 30px; border-radius: 12px; display: inline-block; margin: 20px 0; border: 2px dashed #006B3F; }
+          .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; color: #856404; }
+          .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 20px; }
+          h1 { margin: 0; font-size: 24px; }
+          p { margin: 15px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🔐 Verification Code</h1>
+          </div>
+          <div class="content">
+            <p>Hi there! 👋</p>
+            <p>Your KudiSave verification code is:</p>
+            <div style="text-align: center;">
+              <div class="otp-code">${otp}</div>
+            </div>
+            <p><strong>This code expires in 10 minutes.</strong></p>
+            <div class="warning">
+              <strong>⚠️ Security:</strong> Never share this code with anyone. KudiSave will never ask for your verification code.
+            </div>
+            <p style="color: #999; font-size: 14px;">
+              If you didn't request this code, please ignore this email.
+            </p>
+            <div class="footer">
+              <p>&copy; ${new Date().getFullYear()} KudiSave. All rights reserved.</p>
+              <p>Helping Ghanaian youth master their finances 💪🇬🇭</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: subject,
+      html: htmlContent
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('📧 Email OTP sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Send email OTP error:', error);
+    return false;
+  }
+};
+
 module.exports = {
   sendPasswordResetEmail,
   sendWelcomeEmail,
@@ -594,5 +665,6 @@ module.exports = {
   sendBillReminderEmail,
   sendGoalMilestoneEmail,
   sendBudgetAlertEmail,
-  sendVerificationEmail
+  sendVerificationEmail,
+  sendVerificationOTP
 };

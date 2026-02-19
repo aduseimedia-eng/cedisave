@@ -1,9 +1,12 @@
 const { query } = require('../config/database');
-const { generateOTP, sendOTP } = require('../services/smsService');
+const { generateOTP, sendOTP, verifyOTPViaArkesel } = require('../services/smsService');
 
 /**
  * Send OTP to phone number
- * POST /auth/phone/send-otp
+ * POST /api/v1/phone/send-otp
+ * 
+ * Uses Arkesel's OTP API which generates its own OTP and sends it.
+ * We also store a record locally for rate-limiting and tracking.
  */
 const sendPhoneOTP = async (req, res) => {
   try {
@@ -23,7 +26,7 @@ const sendPhoneOTP = async (req, res) => {
       [phone]
     );
 
-    // Check if there's already a valid OTP
+    // Check if there's already a valid OTP (rate-limiting: 1 per minute)
     const existingOTP = await query(
       'SELECT * FROM phone_verification WHERE phone = $1 AND expires_at > NOW() AND is_verified = false ORDER BY created_at DESC LIMIT 1',
       [phone]
@@ -41,33 +44,18 @@ const sendPhoneOTP = async (req, res) => {
       }
     }
 
-    // Generate new OTP
+    // Generate a local OTP for logging (Arkesel generates its own for SMS)
     const otp = generateOTP();
 
-    // Save OTP to database (expires in 10 minutes)
-    const result = await query(
+    // Save tracking record to database (expires in 10 minutes)
+    await query(
       `INSERT INTO phone_verification (phone, otp, expires_at) 
        VALUES ($1, $2, NOW() + INTERVAL '10 minutes') 
        RETURNING id, phone, expires_at`,
       [phone, otp]
     );
 
-    // Send OTP via SMS
-    const smsSent = await sendOTP(phone, otp);
-
-    if (!smsSent) {
-      // In development mode, keep the OTP in database for testing
-      // In production, delete the OTP if SMS failed
-      if (process.env.NODE_ENV !== 'development') {
-        await query('DELETE FROM phone_verification WHERE id = $1', [result.rows[0].id]);
-      }
-      
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to send OTP. Please try again.'
-      });
-    }
-
+    // Respond immediately — send SMS in background (Arkesel call takes 1-3s)
     res.json({
       success: true,
       message: 'OTP sent successfully',
@@ -75,6 +63,15 @@ const sendPhoneOTP = async (req, res) => {
         phone,
         expiresIn: '10 minutes'
       }
+    });
+
+    // Fire-and-forget: send OTP via Arkesel in the background
+    sendOTP(phone, otp).then(sent => {
+      if (!sent) {
+        console.error(`❌ Background SMS send failed for ${phone}`);
+      }
+    }).catch(err => {
+      console.error(`❌ Background SMS error for ${phone}:`, err.message);
     });
   } catch (error) {
     console.error('Send OTP error:', error);
@@ -88,7 +85,10 @@ const sendPhoneOTP = async (req, res) => {
 
 /**
  * Verify OTP
- * POST /auth/phone/verify-otp
+ * POST /api/v1/phone/verify-otp
+ * 
+ * Verifies the OTP via Arkesel's OTP verify API.
+ * On success, marks the user's phone as verified in our database.
  */
 const verifyPhoneOTP = async (req, res) => {
   try {
@@ -101,50 +101,37 @@ const verifyPhoneOTP = async (req, res) => {
       });
     }
 
-    // Find valid OTP
-    const result = await query(
-      `SELECT * FROM phone_verification 
-       WHERE phone = $1 AND otp = $2 AND expires_at > NOW() AND is_verified = false
-       ORDER BY created_at DESC LIMIT 1`,
-      [phone, otp]
-    );
+    // Try Arkesel OTP verify first (works when OTP API was used to send)
+    const arkeselResult = await verifyOTPViaArkesel(phone, otp);
 
-    if (result.rows.length === 0) {
-      // Increment attempts
-      await query(
-        `UPDATE phone_verification 
-         SET attempts = attempts + 1 
-         WHERE phone = $1 AND expires_at > NOW() AND is_verified = false`,
-        [phone]
+    if (!arkeselResult.success) {
+      // Arkesel verify failed — fall back to local DB check
+      // This handles: SMS v2 fallback sends, dev mode, or Arkesel verify errors
+      console.log('\ud83d\udcf1 Arkesel verify failed, checking local database...');
+      const localResult = await query(
+        `SELECT * FROM phone_verification 
+         WHERE phone = $1 AND otp = $2 AND expires_at > NOW() AND is_verified = false
+         ORDER BY created_at DESC LIMIT 1`,
+        [phone, otp]
       );
 
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired OTP'
-      });
+      if (localResult.rows.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired OTP'
+        });
+      }
+      console.log('\u2705 OTP verified via local database');
+    } else {
+      console.log('\u2705 OTP verified via Arkesel');
     }
 
-    const otpRecord = result.rows[0];
-
-    // Check attempts
-    if (otpRecord.attempts >= otpRecord.max_attempts) {
-      await query(
-        'DELETE FROM phone_verification WHERE id = $1',
-        [otpRecord.id]
-      );
-
-      return res.status(400).json({
-        success: false,
-        message: 'Too many failed attempts. Request a new OTP.'
-      });
-    }
-
-    // Mark OTP as verified
+    // Mark local records as verified
     await query(
       `UPDATE phone_verification 
        SET is_verified = true, verified_at = NOW() 
-       WHERE id = $1`,
-      [otpRecord.id]
+       WHERE phone = $1 AND is_verified = false`,
+      [phone]
     );
 
     // Mark phone as verified for user
@@ -176,7 +163,7 @@ const verifyPhoneOTP = async (req, res) => {
 
 /**
  * Resend OTP
- * POST /auth/phone/resend-otp
+ * POST /api/v1/phone/resend-otp
  */
 const resendPhoneOTP = async (req, res) => {
   try {
@@ -217,31 +204,16 @@ const resendPhoneOTP = async (req, res) => {
       [phone]
     );
 
-    // Send new OTP
+    // Send new OTP via Arkesel
     const otp = generateOTP();
-    const result = await query(
+    await query(
       `INSERT INTO phone_verification (phone, otp, expires_at) 
        VALUES ($1, $2, NOW() + INTERVAL '10 minutes') 
        RETURNING id, phone, expires_at`,
       [phone, otp]
     );
 
-    const smsSent = await sendOTP(phone, otp);
-
-    if (!smsSent) {
-      // In development mode, keep the OTP in database for testing
-      // In production, delete the OTP if SMS failed
-      if (process.env.NODE_ENV !== 'development') {
-        await query('DELETE FROM phone_verification WHERE id = $1', [result.rows[0].id]);
-      }
-      
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to send OTP. Please try again.',
-        ...(process.env.NODE_ENV === 'development' && { otp })
-      });
-    }
-
+    // Respond immediately — send SMS in background
     res.json({
       success: true,
       message: 'OTP resent successfully',
@@ -249,6 +221,15 @@ const resendPhoneOTP = async (req, res) => {
         phone,
         expiresIn: '10 minutes'
       }
+    });
+
+    // Fire-and-forget: send OTP via Arkesel in background
+    sendOTP(phone, otp).then(sent => {
+      if (!sent) {
+        console.error(`❌ Background resend failed for ${phone}`);
+      }
+    }).catch(err => {
+      console.error(`❌ Background resend error for ${phone}:`, err.message);
     });
   } catch (error) {
     console.error('Resend OTP error:', error);

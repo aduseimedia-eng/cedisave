@@ -3,7 +3,10 @@ const router = express.Router();
 const {
   sendEmailVerification,
   verifyEmailToken,
-  resendEmailVerification
+  resendEmailVerification,
+  sendEmailOTP,
+  verifyEmailOTP,
+  resendEmailOTP
 } = require('../controllers/emailController');
 const { body, query, validationResult } = require('express-validator');
 
@@ -71,6 +74,61 @@ router.post(
     handleValidationErrors
   ],
   resendEmailVerification
+);
+
+/**
+ * POST /email/send-otp
+ * Send 6-digit OTP code to email
+ */
+router.post(
+  '/send-otp',
+  [
+    body('email')
+      .trim()
+      .notEmpty().withMessage('Email is required')
+      .isEmail().withMessage('Invalid email format')
+      .normalizeEmail(),
+    handleValidationErrors
+  ],
+  sendEmailOTP
+);
+
+/**
+ * POST /email/verify-otp
+ * Verify 6-digit OTP code
+ */
+router.post(
+  '/verify-otp',
+  [
+    body('email')
+      .trim()
+      .notEmpty().withMessage('Email is required')
+      .isEmail().withMessage('Invalid email format')
+      .normalizeEmail(),
+    body('otp')
+      .trim()
+      .notEmpty().withMessage('Verification code is required')
+      .isLength({ min: 6, max: 6 }).withMessage('Code must be 6 digits'),
+    handleValidationErrors
+  ],
+  verifyEmailOTP
+);
+
+/**
+ * POST /email/resend-otp
+ * Resend 6-digit OTP code
+ */
+router.post(
+  '/resend-otp',
+  [
+    body('email')
+      .trim()
+      .notEmpty().withMessage('Email is required')
+      .isEmail().withMessage('Invalid email format')
+      .normalizeEmail(),
+    handleValidationErrors
+  ],
+  resendEmailOTP
 );
 
 module.exports = router;
