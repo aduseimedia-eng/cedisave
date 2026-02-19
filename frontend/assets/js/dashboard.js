@@ -271,8 +271,10 @@ async function loadGamificationData() {
     const streak = streakResponse.data;
     document.getElementById('currentStreak').textContent = `${streak.current_streak || 0} days`;
     
-    // Celebrate streaks
-    if (streak.current_streak === 7 || streak.current_streak === 30) {
+    // Celebrate streaks (only once per session)
+    const streakKey = `streakCelebrated_${streak.current_streak}`;
+    if ((streak.current_streak === 7 || streak.current_streak === 30) && !sessionStorage.getItem(streakKey)) {
+      sessionStorage.setItem(streakKey, 'true');
       celebrateStreak(streak.current_streak);
     }
 
