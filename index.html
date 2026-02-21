@@ -1167,20 +1167,25 @@
 
     function signInWithGoogle() {
       if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.id.prompt((notification) => {
-          if (notification.isNotDisplayed()) {
-            google.accounts.oauth2.initTokenClient({
-              client_id: GOOGLE_CLIENT_ID,
-              scope: 'email profile',
-              callback: (response) => {
-                if (response.access_token) fetchGoogleUserInfo(response.access_token);
-              }
-            }).requestAccessToken();
+        // Use popup-based OAuth2 flow directly (more reliable than One Tap for GitHub Pages)
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'email profile openid',
+          callback: (response) => {
+            if (response.error) {
+              console.error('Google OAuth error:', response.error, response.error_description);
+              showToast(response.error_description || 'Google sign-in was cancelled', 'error');
+              return;
+            }
+            if (response.access_token) {
+              fetchGoogleUserInfo(response.access_token);
+            }
           }
         });
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
       } else {
         console.log('Google SDK not loaded');
-        showToast('Google Sign-In is not available right now', 'error');
+        showToast('Google Sign-In is not available right now. Refresh and try again.', 'error');
       }
     }
 
