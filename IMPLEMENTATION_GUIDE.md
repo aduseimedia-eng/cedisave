@@ -691,9 +691,9 @@ try {
 # Email Configuration
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
+EMAIL_USER=support@kudisave.com
 EMAIL_PASSWORD=your-app-password
-EMAIL_FROM=noreply@kudisave.com
+EMAIL_FROM=support@kudisave.com
 FRONTEND_URL=https://your-domain.com
 ```
 

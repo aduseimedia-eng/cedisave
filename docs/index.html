@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KudiSave — Smart Money Management for Ghana</title>
+  <meta name="description" content="Track expenses, set budgets, save smarter. KudiSave helps Ghanaian youth master their finances with mobile money support, gamification, and smart insights.">
+  <meta name="keywords" content="Ghana fintech, expense tracker, budget app, mobile money, MTN MoMo, savings, KudiSave">
+  <meta name="author" content="Adusei Media">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="KudiSave — Smart Money Management for Ghana">
+  <meta property="og:description" content="Track every cedi. Budget smarter. Save more. Coming soon to Ghana.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.kudisave.com">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --green-dark: #003822;
+      --green-primary: #006B3F;
+      --green-mid: #009B5A;
+      --green-light: #00C471;
+      --green-glow: #00FF8C;
+      --gold: #FCD116;
+      --gold-dark: #D4A800;
+      --red: #CE1126;
+      --white: #ffffff;
+      --gray-50: #f8faf9;
+      --gray-100: #f0f4f2;
+      --gray-200: #dce5df;
+      --gray-600: #5a6b5e;
+      --gray-800: #1a2e1f;
+      --gray-900: #0d1a10;
+    }
+
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gray-900);
+      color: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== Animated Background ===== */
+    .bg-animation {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      background: linear-gradient(160deg, var(--gray-900) 0%, var(--green-dark) 40%, var(--gray-900) 100%);
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(0, 107, 63, 0.15) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(0, 196, 113, 0.08) 0%, transparent 50%);
+      animation: bgPulse 15s ease-in-out infinite;
+    }
+
+    @keyframes bgPulse {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(2%, -2%) scale(1.02); }
+      66% { transform: translate(-1%, 1%) scale(0.98); }
+    }
+
+    .floating-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .orb-1 { width: 400px; height: 400px; background: var(--green-primary); top: 10%; left: -5%; animation-delay: 0s; }
+    .orb-2 { width: 300px; height: 300px; background: var(--green-light); top: 60%; right: -5%; animation-delay: -7s; }
+    .orb-3 { width: 250px; height: 250px; background: var(--gold); top: 30%; right: 20%; opacity: 0.1; animation-delay: -14s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-30px) translateX(15px); }
+      50% { transform: translateY(15px) translateX(-20px); }
+      75% { transform: translateY(-20px) translateX(10px); }
+    }
+
+    /* Grid pattern overlay */
+    .grid-pattern {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 107, 63, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 107, 63, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ===== Content Wrapper ===== */
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== Navigation ===== */
+    nav {
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 15px rgba(0, 196, 113, 0.3);
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span {
+      color: var(--green-light);
+    }
+
+    .nav-badge {
+      background: rgba(0, 196, 113, 0.15);
+      border: 1px solid rgba(0, 196, 113, 0.3);
+      color: var(--green-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ===== Hero Section ===== */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(252, 209, 22, 0.1);
+      border: 1px solid rgba(252, 209, 22, 0.25);
+      color: var(--gold);
+      padding: 8px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 7vw, 72px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--green-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--gray-200);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    /* ===== Email Form ===== */
+    .waitlist-form {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto 20px;
+      animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+
+    .waitlist-form input {
+      flex: 1;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 2px solid rgba(0, 196, 113, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--white);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+    }
+
+    .waitlist-form input::placeholder { color: var(--gray-600); }
+    .waitlist-form input:focus { border-color: var(--green-light); background: rgba(255, 255, 255, 0.08); }
+
+    .btn-primary {
+      padding: 16px 28px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0, 196, 113, 0.3);
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 196, 113, 0.4); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .waitlist-note {
+      font-size: 13px;
+      color: var(--gray-600);
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 196, 113, 0.1);
+      border: 1px solid rgba(0, 196, 113, 0.3);
+      border-radius: 14px;
+      max-width: 480px;
+      margin: 0 auto 20px;
+    }
+
+    .form-success.show { display: block; }
+    .form-success h3 { color: var(--green-light); margin-bottom: 6px; }
+    .form-success p { color: var(--gray-200); font-size: 14px; }
+
+    /* ===== Ghana Flag Accent ===== */
+    .ghana-flag {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin: 30px auto;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    .flag-bar {
+      width: 40px;
+      height: 6px;
+      border-radius: 3px;
+    }
+
+    .flag-red { background: var(--red); }
+    .flag-gold { background: var(--gold); }
+    .flag-green { background: var(--green-primary); }
+
+    /* ===== Phone Mockup ===== */
+    .mockup-section {
+      padding: 40px 0 80px;
+      text-align: center;
+    }
+
+    .phone-frame {
+      width: 280px;
+      height: 560px;
+      margin: 0 auto;
+      background: linear-gradient(160deg, #1a1a2e, #16213e);
+      border-radius: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 0 30px rgba(0, 107, 63, 0.1);
+      position: relative;
+      animation: phoneFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes phoneFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .phone-notch {
+      width: 120px;
+      height: 28px;
+      background: #0d1a10;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto 15px;
+    }
+
+    .phone-screen {
+      height: calc(100% - 50px);
+      border-radius: 28px;
+      overflow: hidden;
+      background: linear-gradient(160deg, var(--green-dark), var(--green-primary));
+      position: relative;
+    }
+
+    .screen-header {
+      padding: 20px 16px 12px;
+      text-align: left;
+    }
+
+    .screen-greeting {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 2px;
+    }
+
+    .screen-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .screen-balance {
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    .balance-label {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .balance-amount {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .balance-amount span {
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .screen-cards {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .screen-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .card-icon.food { background: rgba(255, 107, 107, 0.2); }
+    .card-icon.transport { background: rgba(78, 205, 196, 0.2); }
+    .card-icon.data { background: rgba(69, 183, 209, 0.2); }
+    .card-icon.goal { background: rgba(252, 209, 22, 0.2); }
+
+    .card-title { font-size: 12px; font-weight: 600; color: var(--white); }
+    .card-sub { font-size: 10px; color: rgba(255, 255, 255, 0.5); }
+    .card-amount { font-size: 13px; font-weight: 700; color: var(--white); }
+    .card-amount.income { color: var(--green-light); }
+
+    /* ===== Features Section ===== */
+    .features {
+      padding: 80px 0;
+    }
+
+    .section-tag {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(0, 196, 113, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .feature-card:hover { border-color: rgba(0, 196, 113, 0.2); transform: translateY(-4px); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .feature-icon.green { background: rgba(0, 196, 113, 0.12); }
+    .feature-icon.gold { background: rgba(252, 209, 22, 0.12); }
+    .feature-icon.red { background: rgba(206, 17, 38, 0.12); }
+    .feature-icon.blue { background: rgba(69, 183, 209, 0.12); }
+    .feature-icon.purple { background: rgba(162, 155, 254, 0.12); }
+    .feature-icon.orange { background: rgba(255, 159, 67, 0.12); }
+
+    .feature-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--gray-200);
+      line-height: 1.7;
+      position: relative;
+    }
+
+    /* ===== Stats Section ===== */
+    .stats {
+      padding: 60px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 30px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--green-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+
+    /* ===== CTA Section ===== */
+    .cta {
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .cta-card {
+      background: linear-gradient(160deg, rgba(0, 107, 63, 0.3), rgba(0, 56, 34, 0.5));
+      border: 1px solid rgba(0, 196, 113, 0.2);
+      border-radius: 24px;
+      padding: 60px 40px;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -30%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0, 196, 113, 0.1), transparent 70%);
+      border-radius: 50%;
+    }
+
+    .cta h2 {
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 800;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .cta p {
+      color: var(--gray-200);
+      margin-bottom: 30px;
+      font-size: 16px;
+      position: relative;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .footer-brand span { color: var(--green-light); }
+
+    .footer-text {
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--gray-600);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--green-light); }
+
+    .footer-flag {
+      display: flex;
+      justify-content: center;
+      gap: 3px;
+      margin-top: 20px;
+    }
+
+    .footer-flag span {
+      width: 24px;
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    /* ===== Animations ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 640px) {
+      .hero { padding: 50px 0 40px; }
+      
+      .waitlist-form {
+        flex-direction: column;
+      }
+
+      .btn-primary { width: 100%; text-align: center; }
+
+      .phone-frame { width: 240px; height: 480px; }
+
+      .features-grid { grid-template-columns: 1fr; }
+      
+      .cta-card { padding: 40px 24px; }
+
+      .nav-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    <div class="grid-pattern"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Navigation -->
+    <nav>
+      <div class="container">
+        <div class="nav-inner">
+          <a href="#" class="logo">
+            <div class="logo-icon">🏦</div>
+            <div class="logo-text">Kudi<span>Save</span></div>
+          </a>
+          <div class="nav-badge">Coming Soon</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-tag">
+          🇬🇭 Built for Ghana, Built for You
+        </div>
+        <h1>
+          Master Your<br>
+          <span class="highlight">Money Moves</span>
+        </h1>
+        <p class="hero-sub">
+          Track every cedi, set smart budgets, crush your savings goals, and level up your 
+          financial game — all with mobile money support built in.
+        </p>
+
+        <!-- Waitlist Form -->
+        <form class="waitlist-form" id="waitlistForm">
+          <input type="email" id="emailInput" placeholder="Enter your email address" required autocomplete="email">
+          <button type="submit" class="btn-primary">Join Waitlist</button>
+        </form>
+        <p class="waitlist-note">🔒 No spam. Get notified when we launch.</p>
+
+        <!-- Success Message -->
+        <div class="form-success" id="formSuccess">
+          <h3>🎉 You're on the list!</h3>
+          <p>We'll notify you when KudiSave launches. Ayeekoo!</p>
+        </div>
+
+        <!-- Ghana Flag -->
+        <div class="ghana-flag">
+          <div class="flag-bar flag-red"></div>
+          <div class="flag-bar flag-gold"></div>
+          <div class="flag-bar flag-green"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phone Mockup -->
+    <section class="mockup-section">
+      <div class="container">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="screen-header">
+              <div class="screen-greeting">Good Morning 👋</div>
+              <div class="screen-name">Kwame</div>
+            </div>
+            <div class="screen-balance">
+              <div class="balance-label">This month's spending</div>
+              <div class="balance-amount"><span>GH₵</span> 1,245<span>.00</span></div>
+            </div>
+            <div class="screen-cards">
+              <div class="screen-card">
+                <div class="card-left">
+                  <div class="card-icon food">🍛</div>
+                  <div>
+                    <div class="card-title">Food / Chop Bar</div>
+                    <div class="card-sub">Today, 12:30 PM</div>
+                  </div>
+                </div>
+                <div class="card-amount">-₵45.00</div>
+              </div>
+              <div class="screen-card">
+                <div class="card-left">
+                  <div class="card-icon transport">🚌</div>
+                  <div>
+                    <div class="card-title">Trotro to Accra</div>
+                    <div class="card-sub">Today, 8:15 AM</div>
+                  </div>
+                </div>
+                <div class="card-amount">-₵15.00</div>
+              </div>
+              <div class="screen-card">
+                <div class="card-left">
+                  <div class="card-icon data">📱</div>
+                  <div>
+                    <div class="card-title">MTN Data Bundle</div>
+                    <div class="card-sub">Yesterday</div>
+                  </div>
+                </div>
+                <div class="card-amount">-₵50.00</div>
+              </div>
+              <div class="screen-card">
+                <div class="card-left">
+                  <div class="card-icon goal">🎯</div>
+                  <div>
+                    <div class="card-title">New Laptop Goal</div>
+                    <div class="card-sub">50% reached!</div>
+                  </div>
+                </div>
+                <div class="card-amount income">₵2,500</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features animate-on-scroll" id="features">
+      <div class="container">
+        <div class="section-tag">Features</div>
+        <h2 class="section-title">Everything You Need to<br>Save Smarter</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon green">📊</div>
+            <h3>Track Every Cedi</h3>
+            <p>Log expenses by category — from chop bar to trotro fare, data bundles to rent. Know exactly where your money goes.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon gold">🎯</div>
+            <h3>Smart Savings Goals</h3>
+            <p>Set goals for that new laptop, emergency fund, or weekend trip. Watch your progress grow with visual tracking.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon red">💰</div>
+            <h3>Budget Like a Boss</h3>
+            <p>Set weekly or monthly budgets and get alerts at 50%, 75%, and 90% — before you overspend.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon blue">📱</div>
+            <h3>Mobile Money Ready</h3>
+            <p>Built for Ghana. Log MTN MoMo, Telecel Cash, AirtelTigo Money, bank transfers, and cash transactions.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon purple">🏆</div>
+            <h3>Earn & Level Up</h3>
+            <p>Gain XP for logging expenses, maintaining streaks, and hitting goals. Unlock badges and climb the leaderboard.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon orange">📈</div>
+            <h3>Smart Insights</h3>
+            <p>Get personalized tips, weekly summaries, spending trends, and a financial health score to keep improving.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats animate-on-scroll">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Ghana Expense Categories</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Payment Methods</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">6</div>
+            <div class="stat-label">Unlockable Badges</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Free to Use</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta animate-on-scroll">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Ready to Take Control?</h2>
+          <p>Join the waitlist and be the first to know when KudiSave launches in Ghana.</p>
+          <form class="waitlist-form" id="waitlistForm2" style="animation: none;">
+            <input type="email" placeholder="your@email.com" required autocomplete="email">
+            <button type="submit" class="btn-primary">Notify Me</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-brand">Kudi<span>Save</span></div>
+        <p class="footer-text">Smart Money Management for Ghana 🇬🇭</p>
+        <div class="footer-links">
+          <a href="mailto:support@kudisave.com">support@kudisave.com</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-flag">
+          <span class="flag-red" style="background: #CE1126;"></span>
+          <span class="flag-gold" style="background: #FCD116;"></span>
+          <span class="flag-green" style="background: #006B3F;"></span>
+        </div>
+        <p class="footer-text" style="margin-top: 16px;">© 2026 Adusei Media. All rights reserved.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Waitlist form handling
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const emailInput = form.querySelector('input[type="email"]');
+        const email = emailInput.value.trim();
+        
+        if (!email) return;
+
+        // Store in localStorage as simple waitlist
+        const waitlist = JSON.parse(localStorage.getItem('kudisave_waitlist') || '[]');
+        if (!waitlist.includes(email)) {
+          waitlist.push(email);
+          localStorage.setItem('kudisave_waitlist', JSON.stringify(waitlist));
+        }
+
+        // Show success
+        const mainForm = document.getElementById('waitlistForm');
+        const successMsg = document.getElementById('formSuccess');
+        
+        if (form === mainForm) {
+          mainForm.style.display = 'none';
+          successMsg.classList.add('show');
+          document.querySelector('.waitlist-note').style.display = 'none';
+        } else {
+          form.innerHTML = '<div style="color: var(--green-light); font-weight: 600; padding: 16px;">🎉 You\'re on the list! Ayeekoo!</div>';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

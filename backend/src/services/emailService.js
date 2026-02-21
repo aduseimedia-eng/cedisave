@@ -4,15 +4,18 @@ require('dotenv').config();
 // Create transporter
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false, // true for 465, false for other ports
+  port: parseInt(process.env.EMAIL_PORT) || 465,
+  secure: process.env.EMAIL_SECURE === 'true' || parseInt(process.env.EMAIL_PORT) === 465,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
   },
   tls: {
     rejectUnauthorized: false
-  }
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000
 });
 
 /**
@@ -147,7 +150,7 @@ const sendWelcomeEmail = async (email, name) => {
 const sendTestEmail = async (email) => {
   try {
     const mailOptions = {
-      from: `"KudiSave" <${process.env.EMAIL_FROM || 'noreply@kudisave.gh'}>`,
+      from: `"KudiSave" <${process.env.EMAIL_FROM || 'support@kudisave.com'}>`,
       to: email,
       subject: '🔔 KudiSave - Notifications Working!',
       html: `
@@ -221,7 +224,7 @@ const sendTestEmail = async (email) => {
 const sendBillReminderEmail = async (email, billName, amount, dueDate) => {
   try {
     const mailOptions = {
-      from: `"KudiSave" <${process.env.EMAIL_FROM || 'noreply@kudisave.gh'}>`,
+      from: `"KudiSave" <${process.env.EMAIL_FROM || 'support@kudisave.com'}>`,
       to: email,
       subject: `🔔 Bill Reminder: ${billName} due soon!`,
       html: `
@@ -281,7 +284,7 @@ const sendBillReminderEmail = async (email, billName, amount, dueDate) => {
 const sendGoalMilestoneEmail = async (email, goalName, progress, milestone) => {
   try {
     const mailOptions = {
-      from: `"KudiSave" <${process.env.EMAIL_FROM || 'noreply@kudisave.gh'}>`,
+      from: `"KudiSave" <${process.env.EMAIL_FROM || 'support@kudisave.com'}>`,
       to: email,
       subject: `🎯 Goal Milestone: ${goalName} - ${milestone}% reached!`,
       html: `

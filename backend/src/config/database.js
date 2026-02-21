@@ -2,11 +2,14 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 // PostgreSQL connection pool configuration
-// Supports both DATABASE_URL (Render) and individual DB_* variables (local)
+// Supports DATABASE_URL (Railway/Render) and individual DB_* variables (local)
+const isRailway = process.env.DATABASE_URL && process.env.DATABASE_URL.includes('railway');
+
 const poolConfig = process.env.DATABASE_URL 
   ? {
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }
+      // Railway proxy handles SSL — don't enable client-side SSL for Railway
+      ssl: isRailway ? false : { rejectUnauthorized: false }
     }
   : {
       host: process.env.DB_HOST,
