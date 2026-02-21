@@ -1286,7 +1286,7 @@
 
     // Update theme display
     function updateThemeDisplay() {
-      const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
       document.getElementById('themeIcon').innerHTML = theme === 'dark' ? '<i data-lucide="moon" class="icon"></i>' : '<i data-lucide="sun" class="icon"></i>';
       document.getElementById('themeText').textContent = theme === 'dark' ? 'Currently: Dark Mode' : 'Currently: Light Mode';
       const themeIcon = document.getElementById('themeIcon');
