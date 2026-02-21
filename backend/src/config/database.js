@@ -1,30 +1,49 @@
 const { Pool } = require('pg');
-require('dotenv').config();
+
+// Only load .env in development (don't let it interfere with Railway env vars)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 // PostgreSQL connection pool configuration
 // Supports DATABASE_URL (Railway/Render) and individual DB_* variables (local)
-const isRailway = process.env.DATABASE_URL && process.env.DATABASE_URL.includes('railway');
+const isRailway = process.env.DATABASE_URL && process.env.DATABASE_URL.includes('.railway.internal');
 
-const poolConfig = process.env.DATABASE_URL 
-  ? {
-      connectionString: process.env.DATABASE_URL,
-      // Railway proxy handles SSL — don't enable client-side SSL for Railway
-      ssl: isRailway ? false : { rejectUnauthorized: false }
-    }
-  : {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+let poolConfig;
+if (process.env.DATABASE_URL) {
+  if (isRailway) {
+    // For Railway internal networking, use explicit host/port
+    const dbUrl = new URL(process.env.DATABASE_URL);
+    poolConfig = {
+      host: dbUrl.hostname,
+      port: parseInt(dbUrl.port) || 5432,
+      database: dbUrl.pathname.slice(1),
+      user: dbUrl.username,
+      password: decodeURIComponent(dbUrl.password),
+      ssl: false, // Railway internal doesn't need SSL
     };
+  } else {
+    poolConfig = {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    };
+  }
+} else {
+  poolConfig = {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+  };
+}
 
 const pool = new Pool({
   ...poolConfig,
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error after 2 seconds if connection not established
+  connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection not established
 });
 
 // Test database connection
