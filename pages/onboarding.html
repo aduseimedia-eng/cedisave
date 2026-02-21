@@ -12,8 +12,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
-  <!-- Lottie Animation Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -80,31 +78,28 @@
       text-align: center;
     }
 
-    .slide-icon {
-      margin-bottom: 24px;
-      animation: float 3s ease-in-out infinite;
-      color: var(--primary-light, #00a05e);
-      width: 120px;
-      height: 120px;
+    .slide-image-wrap {
+      width: 100%;
+      max-width: 300px;
+      height: 240px;
+      margin-bottom: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
+      animation: float 3s ease-in-out infinite;
     }
 
-    .slide-icon i {
-      width: 70px;
-      height: 70px;
-      stroke-width: 1.5;
-    }
-
-    .lottie-container {
+    .slide-image-wrap img {
       width: 100%;
       height: 100%;
+      object-fit: contain;
+      border-radius: 20px;
+      filter: drop-shadow(0 12px 32px rgba(0,107,63,0.35));
     }
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+      50% { transform: translateY(-12px); }
     }
 
     .slide-title {
@@ -243,8 +238,8 @@
       <div class="slides-wrapper" id="slidesWrapper">
         <!-- Slide 1 -->
         <div class="slide">
-          <div class="slide-icon" id="lottie-1">
-            <div class="lottie-container"></div>
+          <div class="slide-image-wrap">
+            <img src="../assets/images/20944292.png" alt="Track your finances">
           </div>
           <h2 class="slide-title">Track Your<br><span class="slide-highlight">Finances</span></h2>
           <p class="slide-description">Easily track all your income and expenses in one place. Know exactly where your money goes every month.</p>
@@ -252,8 +247,8 @@
 
         <!-- Slide 2 -->
         <div class="slide">
-          <div class="slide-icon" id="lottie-2">
-            <div class="lottie-container"></div>
+          <div class="slide-image-wrap">
+            <img src="../assets/images/2009.i518.001_crowdfunding_set-07.png" alt="Set savings goals">
           </div>
           <h2 class="slide-title">Set Goals &<br><span class="slide-highlight">Achieve More</span></h2>
           <p class="slide-description">Create savings goals for what matters most to you. Whether it's a new phone, school fees, or your dream car.</p>
@@ -261,8 +256,8 @@
 
         <!-- Slide 3 -->
         <div class="slide">
-          <div class="slide-icon" id="lottie-3">
-            <div class="lottie-container"></div>
+          <div class="slide-image-wrap">
+            <img src="../assets/images/Jan-Business_team_3.png" alt="Build money habits">
           </div>
           <h2 class="slide-title">Build Better<br><span class="slide-highlight">Money Habits</span></h2>
           <p class="slide-description">Get insights with beautiful reports, earn badges for good habits, and level up your financial game!</p>
@@ -379,42 +374,7 @@
     // In demo mode, always show onboarding (don't auto-redirect)
     // Check is now skipped to allow viewing
     
-    // Initialize Lottie Animations
-    let animationInstances = {};
-
-    function initLottieAnimations() {
-      // Animation 1: Wallet - Track Finances
-      animationInstances.anim1 = lottie.loadAnimation({
-        container: document.querySelector('#lottie-1 .lottie-container'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/wallet.json'
-      });
-
-      // Animation 2: Target - Set Goals
-      animationInstances.anim2 = lottie.loadAnimation({
-        container: document.querySelector('#lottie-2 .lottie-container'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/target.json'
-      });
-
-      // Animation 3: Growth - Build Habits
-      animationInstances.anim3 = lottie.loadAnimation({
-        container: document.querySelector('#lottie-3 .lottie-container'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/growth.json'
-      });
-    }
-
-    // Load animations when page is ready
-    window.addEventListener('load', () => {
-      initLottieAnimations();
-    });
+    // Images are used directly — no Lottie needed
     
     // Initialize Lucide icons
     lucide.createIcons();
