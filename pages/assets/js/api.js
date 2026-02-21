@@ -274,7 +274,7 @@ class APIService {
       }
     };
     clearOldCache();
-    window.location.href = '../splash.html';
+    window.location.href = '../index.html';
   }
 
   // EXPENSE ENDPOINTS

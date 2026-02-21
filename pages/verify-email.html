@@ -282,11 +282,12 @@
       </div>
 
       <div class="go-back">
-        <a href="index.html" class="go-back-link">&larr; Go back to login</a>
+        <a href="../index.html" class="go-back-link">&larr; Go back to login</a>
       </div>
     </div>
   </div>
 
+  <script src="assets/js/config.js"></script>
   <script>
     const API_BASE_URL = window.KUDISAVE_API_URL || (
       (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '')
@@ -303,7 +304,7 @@
 
       if (!emailAddress) {
         showToast('No email found. Please register again.', 'error');
-        setTimeout(function() { window.location.href = 'index.html'; }, 2000);
+        setTimeout(function() { window.location.href = '../index.html'; }, 2000);
         return;
       }
 
@@ -450,7 +451,7 @@
           sessionStorage.removeItem('pendingEmailVerification');
 
           setTimeout(function() {
-            window.location.href = 'index.html?verified=true';
+            window.location.href = '../index.html?verified=true';
           }, 2000);
         });
       })
