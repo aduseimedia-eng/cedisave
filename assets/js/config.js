@@ -37,7 +37,7 @@
   // Google OAuth Client ID
   // Replace with your actual Client ID from Google Cloud Console
   // console.cloud.google.com → APIs & Services → Credentials → OAuth 2.0 Client IDs
-  window.KUDISAVE_GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+  window.KUDISAVE_GOOGLE_CLIENT_ID = '760162537864-49c7509k9sdk3hf57d2at16anhv74cul.apps.googleusercontent.com';
 
   // Log configuration
   console.log('Config:', {
