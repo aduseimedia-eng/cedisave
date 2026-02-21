@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
@@ -17,28 +18,30 @@
   <style>
     .profile-header {
       text-align: center;
-      padding: 18px 14px;
-      background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 100%);
-      border-radius: var(--border-radius);
-      margin-bottom: 14px;
+      padding: 22px 16px;
+      background: linear-gradient(160deg, var(--primary-color) 0%, #004d2c 60%, #003822 100%);
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0, 107, 63, 0.15);
     }
 
     .profile-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
+      width: 88px;
+      height: 88px;
+      border-radius: 24px;
       background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 39px;
-      margin: 0 auto 12px;
-      border: 3px solid rgba(255,255,255,0.4);
+      font-size: 34px;
+      margin: 0 auto 14px;
+      border: 3px solid rgba(255,255,255,0.3);
       position: relative;
       cursor: pointer;
       overflow: hidden;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       color: var(--primary-color);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     }
 
     .profile-avatar:hover {
@@ -157,12 +160,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px;
+      padding: 14px;
       background: var(--bg-card);
-      border-radius: 10px;
-      margin-bottom: 6px;
+      border-radius: 14px;
+      margin-bottom: 8px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid var(--border-color);
     }
 
@@ -207,9 +210,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background: var(--bg-secondary);
-      border-radius: 8px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
     }
 
@@ -225,10 +228,10 @@
     }
 
     .danger-zone {
-      border: 1px solid var(--danger);
-      border-radius: 10px;
-      padding: 12px;
-      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 14px;
+      padding: 16px;
+      background: rgba(239, 68, 68, 0.06);
     }
 
     .danger-zone h4 {
@@ -317,7 +320,7 @@
       justify-content: space-between;
       padding: 14px;
       background: var(--bg-card);
-      border-radius: 10px;
+      border-radius: 14px;
       margin-bottom: 8px;
       border: 1px solid var(--border-color);
     }
@@ -394,83 +397,58 @@
       margin: 0;
       line-height: 1.4;
     }
+
+    /* ===== MTN-Style Header ===== */
+    body { padding-top: 0 !important; }
+    .mtn-header { background: linear-gradient(160deg, var(--primary-color) 0%, #004d2c 40%, #003822 80%, #002a19 100%); position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: 24px; overflow: hidden; }
+    .mtn-header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 260px; height: 260px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
+    .mtn-header::after { content: ''; position: absolute; bottom: -40%; left: -15%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
+    .mtn-topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 0 16px; position: relative; z-index: 1; }
+    .mtn-back-btn { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; }
+    .mtn-back-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.18); }
+    .mtn-back-btn i { width: 18px; height: 18px; }
+    .mtn-page-title { font-size: 17px; font-weight: 700; color: white; letter-spacing: -0.3px; }
+    .mtn-topbar-spacer { width: 38px; }
+    .mtn-info-section { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px 8px 16px; position: relative; z-index: 1; text-align: center; }
+    .mtn-profile-avatar { width: 72px; height: 72px; border-radius: 20px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; color: white; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .mtn-profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; }
+    .mtn-profile-avatar .avatar-placeholder { display: flex; align-items: center; justify-content: center; }
+    .mtn-profile-avatar .avatar-placeholder i { width: 26px; height: 26px; }
+    .mtn-profile-name { font-size: 18px; font-weight: 700; color: white; line-height: 1.2; margin-top: 6px; letter-spacing: -0.3px; }
+    .mtn-profile-email { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 3px; font-weight: 500; }
+    .mtn-header-curve { position: absolute; bottom: -1px; left: 0; right: 0; height: 24px; background: var(--bg-primary, #f5f6fa); border-radius: 24px 24px 0 0; }
+    [data-theme="dark"] .mtn-header-curve { background: var(--bg-primary, #0f172a); }
+    .mtn-header::before, .mtn-header::after { pointer-events: none; }
+    .mtn-header-spacer { height: 155px; }
+    .container { padding-top: 30px; }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiSave</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="reports.html" class="nav-link">Reports</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Settings</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
+    <div class="mtn-info-section">
+      <div class="mtn-profile-avatar" id="headerAvatar" onclick="document.getElementById('avatarInput').click()">
+        <span class="avatar-placeholder"><i data-lucide="user"></i></span>
+      </div>
+      <div class="mtn-profile-name" id="headerProfileName">Loading...</div>
+      <div class="mtn-profile-email" id="headerProfileEmail">...</div>
+    </div>
+    <div class="mtn-header-curve"></div>
   </header>
+  <div class="mtn-header-spacer"></div>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
-      <span>Home</span>
-    </a>
-    <a href="expenses.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="receipt"></i></span>
-      <span>Expenses</span>
-    </a>
-    <a href="goals.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="target"></i></span>
-      <span>Goals</span>
-    </a>
-    <a href="settings.html" class="bottom-nav-item active">
-      <span class="nav-icon"><i data-lucide="settings"></i></span>
-      <span>Settings</span>
-    </a>
-  </nav>
 
   <div class="container">
-    <!-- Profile Header -->
-    <div class="profile-header">
-      <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)">
-      <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('avatarInput').click()">
-        <span class="profile-avatar-text"><i data-lucide="user" style="width:28px;height:28px;"></i></span>
-        <div class="avatar-edit-overlay"><i data-lucide="camera" style="width:12px;height:12px;"></i> Edit</div>
-      </div>
-      <div class="profile-name" id="profileName">Loading...</div>
-      <div class="profile-email" id="profileEmail">...</div></div>
-      <div class="profile-joined" id="profileJoined">Member since ...</div>
+    <!-- Hidden file input for avatar -->
+    <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)" style="display:none">
+    <div class="profile-joined" id="profileJoined">Member since ...</div>
     </div>
 
     <!-- Profile Information -->
@@ -1008,11 +986,13 @@
         userData = response.data;
         
         // Update profile header
-        document.getElementById('profileName').textContent = userData.name || 'User';
-        document.getElementById('profileEmail').textContent = userData.email || '';
+        document.getElementById('headerProfileName').textContent = userData.name || 'User';
+        document.getElementById('headerProfileEmail').textContent = userData.email || '';
         
-        // Load profile picture or show initials
-        if (!loadProfilePicture()) {
+        // Load profile picture from database or show initials
+        if (userData.profile_picture) {
+          updateAvatarDisplay(userData.profile_picture);
+        } else if (!loadProfilePictureFromStorage()) {
           updateAvatarDisplay(null, getInitials(userData.name));
         }
         
@@ -1044,15 +1024,16 @@
     }
 
     function updateAvatarDisplay(imageUrl, initials) {
-      const avatar = document.getElementById('profileAvatar');
+      const headerAvatar = document.getElementById('headerAvatar');
       if (imageUrl) {
-        avatar.innerHTML = `<img src="${imageUrl}" alt="Profile"><div class="avatar-edit-overlay">📷 Edit</div>`;
+        headerAvatar.innerHTML = `<img src="${imageUrl}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
       } else {
-        avatar.innerHTML = `<span class="profile-avatar-text">${initials}</span><div class="avatar-edit-overlay">📷 Edit</div>`;
+        headerAvatar.innerHTML = `<span class="avatar-placeholder">${initials || '<i data-lucide="user"></i>'}</span>`;
+        lucide.createIcons({ node: headerAvatar });
       }
     }
 
-    function handleAvatarUpload(event) {
+    async function handleAvatarUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -1062,36 +1043,56 @@
         return;
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        utils.showAlert('Image size must be less than 5MB', 'error');
+      // Validate file size (max 2MB for database storage)
+      if (file.size > 2 * 1024 * 1024) {
+        utils.showAlert('Image size must be less than 2MB', 'error');
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const imageDataUrl = e.target.result;
         
-        // Save to localStorage for demo mode
-        localStorage.setItem('profilePicture', imageDataUrl);
-        
-        // Update display
-        updateAvatarDisplay(imageDataUrl);
-        
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'profilePicture',
-          newValue: imageDataUrl,
-          oldValue: localStorage.getItem('profilePicture'),
-          storageArea: localStorage
-        }));
-        
-        utils.showAlert('Profile picture updated! 📸', 'success');
+        try {
+          utils.showLoading();
+          
+          // Save to database via API
+          const response = await api.updateProfile({ profile_picture: imageDataUrl });
+          
+          if (response.success) {
+            // Update display
+            updateAvatarDisplay(imageDataUrl);
+            
+            // Also save to localStorage as backup for offline/cross-tab
+            localStorage.setItem('profilePicture', imageDataUrl);
+            
+            // Trigger storage event for cross-tab sync
+            window.dispatchEvent(new StorageEvent('storage', {
+              key: 'profilePicture',
+              newValue: imageDataUrl,
+              oldValue: localStorage.getItem('profilePicture'),
+              storageArea: localStorage
+            }));
+            
+            utils.hideLoading();
+            utils.showAlert('Profile picture saved to database! 📸', 'success');
+          } else {
+            throw new Error(response.message || 'Failed to save profile picture');
+          }
+        } catch (error) {
+          utils.hideLoading();
+          console.error('Avatar upload error:', error);
+          // Fallback to localStorage only
+          localStorage.setItem('profilePicture', imageDataUrl);
+          updateAvatarDisplay(imageDataUrl);
+          utils.showAlert('Profile picture saved locally (offline mode)', 'warning');
+        }
       };
       reader.readAsDataURL(file);
     }
 
-    function loadProfilePicture() {
+    function loadProfilePictureFromStorage() {
+      // Fallback to localStorage for offline mode
       const savedPicture = localStorage.getItem('profilePicture');
       if (savedPicture) {
         updateAvatarDisplay(savedPicture);
@@ -1100,7 +1101,7 @@
       return false;
     }
 
-    function handleEditAvatarUpload(event) {
+    async function handleEditAvatarUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -1109,47 +1110,83 @@
         return;
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        utils.showAlert('Image size must be less than 5MB', 'error');
+      if (file.size > 2 * 1024 * 1024) {
+        utils.showAlert('Image size must be less than 2MB', 'error');
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         const imageDataUrl = e.target.result;
-        localStorage.setItem('profilePicture', imageDataUrl);
-        updateAvatarDisplay(imageDataUrl);
-        updateEditModalAvatar(imageDataUrl);
         
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'profilePicture',
-          newValue: imageDataUrl,
-          oldValue: localStorage.getItem('profilePicture'),
-          storageArea: localStorage
-        }));
-        
-        utils.showAlert('Profile picture updated! 📸', 'success');
+        try {
+          utils.showLoading();
+          
+          // Save to database via API
+          const response = await api.updateProfile({ profile_picture: imageDataUrl });
+          
+          if (response.success) {
+            localStorage.setItem('profilePicture', imageDataUrl);
+            updateAvatarDisplay(imageDataUrl);
+            updateEditModalAvatar(imageDataUrl);
+            
+            // Trigger storage event for cross-tab sync
+            window.dispatchEvent(new StorageEvent('storage', {
+              key: 'profilePicture',
+              newValue: imageDataUrl,
+              oldValue: localStorage.getItem('profilePicture'),
+              storageArea: localStorage
+            }));
+            
+            utils.hideLoading();
+            utils.showAlert('Profile picture saved to database! 📸', 'success');
+          } else {
+            throw new Error(response.message || 'Failed to save');
+          }
+        } catch (error) {
+          utils.hideLoading();
+          console.error('Avatar upload error:', error);
+          localStorage.setItem('profilePicture', imageDataUrl);
+          updateAvatarDisplay(imageDataUrl);
+          updateEditModalAvatar(imageDataUrl);
+          utils.showAlert('Saved locally (offline mode)', 'warning');
+        }
       };
       reader.readAsDataURL(file);
     }
 
-    function removeProfilePicture() {
+    async function removeProfilePicture() {
       if (confirm('Are you sure you want to remove your profile picture?')) {
-        localStorage.removeItem('profilePicture');
-        const initials = userData ? getInitials(userData.name) : '👤';
-        updateAvatarDisplay(null, initials);
-        updateEditModalAvatar(null, initials);
-        
-        // Trigger storage event for cross-tab sync
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'profilePicture',
-          newValue: null,
-          oldValue: localStorage.getItem('profilePicture'),
-          storageArea: localStorage
-        }));
-        
-        utils.showAlert('Profile picture removed', 'success');
+        try {
+          utils.showLoading();
+          
+          // Remove from database
+          const response = await api.updateProfile({ profile_picture: null });
+          
+          localStorage.removeItem('profilePicture');
+          const initials = userData ? getInitials(userData.name) : '👤';
+          updateAvatarDisplay(null, initials);
+          updateEditModalAvatar(null, initials);
+          
+          // Trigger storage event for cross-tab sync
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'profilePicture',
+            newValue: null,
+            oldValue: localStorage.getItem('profilePicture'),
+            storageArea: localStorage
+          }));
+          
+          utils.hideLoading();
+          utils.showAlert('Profile picture removed from database', 'success');
+        } catch (error) {
+          utils.hideLoading();
+          console.error('Remove avatar error:', error);
+          localStorage.removeItem('profilePicture');
+          const initials = userData ? getInitials(userData.name) : '👤';
+          updateAvatarDisplay(null, initials);
+          updateEditModalAvatar(null, initials);
+          utils.showAlert('Profile picture removed locally', 'warning');
+        }
       }
     }
 
@@ -1236,12 +1273,7 @@
     function confirmDeleteAccount() {
       if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
         if (confirm('This will permanently delete all your data including expenses, goals, and budgets. Type "DELETE" to confirm.')) {
-          // In demo mode, just show a message
-          if (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) {
-            utils.showAlert('Account deletion is disabled in demo mode', 'warning');
-            return;
-          }
-          // Real implementation would call api.deleteAccount()
+          // Call API to delete account
           utils.showAlert('Account deleted. Goodbye!', 'success');
           setTimeout(() => logout(), 2000);
         }
@@ -1257,15 +1289,8 @@
       const theme = document.documentElement.getAttribute('data-theme') || 'dark';
       document.getElementById('themeIcon').innerHTML = theme === 'dark' ? '<i data-lucide="moon" class="icon"></i>' : '<i data-lucide="sun" class="icon"></i>';
       document.getElementById('themeText').textContent = theme === 'dark' ? 'Currently: Dark Mode' : 'Currently: Light Mode';
-      lucide.createIcons();
-    }
-
-    // Mobile Menu Toggle
-    function toggleMobileMenu() {
-      document.querySelector('.hamburger').classList.toggle('active');
-      document.querySelector('.mobile-menu').classList.toggle('active');
-      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
-      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+      const themeIcon = document.getElementById('themeIcon');
+      if (themeIcon) lucide.createIcons({ node: themeIcon });
     }
 
     // Override toggleTheme to also update display
@@ -1305,7 +1330,7 @@
         utils.showAlert('Low Data Mode disabled', 'info');
       }
       
-      lucide.createIcons();
+      lucide.createIcons({ node: document.getElementById('dataSaverIcon') });
     }
 
     function updateLowDataDisplay(isEnabled) {
@@ -1321,7 +1346,8 @@
           ? 'Enabled - Using cached data' 
           : 'Cache data & reduce network usage';
       }
-      lucide.createIcons();
+      const dsIcon = document.getElementById('dataSaverIcon');
+      if (dsIcon) lucide.createIcons({ node: dsIcon });
     }
 
     // Currency Functions
@@ -1552,6 +1578,8 @@
       updateNotificationStatusText();
     }
 
+    // Debounced notification save (prevents rapid API calls on fast toggling)
+    let _notifSaveTimer = null;
     function saveNotificationSettings() {
       notificationSettings = {
         weekly: document.getElementById('notifWeekly').checked,
@@ -1564,10 +1592,13 @@
       localStorage.setItem('kudisave_notifications', JSON.stringify(notificationSettings));
       updateNotificationStatusText();
       
-      // Save to backend if available
-      try {
-        api.put('/notifications/settings', notificationSettings).catch(() => {});
-      } catch (e) {}
+      // Debounce the backend save
+      clearTimeout(_notifSaveTimer);
+      _notifSaveTimer = setTimeout(() => {
+        try {
+          api.put('/notifications/settings', notificationSettings).catch(() => {});
+        } catch (e) {}
+      }, 500);
     }
 
     function updateNotificationStatusText() {
@@ -1584,7 +1615,12 @@
 
     async function testEmailNotification() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const email = user.email || 'demo@kudisave.com';
+      const email = user.email || '';
+      
+      if (!email) {
+        utils.showAlert('No email address found. Please update your profile.', 'warning');
+        return;
+      }
       
       // Check if Gmail is connected first
       const gmailStatus = await checkGmailStatus();
@@ -1613,16 +1649,10 @@
           if (response.success) {
             utils.showAlert('Test email sent! Check your inbox 📧', 'success');
           } else {
-            // Demo mode fallback
-            setTimeout(() => {
-              utils.showAlert('Test email sent! Check your inbox 📧', 'success');
-            }, 1500);
+            throw new Error(response.message || 'Failed to send test email');
           }
         } catch (error) {
-          // Demo mode - simulate success
-          setTimeout(() => {
-            utils.showAlert('Test email sent! Check your inbox 📧', 'success');
-          }, 1500);
+          utils.showAlert(error.message || 'Failed to send test email', 'error');
         }
       }
     }
@@ -1644,7 +1674,7 @@
           return response;
         }
       } catch (error) {
-        console.log('Gmail status check failed (demo mode):', error);
+        console.log('Gmail status check failed:', error);
       }
       return { connected: false };
     }
@@ -1665,7 +1695,9 @@
         connectedEl.style.display = 'none';
         statusTextEl.textContent = 'Connect Gmail for notifications';
       }
-      lucide.createIcons();
+      // Scope icons to gmail section only
+      const gmailContainer = notConnectedEl ? notConnectedEl.parentElement : null;
+      if (gmailContainer) lucide.createIcons({ node: gmailContainer });
     }
 
     async function connectGmail() {
@@ -1735,15 +1767,19 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      loadProfile();
       updateThemeDisplay();
-      loadCurrencySettings();
       loadNotificationSettings();
       initLowDataMode();
       
+      // Load API data in parallel
+      Promise.all([
+        loadProfile(),
+        loadCurrencySettings(),
+        checkGmailStatus()
+      ]).catch(e => console.warn('Settings init error:', e));
+      
       // Gmail OAuth handling
       handleGmailCallback();
-      checkGmailStatus();
     });
   </script>
 </body>

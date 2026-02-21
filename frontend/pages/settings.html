@@ -1092,7 +1092,7 @@
     }
 
     function loadProfilePictureFromStorage() {
-      // Fallback to localStorage for demo/offline mode
+      // Fallback to localStorage for offline mode
       const savedPicture = localStorage.getItem('profilePicture');
       if (savedPicture) {
         updateAvatarDisplay(savedPicture);
@@ -1273,12 +1273,7 @@
     function confirmDeleteAccount() {
       if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
         if (confirm('This will permanently delete all your data including expenses, goals, and budgets. Type "DELETE" to confirm.')) {
-          // In demo mode, just show a message
-          if (typeof DEMO_MODE !== 'undefined' && DEMO_MODE) {
-            utils.showAlert('Account deletion is disabled in demo mode', 'warning');
-            return;
-          }
-          // Real implementation would call api.deleteAccount()
+          // Call API to delete account
           utils.showAlert('Account deleted. Goodbye!', 'success');
           setTimeout(() => logout(), 2000);
         }
@@ -1620,7 +1615,12 @@
 
     async function testEmailNotification() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const email = user.email || 'demo@kudisave.com';
+      const email = user.email || '';
+      
+      if (!email) {
+        utils.showAlert('No email address found. Please update your profile.', 'warning');
+        return;
+      }
       
       // Check if Gmail is connected first
       const gmailStatus = await checkGmailStatus();
@@ -1649,16 +1649,10 @@
           if (response.success) {
             utils.showAlert('Test email sent! Check your inbox 📧', 'success');
           } else {
-            // Demo mode fallback
-            setTimeout(() => {
-              utils.showAlert('Test email sent! Check your inbox 📧', 'success');
-            }, 1500);
+            throw new Error(response.message || 'Failed to send test email');
           }
         } catch (error) {
-          // Demo mode - simulate success
-          setTimeout(() => {
-            utils.showAlert('Test email sent! Check your inbox 📧', 'success');
-          }, 1500);
+          utils.showAlert(error.message || 'Failed to send test email', 'error');
         }
       }
     }
@@ -1680,7 +1674,7 @@
           return response;
         }
       } catch (error) {
-        console.log('Gmail status check failed (demo mode):', error);
+        console.log('Gmail status check failed:', error);
       }
       return { connected: false };
     }

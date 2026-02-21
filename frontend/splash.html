@@ -119,9 +119,6 @@
     // Initialize Lucide icons
     lucide.createIcons();
     
-    // DEMO MODE - Show full app flow for new users
-    const DEMO_MODE = true;
-    
     // Check if user has completed onboarding and is logged in
     const hasCompletedOnboarding = localStorage.getItem('onboardingComplete');
     const isLoggedIn = localStorage.getItem('token');
@@ -129,21 +126,19 @@
     // Mark splash screen as shown
     sessionStorage.setItem('splashShown', 'true');
 
+    function getRedirectUrl() {
+      if (isLoggedIn) {
+        return 'pages/dashboard.html';
+      } else if (!hasCompletedOnboarding) {
+        return 'onboarding.html';
+      } else {
+        return 'index.html';
+      }
+    }
+
     // Wait 2.5 seconds then redirect based on user state
     setTimeout(() => {
-      if (isLoggedIn) {
-        // User is logged in, go to dashboard
-        window.location.href = 'pages/dashboard.html';
-      } else if (DEMO_MODE && !hasCompletedOnboarding) {
-        // Demo mode for NEW users only - show onboarding
-        window.location.href = 'onboarding.html';
-      } else if (!hasCompletedOnboarding) {
-        // New user, show onboarding
-        window.location.href = 'onboarding.html';
-      } else {
-        // Returning user, go to login
-        window.location.href = 'index.html';
-      }
+      window.location.href = getRedirectUrl();
     }, 2500);
     
     // Allow skip with tap/click
@@ -154,15 +149,7 @@
     function skipSplash() {
       if (!skipped) {
         skipped = true;
-        if (isLoggedIn) {
-          window.location.href = 'pages/dashboard.html';
-        } else if (DEMO_MODE && !hasCompletedOnboarding) {
-          window.location.href = 'onboarding.html';
-        } else if (!hasCompletedOnboarding) {
-          window.location.href = 'onboarding.html';
-        } else {
-          window.location.href = 'index.html';
-        }
+        window.location.href = getRedirectUrl();
       }
     }
   </script>

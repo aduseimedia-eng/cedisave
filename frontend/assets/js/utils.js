@@ -1,18 +1,5 @@
 // KudiSave - Utility Functions
 
-// Demo mode indicator - shows on all pages when in demo mode
-function showDemoModeIndicator() {
-  if (window.KUDISAVE_DEMO_MODE && !document.getElementById('demo-indicator')) {
-    const indicator = document.createElement('div');
-    indicator.id = 'demo-indicator';
-    indicator.innerHTML = '🎮 Demo Mode';
-    indicator.style.cssText = 'position:fixed;bottom:70px;right:10px;background:#2B5A34;color:white;padding:6px 12px;border-radius:15px;font-size:11px;z-index:9999;opacity:0.85;cursor:pointer;';
-    indicator.title = 'Data is stored locally in your browser';
-    indicator.onclick = () => { indicator.style.display = 'none'; };
-    document.body.appendChild(indicator);
-  }
-}
-
 // Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
   // Always read from localStorage first for instant persistence
@@ -60,7 +47,6 @@ function updateThemeIcon(theme) {
 // Initialize theme on page load
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  showDemoModeIndicator();
 });
 
 // Currency configuration
@@ -220,18 +206,11 @@ function hideLoading() {
 
 // Check if user is authenticated
 function isAuthenticated() {
-  // Don't auto-auth on login/onboarding pages in demo mode
-  const currentPage = window.location.pathname;
-  if (currentPage.includes('index.html') || currentPage.includes('onboarding.html') || currentPage.includes('splash.html')) {
-    return !!localStorage.getItem('token');
-  }
-  if (DEMO_MODE) return true;
   return !!localStorage.getItem('token');
 }
 
 // Redirect to login if not authenticated
 function requireAuth() {
-  if (DEMO_MODE) return; // Skip auth check in demo mode
   if (!isAuthenticated()) {
     window.location.href = '../index.html';
   }

@@ -1,22 +1,9 @@
 // KudiSave - Utility Functions
 
-// Demo mode indicator - shows on all pages when in demo mode
-function showDemoModeIndicator() {
-  if (window.KUDISAVE_DEMO_MODE && !document.getElementById('demo-indicator')) {
-    const indicator = document.createElement('div');
-    indicator.id = 'demo-indicator';
-    indicator.innerHTML = '🎮 Demo Mode';
-    indicator.style.cssText = 'position:fixed;bottom:70px;right:10px;background:#2B5A34;color:white;padding:6px 12px;border-radius:15px;font-size:11px;z-index:9999;opacity:0.85;cursor:pointer;';
-    indicator.title = 'Data is stored locally in your browser';
-    indicator.onclick = () => { indicator.style.display = 'none'; };
-    document.body.appendChild(indicator);
-  }
-}
-
 // Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
   // Always read from localStorage first for instant persistence
-  const savedTheme = localStorage.getItem('kudisave_theme') || 'dark';
+  const savedTheme = localStorage.getItem('kudisave_theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
 }
@@ -28,14 +15,14 @@ function initThemeFromPreferences() {
   const localTheme = localStorage.getItem('kudisave_theme');
   
   // API takes priority if user logged in, otherwise use localStorage
-  const theme = apiTheme || localTheme || 'dark';
+  const theme = apiTheme || localTheme || 'light';
   localStorage.setItem('kudisave_theme', theme);
   document.documentElement.setAttribute('data-theme', theme);
   updateThemeIcon(theme);
 }
 
 async function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   
   // Save to localStorage FIRST for instant persistence
@@ -60,7 +47,6 @@ function updateThemeIcon(theme) {
 // Initialize theme on page load
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  showDemoModeIndicator();
 });
 
 // Currency configuration
@@ -124,21 +110,68 @@ function getTodayDate() {
   return new Date().toISOString().split('T')[0];
 }
 
-// Show alert message
+// Show toast notification (mobile-friendly)
 function showAlert(message, type = 'success') {
-  const alertDiv = document.createElement('div');
-  alertDiv.className = `alert alert-${type}`;
-  alertDiv.innerHTML = `
-    <span>${getAlertIcon(type)}</span>
-    <span>${message}</span>
+  // Ensure toast container exists
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const icons = {
+    success: '✓',
+    error: '✕',
+    warning: '!',
+    info: 'i'
+  };
+  const icon = icons[type] || icons.info;
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-body">
+      <div class="toast-message">${message}</div>
+    </div>
+    <button class="toast-dismiss" onclick="this.parentElement.classList.add('toast-exit'); setTimeout(() => this.parentElement.remove(), 300)">&times;</button>
+    <div class="toast-progress"></div>
   `;
 
-  const container = document.querySelector('.container');
-  container.insertBefore(alertDiv, container.firstChild);
+  container.appendChild(toast);
 
-  setTimeout(() => {
-    alertDiv.remove();
-  }, 5000);
+  // Auto-dismiss after 4 seconds
+  const timer = setTimeout(() => {
+    if (toast.parentElement) {
+      toast.classList.add('toast-exit');
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, 4000);
+
+  // Swipe to dismiss
+  let startX = 0;
+  toast.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+  toast.addEventListener('touchmove', (e) => {
+    const dx = e.touches[0].clientX - startX;
+    if (Math.abs(dx) > 10) toast.style.transform = `translateX(${dx}px)`;
+    toast.style.opacity = Math.max(0, 1 - Math.abs(dx) / 200);
+  }, { passive: true });
+  toast.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 80) {
+      clearTimeout(timer);
+      toast.remove();
+    } else {
+      toast.style.transform = '';
+      toast.style.opacity = '';
+    }
+  });
+
+  // Limit to 3 toasts visible
+  const toasts = container.querySelectorAll('.toast');
+  if (toasts.length > 3) toasts[0].remove();
 }
 
 function getAlertIcon(type) {
@@ -150,35 +183,34 @@ function getAlertIcon(type) {
   return icons[type] || '💡';
 }
 
-// Show loading spinner
+// Show loading overlay
 function showLoading() {
-  const spinner = document.createElement('div');
-  spinner.id = 'loading-spinner';
-  spinner.className = 'spinner';
-  document.body.appendChild(spinner);
+  if (document.getElementById('loading-overlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'loading-overlay';
+  overlay.className = 'loading-overlay';
+  overlay.innerHTML = `
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Please wait...</div>
+  `;
+  document.body.appendChild(overlay);
 }
 
 function hideLoading() {
-  const spinner = document.getElementById('loading-spinner');
-  if (spinner) {
-    spinner.remove();
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.remove(), 200);
   }
 }
 
 // Check if user is authenticated
 function isAuthenticated() {
-  // Don't auto-auth on login/onboarding pages in demo mode
-  const currentPage = window.location.pathname;
-  if (currentPage.includes('index.html') || currentPage.includes('onboarding.html') || currentPage.includes('splash.html')) {
-    return !!localStorage.getItem('token');
-  }
-  if (DEMO_MODE) return true;
   return !!localStorage.getItem('token');
 }
 
 // Redirect to login if not authenticated
 function requireAuth() {
-  if (DEMO_MODE) return; // Skip auth check in demo mode
   if (!isAuthenticated()) {
     window.location.href = '../index.html';
   }

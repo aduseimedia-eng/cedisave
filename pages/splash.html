@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
@@ -23,7 +24,7 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+      background: #006B3F;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -44,13 +45,14 @@
     .splash-logo {
       margin-bottom: 20px;
       animation: bounce 1s ease infinite;
-      color: var(--primary-light, #00a05e);
+      color: #ffffff;
     }
 
     .splash-logo i {
       width: 80px;
       height: 80px;
       stroke-width: 1.5;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
     }
 
     @keyframes bounce {
@@ -84,9 +86,9 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: #00a05e;
+      background: rgba(255,255,255,0.9);
       animation: pulse 1.4s ease-in-out infinite;
-      box-shadow: 0 2px 8px rgba(0, 160, 94, 0.3);
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
     }
 
     .splash-dot:nth-child(1) { animation-delay: 0s; }
@@ -98,22 +100,7 @@
       50% { transform: scale(1.2); opacity: 1; }
     }
 
-    .ghana-colors {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 6px;
-      display: flex;
-    }
 
-    .ghana-colors span {
-      flex: 1;
-    }
-
-    .ghana-colors span:nth-child(1) { background: #006B3F; }
-    .ghana-colors span:nth-child(2) { background: #ffffff; }
-    .ghana-colors span:nth-child(3) { background: #004d2c; }
   </style>
 </head>
 <body>
@@ -128,18 +115,9 @@
     </div>
   </div>
 
-  <div class="ghana-colors">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-
   <script>
     // Initialize Lucide icons
     lucide.createIcons();
-    
-    // DEMO MODE - Show full app flow for new users
-    const DEMO_MODE = true;
     
     // Check if user has completed onboarding and is logged in
     const hasCompletedOnboarding = localStorage.getItem('onboardingComplete');
@@ -148,21 +126,19 @@
     // Mark splash screen as shown
     sessionStorage.setItem('splashShown', 'true');
 
+    function getRedirectUrl() {
+      if (isLoggedIn) {
+        return 'pages/dashboard.html';
+      } else if (!hasCompletedOnboarding) {
+        return 'onboarding.html';
+      } else {
+        return 'index.html';
+      }
+    }
+
     // Wait 2.5 seconds then redirect based on user state
     setTimeout(() => {
-      if (isLoggedIn) {
-        // User is logged in, go to dashboard
-        window.location.href = 'pages/dashboard.html';
-      } else if (DEMO_MODE && !hasCompletedOnboarding) {
-        // Demo mode for NEW users only - show onboarding
-        window.location.href = 'onboarding.html';
-      } else if (!hasCompletedOnboarding) {
-        // New user, show onboarding
-        window.location.href = 'onboarding.html';
-      } else {
-        // Returning user, go to login
-        window.location.href = 'index.html';
-      }
+      window.location.href = getRedirectUrl();
     }, 2500);
     
     // Allow skip with tap/click
@@ -173,15 +149,7 @@
     function skipSplash() {
       if (!skipped) {
         skipped = true;
-        if (isLoggedIn) {
-          window.location.href = 'pages/dashboard.html';
-        } else if (DEMO_MODE && !hasCompletedOnboarding) {
-          window.location.href = 'onboarding.html';
-        } else if (!hasCompletedOnboarding) {
-          window.location.href = 'onboarding.html';
-        } else {
-          window.location.href = 'index.html';
-        }
+        window.location.href = getRedirectUrl();
       }
     }
   </script>
