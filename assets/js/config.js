@@ -34,6 +34,11 @@
     console.log('💻 KudiSave: Fallback mode');
   }
   
+  // Google OAuth Client ID
+  // Replace with your actual Client ID from Google Cloud Console
+  // console.cloud.google.com → APIs & Services → Credentials → OAuth 2.0 Client IDs
+  window.KUDISAVE_GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
   // Log configuration
   console.log('Config:', {
     hostname,
