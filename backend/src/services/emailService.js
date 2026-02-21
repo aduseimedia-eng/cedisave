@@ -1,10 +1,11 @@
 const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 require('dotenv').config();
 
-// Create transporter
+// Create SMTP transporter (fallback)
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT) || 465,
+  port: parseInt(process.env.EMAIL_PORT) || 587,
   secure: process.env.EMAIL_SECURE === 'true' || parseInt(process.env.EMAIL_PORT) === 465,
   auth: {
     user: process.env.EMAIL_USER,
@@ -17,6 +18,22 @@ const transporter = nodemailer.createTransport({
   greetingTimeout: 10000,
   socketTimeout: 15000
 });
+
+/**
+ * Unified email sender — uses Resend API (port 443) when RESEND_API_KEY is set,
+ * falls back to SMTP nodemailer otherwise.
+ */
+const sendEmail = async ({ from, to, subject, html, text }) => {
+  if (process.env.RESEND_API_KEY) {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromAddress = from || process.env.EMAIL_FROM || 'KudiSave <support@kudisave.com>';
+    const { error } = await resend.emails.send({ from: fromAddress, to, subject, html, text });
+    if (error) throw new Error(`Resend error: ${error.message}`);
+    return { messageId: 'resend-' + Date.now() };
+  }
+  // SMTP fallback
+  return transporter.sendMail({ from: from || process.env.EMAIL_FROM, to, subject, html, text });
+};
 
 /**
  * Send password reset email
@@ -67,7 +84,7 @@ const sendPasswordResetEmail = async (email, name, resetToken) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Password reset email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -137,7 +154,7 @@ const sendWelcomeEmail = async (email, name) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Welcome email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -211,7 +228,7 @@ const sendTestEmail = async (email) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Test email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -271,7 +288,7 @@ const sendBillReminderEmail = async (email, billName, amount, dueDate) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Bill reminder email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -334,7 +351,7 @@ const sendGoalMilestoneEmail = async (email, goalName, progress, milestone) => {
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Goal milestone email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -408,7 +425,7 @@ const sendBudgetAlertEmail = async (email, userName, spent, budget, percentage, 
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Budget alert email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -511,7 +528,7 @@ const sendWeeklySummaryEmail = async (email, userName, expenses, income, savings
       `
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Weekly summary email sent:', info.messageId);
     return true;
   } catch (error) {
@@ -583,7 +600,7 @@ const sendVerificationEmail = async (email, verificationToken) => {
       html: htmlContent
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('Email verification link sent:', info.messageId);
     return true;
   } catch (error) {
@@ -651,7 +668,7 @@ const sendVerificationOTP = async (email, otp) => {
       html: htmlContent
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    const info = await sendEmail(mailOptions);
     console.log('📧 Email OTP sent:', info.messageId);
     return true;
   } catch (error) {
