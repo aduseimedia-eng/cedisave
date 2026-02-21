@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const { query } = require('../config/database');
 const { generateToken, generateRefreshToken } = require('../middleware/auth');
 const { sendPasswordResetEmail } = require('../services/emailService');
+const { OAuth2Client } = require('google-auth-library');
 
 /**
  * Register new user
@@ -441,6 +442,123 @@ const changePassword = async (req, res) => {
   }
 };
 
+/**
+ * Google OAuth Sign-In
+ * POST /api/v1/auth/google
+ */
+const googleAuth = async (req, res) => {
+  try {
+    const { credential, accessToken } = req.body;
+
+    if (!credential && !accessToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google credential or access token required'
+      });
+    }
+
+    let googleUser;
+
+    if (credential) {
+      // Verify Google ID token (from One Tap / standard button callback)
+      const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+      const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: GOOGLE_CLIENT_ID
+      });
+      const payload = ticket.getPayload();
+      googleUser = {
+        googleId: payload.sub,
+        email: payload.email,
+        name: payload.name || payload.given_name || 'Google User',
+        picture: payload.picture,
+        emailVerified: payload.email_verified
+      };
+    } else {
+      // Verify via Google userinfo endpoint (OAuth2 access token flow)
+      const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (!response.ok) {
+        return res.status(401).json({ success: false, message: 'Invalid Google access token' });
+      }
+      const info = await response.json();
+      googleUser = {
+        googleId: info.id,
+        email: info.email,
+        name: info.name || `${info.given_name || ''} ${info.family_name || ''}`.trim() || 'Google User',
+        picture: info.picture,
+        emailVerified: info.verified_email
+      };
+    }
+
+    if (!googleUser.email) {
+      return res.status(400).json({ success: false, message: 'Could not get email from Google account' });
+    }
+
+    // Find existing user by google_id or email
+    const existing = await query(
+      'SELECT * FROM users WHERE google_id = $1 OR email = $2 LIMIT 1',
+      [googleUser.googleId, googleUser.email]
+    );
+
+    let user;
+    if (existing.rows.length > 0) {
+      user = existing.rows[0];
+      // Link google_id and update profile picture / mark email verified
+      await query(
+        `UPDATE users
+           SET google_id = $1,
+               profile_picture = COALESCE(profile_picture, $2),
+               email_verified = true,
+               updated_at = CURRENT_TIMESTAMP
+         WHERE id = $3`,
+        [googleUser.googleId, googleUser.picture, user.id]
+      );
+    } else {
+      // Create new user (no phone/password for Google-only accounts)
+      const newUser = await query(
+        `INSERT INTO users (name, email, google_id, auth_provider, profile_picture, email_verified)
+         VALUES ($1, $2, $3, 'google', $4, true)
+         RETURNING *`,
+        [googleUser.name, googleUser.email, googleUser.googleId, googleUser.picture]
+      );
+      user = newUser.rows[0];
+    }
+
+    const token = generateToken(user.id, user.email);
+    const refreshToken = generateRefreshToken(user.id);
+
+    console.log(`✅ Google auth: ${googleUser.email}`);
+
+    res.json({
+      success: true,
+      message: 'Google sign-in successful',
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone || null,
+          email_verified: true,
+          profile_picture: googleUser.picture,
+          auth_provider: 'google'
+        },
+        token,
+        refreshToken
+      }
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(401).json({
+      success: false,
+      message: 'Google sign-in failed. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -448,5 +566,6 @@ module.exports = {
   updateProfile,
   requestPasswordReset,
   resetPassword,
-  changePassword
+  changePassword,
+  googleAuth
 };
