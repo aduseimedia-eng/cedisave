@@ -41,9 +41,10 @@
     }
 
     .skip-btn {
-      position: absolute;
+      position: fixed;
       top: calc(20px + env(safe-area-inset-top, 0px));
       right: 20px;
+      z-index: 100;
       background: rgba(255,255,255,0.2);
       border: 1px solid rgba(255,255,255,0.3);
       color: white;
@@ -91,8 +92,8 @@
       margin-bottom: 40px;
       animation: float 3s ease-in-out infinite;
       width: 100%;
-      max-width: 360px;
-      height: 300px;
+      max-width: 420px;
+      height: 360px;
       display: flex;
       align-items: center;
       justify-content: center;
