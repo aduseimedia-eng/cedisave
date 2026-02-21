@@ -13,8 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
-  <!-- Lottie Animation Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -89,36 +87,23 @@
       text-align: center;
     }
 
-    .slide-icon {
+    .slide-image-wrap {
       margin-bottom: 40px;
       animation: float 3s ease-in-out infinite;
-      width: 180px;
-      height: 180px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .slide-icon i {
-      width: 140px;
-      height: 140px;
-      stroke-width: 1.5;
-      color: white;
-    }
-
-    .lottie-container {
-      width: 180px;
-      height: 180px;
+      width: 100%;
+      max-width: 300px;
+      height: 240px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .lottie-container svg {
-      width: 100% !important;
-      height: 100% !important;
-      display: block !important;
+    .slide-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 20px;
+      filter: drop-shadow(0 12px 32px rgba(0,0,0,0.3));
     }
 
     @keyframes float {
@@ -256,10 +241,8 @@
       <div class="slides-wrapper" id="slidesWrapper">
         <!-- Slide 1 -->
         <div class="slide">
-          <div class="slide-icon" id="lottie-1">
-            <div class="lottie-container">
-              <i data-lucide="wallet" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>
-            </div>
+          <div class="slide-image-wrap">
+            <img src="../assets/images/20944292.png" alt="Track your finances">
           </div>
           <h2 class="slide-title">Track Your<br><span class="slide-highlight">Finances</span></h2>
           <p class="slide-description">Easily track all your income and expenses in one place. Know exactly where your money goes every month.</p>
@@ -267,10 +250,8 @@
 
         <!-- Slide 2 -->
         <div class="slide">
-          <div class="slide-icon" id="lottie-2">
-            <div class="lottie-container">
-              <i data-lucide="target" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>
-            </div>
+          <div class="slide-image-wrap">
+            <img src="../assets/images/2009.i518.001_crowdfunding_set-07.png" alt="Set savings goals">
           </div>
           <h2 class="slide-title">Set Goals &<br><span class="slide-highlight">Achieve More</span></h2>
           <p class="slide-description">Create savings goals for what matters most to you. Whether it's a new phone, school fees, or your dream car.</p>
@@ -278,10 +259,8 @@
 
         <!-- Slide 3 -->
         <div class="slide">
-          <div class="slide-icon" id="lottie-3">
-            <div class="lottie-container">
-              <i data-lucide="trending-up" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>
-            </div>
+          <div class="slide-image-wrap">
+            <img src="../assets/images/Jan-Business_team_3.png" alt="Build money habits">
           </div>
           <h2 class="slide-title">Build Better<br><span class="slide-highlight">Money Habits</span></h2>
           <p class="slide-description">Get insights with beautiful reports, earn badges for good habits, and level up your financial game!</p>
@@ -395,13 +374,9 @@
       }
     }
 
-    // Initialize Lottie Animations
-    let animationInstances = {};
+    // Images are used directly — no Lottie needed
 
-    function initLottieAnimations() {
-      console.log('Starting Lottie initialization...');
-      console.log('Lottie version:', lottie.version);
-      
+    function _unused_initLottieAnimations() {
       try {
         // Animation 1: Wallet
         const container1 = document.querySelector('#lottie-1 .lottie-container');
@@ -498,28 +473,13 @@
       lucide.createIcons();
     }
 
-    // Initialize Lucide icons immediately on page load
+    // Initialize Lucide icons
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      console.log('✓ Lucide icons initialized');
     });
 
-    // Load animations when page is ready
     window.addEventListener('load', () => {
-      console.log('Page loaded');
-      console.log('Lottie available:', typeof lottie !== 'undefined');
-      console.log('Current URL:', window.location.href);
-      
-      // Disable Lottie loading to keep fallback icons visible
-      console.log('Using fallback Lucide icons (Lottie disabled)');
-      
-      /* Uncomment to enable Lottie animations when served via http-server:
-      if (typeof lottie !== 'undefined' && window.location.protocol === 'http:') {
-        setTimeout(() => {
-          initLottieAnimations();
-        }, 500);
-      }
-      */
+      lucide.createIcons();
     });
   </script>
 </body>
