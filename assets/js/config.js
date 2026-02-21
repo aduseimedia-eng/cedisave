@@ -12,19 +12,26 @@
   // Example: 'https://kudisave-api.onrender.com/api/v1'
   const PRODUCTION_API_URL = null; // Change to your production URL when deployed
   
+  // Detect if on local network (private IP ranges)
+  const isLocalNetwork = /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(hostname);
+
   // Configure API URL
   if (PRODUCTION_API_URL) {
     // Production mode - backend deployed
     window.KUDISAVE_API_URL = PRODUCTION_API_URL;
     console.log('🚀 KudiSave: Production mode');
+  } else if (isLocalNetwork) {
+    // Local network (mobile device on same WiFi) - use same host IP
+    window.KUDISAVE_API_URL = `http://${hostname}:5000/api/v1`;
+    console.log('📱 KudiSave: Local network mode');
   } else if (isLocalhost || isFileProtocol) {
-    // Local development
+    // Local development on same machine
     window.KUDISAVE_API_URL = 'http://localhost:5000/api/v1';
     console.log('💻 KudiSave: Local development mode');
   } else {
-    // Fallback to localhost backend
-    window.KUDISAVE_API_URL = 'http://localhost:5000/api/v1';
-    console.log('💻 KudiSave: Fallback to local backend');
+    // Fallback - try same host with backend port
+    window.KUDISAVE_API_URL = `http://${hostname}:5000/api/v1`;
+    console.log('💻 KudiSave: Fallback mode');
   }
   
   // Log configuration
