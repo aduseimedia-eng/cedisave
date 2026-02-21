@@ -1249,9 +1249,10 @@
         }
       } catch (error) {
         console.error('Login error:', error);
-        if (error.status === 403 && error.response?.data?.requiresEmailVerification) {
+        const errorData = error.response?.data?.data || error.response?.data || {};
+        if (error.status === 403 && errorData.requiresEmailVerification) {
           showToast('Email verification required. Redirecting...', 'warning');
-          const email = error.response.data.email;
+          const email = errorData.email;
           sessionStorage.setItem('pendingEmailVerification', email);
           setTimeout(() => { window.location.href = 'verify-email.html'; }, 1000);
         } else {
