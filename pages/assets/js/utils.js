@@ -2,10 +2,14 @@
 
 // Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
-  // Always read from localStorage first for instant persistence
-  const savedTheme = localStorage.getItem('kudisave_theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeIcon(savedTheme);
+  // One-time reset: clear dark theme from old demo mode
+  if (!localStorage.getItem('kudisave_theme_v2_reset')) {
+    localStorage.setItem('kudisave_theme', 'light');
+    localStorage.setItem('kudisave_theme_v2_reset', 'true');
+  }
+  const theme = localStorage.getItem('kudisave_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  updateThemeIcon(theme);
 }
 
 // Called by api.js after preferences are loaded (syncs localStorage)
