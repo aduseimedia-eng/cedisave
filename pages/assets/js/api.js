@@ -1,4 +1,4 @@
-// KudiSave - API Service
+﻿// KudiSave - API Service
 // Handles all communication with backend
 
 // API Configuration - set by config.js
@@ -274,7 +274,7 @@ class APIService {
       }
     };
     clearOldCache();
-    window.location.href = '../index.html';
+    window.location.href = '../splash.html';
   }
 
   // EXPENSE ENDPOINTS
@@ -409,10 +409,10 @@ class APIService {
       });
 
       const result = await this.handleResponse(response);
-      console.log('✅ Goal created successfully:', result.data.title);
+      console.log('Γ£à Goal created successfully:', result.data.title);
       return result;
     } catch (error) {
-      console.error('❌ Failed to create goal:', error.message);
+      console.error('Γ¥î Failed to create goal:', error.message);
       throw error;
     }
   }

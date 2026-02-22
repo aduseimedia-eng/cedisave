@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
@@ -376,16 +377,16 @@
         if (response.ok && data.success) {
           // In dev mode, show OTP if provided
           if (data.otp) {
-            console.log('📱 Development OTP:', data.otp);
-            showSuccessMessage(`✓ OTP sent! DEV MODE: ${data.otp}`);
+            console.log('≡ƒô▒ Development OTP:', data.otp);
+            showSuccessMessage(`Γ£ô OTP sent! DEV MODE: ${data.otp}`);
           } else {
-            showSuccessMessage('✓ OTP sent to your phone!');
+            showSuccessMessage('Γ£ô OTP sent to your phone!');
           }
         } else {
           // Always check for OTP in development mode, even on error
           if (data.otp) {
-            console.log('📱 Development OTP:', data.otp);
-            showSuccessMessage(`✓ OTP generated! DEV MODE: ${data.otp}`);
+            console.log('≡ƒô▒ Development OTP:', data.otp);
+            showSuccessMessage(`Γ£ô OTP generated! DEV MODE: ${data.otp}`);
           } else {
             showErrorMessage(data.message || 'Failed to send OTP');
           }
@@ -431,7 +432,7 @@
         const data = await response.json();
 
         if (response.ok && data.success) {
-          showSuccessMessage('✓ Phone number verified successfully!');
+          showSuccessMessage('Γ£ô Phone number verified successfully!');
           
           // Clear session storage
           sessionStorage.removeItem('pendingPhoneVerification');
@@ -484,8 +485,8 @@
         } else {
           // Always check for OTP in development mode, even on error
           if (data.otp) {
-            console.log('📱 Development OTP:', data.otp);
-            showSuccessMessage(`✓ New OTP: ${data.otp}`);
+            console.log('≡ƒô▒ Development OTP:', data.otp);
+            showSuccessMessage(`Γ£ô New OTP: ${data.otp}`);
             clearOTPInputs();
             startResendTimer();
           } else {

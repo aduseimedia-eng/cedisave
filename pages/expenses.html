@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes"
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
   <title>Expenses - KudiSave</title>
@@ -13,70 +14,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { padding-top: 0 !important; }
+    .mtn-header { background: linear-gradient(160deg, var(--primary-color) 0%, #004d2c 40%, #003822 80%, #002a19 100%); position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: 24px; overflow: hidden; }
+    .mtn-header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 260px; height: 260px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
+    .mtn-header::after { content: ''; position: absolute; bottom: -40%; left: -15%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
+    .mtn-topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 0 16px; position: relative; z-index: 1; }
+    .mtn-back-btn { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; }
+    .mtn-back-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.18); }
+    .mtn-back-btn i { width: 18px; height: 18px; }
+    .mtn-page-title { font-size: 17px; font-weight: 700; color: white; letter-spacing: -0.3px; }
+    .mtn-topbar-spacer { width: 38px; }
+    .mtn-info-section { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px 8px 16px; position: relative; z-index: 1; text-align: center; }
+    .mtn-info-icon { width: 42px; height: 42px; border-radius: 14px; background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.12); color: white; }
+    .mtn-info-icon i { width: 20px; height: 20px; }
+    .mtn-info-text { flex: 1; min-width: 0; }
+    .mtn-info-title { font-size: 16px; font-weight: 700; color: white; line-height: 1.2; letter-spacing: -0.2px; }
+    .mtn-info-subtitle { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; font-weight: 500; }
+    .mtn-header-curve { position: absolute; bottom: -1px; left: 0; right: 0; height: 24px; background: var(--bg-primary, #f5f6fa); border-radius: 24px 24px 0 0; }
+    [data-theme="dark"] .mtn-header-curve { background: var(--bg-primary, #0f172a); }
+    .mtn-header::before, .mtn-header::after { pointer-events: none; }
+    .mtn-header-spacer { height: 155px; }
+    .container { padding-top: 4px; }
+  </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiSave</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="reports.html" class="nav-link">Reports</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Expenses</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
+    <div class="mtn-info-section">
+      <div class="mtn-info-icon">
+        <i data-lucide="receipt"></i>
+      </div>
+      <div class="mtn-info-text">
+        <div class="mtn-info-title">Expense Tracker</div>
+        <div class="mtn-info-subtitle">Track & manage your daily spending</div>
+      </div>
+    </div>
+    <div class="mtn-header-curve"></div>
   </header>
+  <div class="mtn-header-spacer"></div>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="layout-dashboard" class="icon"></i></span>
-      <span>Home</span>
-    </a>
-    <a href="expenses.html" class="bottom-nav-item active">
-      <span class="nav-icon"><i data-lucide="receipt" class="icon"></i></span>
-      <span>Expenses</span>
-    </a>
-    <a href="goals.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="target" class="icon"></i></span>
-      <span>Goals</span>
-    </a>
-    <a href="settings.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="settings" class="icon"></i></span>
-      <span>Settings</span>
-    </a>
-  </nav>
 
   <div class="container">
     <div class="card">
@@ -98,6 +82,48 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/api.js"></script>
   <script src="../assets/js/utils.js"></script>
+
+  <!-- Add Expense Modal -->
+  <div id="expenseModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Add Expense</h2>
+        <button class="close-btn" onclick="closeModal('expenseModal')">&times;</button>
+      </div>
+      <form id="expenseForm" onsubmit="handleAddExpense(event)">
+        <div class="form-group">
+          <label class="form-label">Amount</label>
+          <div class="currency-input-wrapper">
+            <span class="currency-prefix">Γé╡</span>
+            <input type="number" class="form-input" id="expenseAmount" placeholder="0.00" step="0.01" min="0.01" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="expenseCategory" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <select class="form-select" id="expensePaymentMethod" required></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" id="expenseDate" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Note (Optional)</label>
+          <textarea class="form-textarea" id="expenseNote" rows="3" placeholder="Add a note..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Add Expense</button>
+      </form>
+    </div>
+  </div>
   <script>
     utils.requireAuth();
 
@@ -116,7 +142,7 @@
               <button class="btn btn-primary" onclick="openAddExpenseModal()">Add Your First Expense</button>
             </div>
           `;
-          lucide.createIcons();
+          lucide.createIcons({ node: listView });
           return;
         }
 
@@ -127,7 +153,7 @@
                 ${utils.getCategoryIcon(expense.category)} ${expense.category}
               </div>
               <div class="expense-details">
-                ${expense.payment_method} ${expense.note ? '• ' + expense.note : ''}
+                ${expense.payment_method} ${expense.note ? 'ΓÇó ' + expense.note : ''}
               </div>
             </div>
             <div>
@@ -144,7 +170,7 @@
             <button class="btn btn-primary" onclick="loadExpenses()">Try Again</button>
           </div>
         `;
-        lucide.createIcons();
+        lucide.createIcons({ node: document.getElementById('expensesListView') });
       }
     }
 
@@ -169,18 +195,84 @@
       api.logout();
     }
 
-    // Mobile Menu Toggle
-    function toggleMobileMenu() {
-      document.querySelector('.hamburger').classList.toggle('active');
-      document.querySelector('.mobile-menu').classList.toggle('active');
-      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
-      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+    function openAddExpenseModal() {
+      // Populate category select
+      const categorySelect = document.getElementById('expenseCategory');
+      categorySelect.innerHTML = utils.EXPENSE_CATEGORIES.map(cat => 
+        `<option value="${cat}">${utils.getCategoryIcon(cat)} ${cat}</option>`
+      ).join('');
+
+      // Populate payment method select
+      const methodSelect = document.getElementById('expensePaymentMethod');
+      methodSelect.innerHTML = utils.PAYMENT_METHODS.map(method => 
+        `<option value="${method}">${method}</option>`
+      ).join('');
+
+      // Set today's date
+      document.getElementById('expenseDate').value = utils.getTodayDate();
+
+      // Show modal
+      document.getElementById('expenseModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Backdrop click to close
+    document.getElementById('expenseModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('expenseModal');
+    });
+
+    async function handleAddExpense(event) {
+      event.preventDefault();
+
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      const category = document.getElementById('expenseCategory').value;
+      const paymentMethod = document.getElementById('expensePaymentMethod').value;
+      const expenseDate = document.getElementById('expenseDate').value;
+      const noteValue = document.getElementById('expenseNote').value;
+
+      if (!amount || amount <= 0) {
+        utils.showAlert('Please enter a valid amount', 'error');
+        return;
+      }
+
+      const expenseData = {
+        amount,
+        category,
+        payment_method: paymentMethod,
+        expense_date: expenseDate,
+        is_recurring: false
+      };
+
+      if (noteValue) {
+        expenseData.note = noteValue;
+      }
+
+      try {
+        utils.showLoading();
+        await api.createExpense(expenseData);
+        utils.hideLoading();
+
+        utils.showAlert('Expense added successfully! ≡ƒÄë', 'success');
+        closeModal('expenseModal');
+        document.getElementById('expenseForm').reset();
+        await loadExpenses();
+      } catch (error) {
+        utils.hideLoading();
+        utils.showAlert(error.message || 'Failed to add expense', 'error');
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       loadExpenses();
     });
+
+    function logout() { api.logout(); }
   </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -11,120 +11,222 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* Main Content Area */
-    main.main-content {
-      margin: 0 auto;
-      max-width: 100%;
-      padding: 16px;
-      padding-bottom: 120px;
-    }
-
-    .achievements-header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, #004d2c 50%, var(--primary-light) 100%);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      margin-bottom: 16px;
-      color: white;
-      position: relative;
+    /* ===== Modern Header for Achievements ===== */
+    .mtn-header {
+      background: linear-gradient(160deg, var(--primary-color) 0%, #004d2c 40%, #003822 80%, #002a19 100%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
       overflow: hidden;
     }
 
-    .achievements-header::before {
+    .mtn-header::before {
       content: '';
       position: absolute;
       top: -50%;
       right: -20%;
-      width: 150px;
-      height: 150px;
-      background: rgba(255,255,255,0.1);
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
       border-radius: 50%;
     }
 
-    .achievements-header::after {
+    .mtn-header::after {
       content: '';
+      position: absolute;
+      bottom: -40%;
+      left: -15%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+      border-radius: 50%;
     }
 
-    .level-badge {
-      font-size: 1.8rem;
+    .mtn-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 0 16px;
+      position: relative;
+      z-index: 1;
     }
 
-    .level-title {
-      font-size: 18px;
-      font-weight: 600;
+    .mtn-back-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
     }
 
-    .xp-info {
-      font-size: 12px;
-      color: rgba(255,255,255,0.8);
-      margin-top: 8px;
-    }
-
-    .xp-progress {
-      max-width: 280px;
-      margin: 12px auto 0;
+    .mtn-back-btn:active {
+      transform: scale(0.92);
       background: rgba(255,255,255,0.18);
-      border-radius: 8px;
-      height: 16px;
-      overflow: hidden;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .xp-progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    .mtn-back-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .mtn-page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.3px;
+    }
+
+    .mtn-topbar-spacer {
+      width: 38px;
+    }
+
+    /* Level/XP section inside header */
+    .mtn-level-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 16px 24px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-level-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 1px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .mtn-level-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mtn-level-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .mtn-xp-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .mtn-xp-bar {
+      margin-top: 8px;
+      background: rgba(255,255,255,0.12);
       border-radius: 8px;
+      height: 6px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .mtn-xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00e676, #69f0ae);
+      border-radius: 8px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 107, 63, 0.2);
-      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 4px rgba(0, 230, 118, 0.3);
     }
 
-    .xp-progress-fill::before {
+    .mtn-xp-fill::before {
       content: '';
       position: absolute;
       top: 0;
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
       animation: shimmer 2s infinite;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 12px;
+    /* Stats row inside header */
+    .mtn-stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 0 16px 20px 16px;
+      position: relative;
+      z-index: 1;
     }
 
-    .stat-item {
+    .mtn-stat {
       text-align: center;
-      padding: 12px 8px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      transition: all 0.3s ease;
     }
 
-    .stat-item:hover {
-      background: rgba(255,255,255,0.15);
-    }
-
-    .stat-value {
-      font-size: 18px;
+    .mtn-stat-value {
+      font-size: 20px;
       font-weight: 700;
       color: white;
     }
 
-    .stat-label {
-      font-size: 9px;
-      color: rgba(255,255,255,0.7);
+    .mtn-stat-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-top: 4px;
+      margin-top: 2px;
+    }
+
+    .mtn-header-curve {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 24px;
+      background: var(--bg-primary, #f5f6fa);
+      border-radius: 24px 24px 0 0;
+    }
+
+    [data-theme="dark"] .mtn-header-curve {
+      background: var(--bg-primary, #0f172a);
+    }
+
+    .mtn-header-spacer {
+      height: 270px;
+    }
+
+    body {
+      padding-top: 0 !important;
+    }
+
+    /* Main Content Area */
+    main.main-content {
+      margin: 0 auto;
+      max-width: 100%;
+      padding: 16px;
+      padding-bottom: 120px;
     }
 
     .category-tabs {
@@ -149,15 +251,19 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      border: 2px solid transparent;
     }
 
     .category-tab:hover {
       background: rgba(0, 107, 63, 0.1);
+      transform: translateY(-1px);
     }
 
     .category-tab.active {
-      background: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), #00a05e);
       color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 2px 8px rgba(0, 107, 63, 0.3);
     }
 
     .achievement-grid {
@@ -178,20 +284,39 @@
       transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
+      overflow: hidden;
+    }
+
+    .achievement-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: var(--progress, 0%);
+      background: linear-gradient(90deg, var(--primary-color), #00a05e);
+      transition: width 0.8s ease;
     }
 
     .achievement-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
     }
 
     .achievement-card.locked {
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     .achievement-card.earned {
       border-color: var(--primary-color);
-      background: rgba(0, 107, 63, 0.05);
+      background: linear-gradient(135deg, rgba(0, 107, 63, 0.08), rgba(0, 107, 63, 0.03));
+      box-shadow: 0 2px 8px rgba(0, 107, 63, 0.15);
+    }
+
+    .achievement-card.earned::before {
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #FFD700, #FFA500);
     }
 
     .achievement-icon {
@@ -204,14 +329,23 @@
       justify-content: center;
       font-size: 28px;
       flex-shrink: 0;
+      transition: all 0.3s ease;
     }
 
     .achievement-card.earned .achievement-icon {
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      background: linear-gradient(135deg, var(--primary-color), #00a05e);
+      animation: iconShine 2s infinite;
+      box-shadow: 0 4px 12px rgba(0, 107, 63, 0.4);
+    }
+
+    @keyframes iconShine {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0, 107, 63, 0.4); }
+      50% { box-shadow: 0 4px 20px rgba(0, 107, 63, 0.6), 0 0 30px rgba(0, 107, 63, 0.3); }
     }
 
     .achievement-card.locked .achievement-icon {
       filter: grayscale(100%);
+      opacity: 0.5;
     }
 
     .achievement-info {
@@ -272,80 +406,54 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiSave</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="achievements.html" class="nav-link active">Achievements</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Achievements</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
+
+    <!-- Level & XP Section -->
+    <div class="mtn-level-section">
+      <div class="mtn-level-icon" id="levelBadge">≡ƒÅå</div>
+      <div class="mtn-level-info">
+        <div class="mtn-level-name" id="levelTitle">Money Master</div>
+        <div class="mtn-xp-text">
+          <span id="currentXP">0</span> / <span id="nextLevelXP">1000</span> XP
+        </div>
+        <div class="mtn-xp-bar">
+          <div class="mtn-xp-fill" id="xpProgressFill" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="mtn-stats-row">
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="earnedCount">0</div>
+        <div class="mtn-stat-label">Earned</div>
+      </div>
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="totalCount">0</div>
+        <div class="mtn-stat-label">Total</div>
+      </div>
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="completionRate">0%</div>
+        <div class="mtn-stat-label">Complete</div>
+      </div>
+    </div>
+
+    <div class="mtn-header-curve"></div>
   </header>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="achievements.html" class="mobile-menu-link active"><i data-lucide="award" class="icon-menu"></i> Achievements</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
+  <!-- Header Spacer -->
+  <div class="mtn-header-spacer"></div>
 
   <!-- Main Content -->
   <main class="main-content">
-    <!-- Level Header -->
-    <div class="achievements-header">
-      <div class="level-badge" id="levelBadge">🏆</div>
-      <div class="level-title" id="levelTitle">Money Master</div>
-      <div class="xp-info">
-        <span id="currentXP">0</span> / <span id="nextLevelXP">1000</span> XP
-      </div>
-      <div class="xp-progress">
-        <div class="xp-progress-fill" id="xpProgressFill" style="width: 0%"></div>
-      </div>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-value" id="earnedCount">0</div>
-        <div class="stat-label">Earned</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="totalCount">0</div>
-        <div class="stat-label">Total</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="completionRate">0%</div>
-        <div class="stat-label">Complete</div>
-      </div>
-    </div>
-
     <!-- Category Tabs -->
     <div class="category-tabs">
       <button class="category-tab active" onclick="filterCategory('all')">All</button>
@@ -362,83 +470,49 @@
     </div>
   </main>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-      </svg>
-      <span>Home</span>
-    </a>
-    <a href="expenses.html" class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="12" y1="1" x2="12" y2="23"></line>
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-      </svg>
-      <span>Expenses</span>
-    </a>
-    <a href="achievements.html" class="nav-item active">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="8" r="7"></circle>
-        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-      </svg>
-      <span>Badges</span>
-    </a>
-    <a href="goals.html" class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <circle cx="12" cy="12" r="6"></circle>
-        <circle cx="12" cy="12" r="2"></circle>
-      </svg>
-      <span>Goals</span>
-    </a>
-    <a href="settings.html" class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-      </svg>
-      <span>Settings</span>
-    </a>
-  </nav>
-
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/api.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
     utils.requireAuth();
+
+    function logout() { api.logout(); }
     
     let allAchievements = [];
     let currentCategory = 'all';
 
     // Achievement icons mapping
     const achievementIcons = {
-      'first_expense': '📝',
-      'expense_master': '💵',
-      'budget_keeper': '📊',
-      'savings_starter': '🌱',
-      'savings_champion': '💰',
-      'goal_setter': '🎯',
-      'goal_crusher': '🏆',
-      'streak_starter': '🔥',
-      'streak_master': '⚡',
-      'challenge_winner': '🥇',
-      'early_bird': '🌅',
-      'night_owl': '🦉',
-      'consistent': '📅',
-      'frugal': '🪙',
-      'investor': '📈',
-      'default': '⭐'
+      'first_expense': '≡ƒô¥',
+      'expense_master': '≡ƒÆ╡',
+      'budget_keeper': '≡ƒôè',
+      'savings_starter': '≡ƒî▒',
+      'savings_champion': '≡ƒÆ░',
+      'goal_setter': '≡ƒÄ»',
+      'goal_crusher': '≡ƒÅå',
+      'streak_starter': '≡ƒöÑ',
+      'streak_master': 'ΓÜí',
+      'challenge_winner': '≡ƒÑç',
+      'early_bird': '≡ƒîà',
+      'night_owl': '≡ƒªë',
+      'consistent': '≡ƒôà',
+      'frugal': '≡ƒ¬Ö',
+      'investor': '≡ƒôê',
+      'default': 'Γ¡É'
     };
 
     // Level definitions
     const levels = [
-      { name: 'Beginner', icon: '🌱', minXP: 0 },
-      { name: 'Saver', icon: '💰', minXP: 100 },
-      { name: 'Budgeter', icon: '📊', minXP: 500 },
-      { name: 'Investor', icon: '📈', minXP: 1000 },
-      { name: 'Expert', icon: '🎓', minXP: 2500 },
-      { name: 'Master', icon: '👑', minXP: 5000 },
-      { name: 'Legend', icon: '🏆', minXP: 10000 }
+      { name: 'Beginner', icon: '≡ƒî▒', minXP: 0 },
+      { name: 'Saver', icon: '≡ƒÆ░', minXP: 100 },
+      { name: 'Budgeter', icon: '≡ƒôè', minXP: 500 },
+      { name: 'Investor', icon: '≡ƒôê', minXP: 1000 },
+      { name: 'Expert', icon: '≡ƒÄô', minXP: 2500 },
+      { name: 'Master', icon: '≡ƒææ', minXP: 5000 },
+      { name: 'Legend', icon: '≡ƒÅå', minXP: 10000 }
     ];
 
     document.addEventListener('DOMContentLoaded', loadAchievements);
@@ -549,7 +623,7 @@
     }
 
     function getIcon(achievement) {
-      if (achievement.is_secret && !achievement.earned) return '❓';
+      if (achievement.is_secret && !achievement.earned) return 'Γ¥ô';
       if (achievement.icon) return achievement.icon;
       return achievementIcons[achievement.achievement_key] || achievementIcons.default;
     }
@@ -560,14 +634,16 @@
       return div.innerHTML;
     }
 
-    // Check for new achievements periodically
+    // Check for new achievements periodically (only once on page load)
+    let _achievementCheckDone = false;
     async function checkNewAchievements() {
+      if (_achievementCheckDone) return;
+      _achievementCheckDone = true;
       try {
         const response = await api.post('/achievements/check');
         if (response.success && response.data.newly_earned && response.data.newly_earned.length > 0) {
-          response.data.newly_earned.forEach(achievement => {
-            showAchievementUnlock(achievement);
-          });
+          // Show only the first unlock overlay to avoid stacking
+          showAchievementUnlock(response.data.newly_earned[0]);
           loadAchievements(); // Reload to update UI
         }
       } catch (error) {
@@ -599,9 +675,9 @@
           max-width: 300px;
           animation: bounceIn 0.5s;
         ">
-          <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+          <div style="font-size: 4rem; margin-bottom: 1rem;">≡ƒÄë</div>
           <h2 style="color: var(--primary-green); margin-bottom: 0.5rem;">Achievement Unlocked!</h2>
-          <div style="font-size: 3rem; margin: 1rem 0;">${achievement.icon || '⭐'}</div>
+          <div style="font-size: 3rem; margin: 1rem 0;">${achievement.icon || 'Γ¡É'}</div>
           <h3 style="margin-bottom: 0.5rem;">${achievement.name}</h3>
           <p style=\"color: var(--text-secondary); font-size: 0.9rem;\">${achievement.description}</p>
           <div style="

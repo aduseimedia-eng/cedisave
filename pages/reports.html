@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
@@ -60,7 +61,7 @@
     .overview-card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 14px;
+      padding: 16px;
       position: relative;
       overflow: hidden;
       animation: slideUp 0.4s ease-out both;
@@ -88,9 +89,9 @@
     .overview-card.rate::before { background: #FCD116; }
 
     .overview-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -103,25 +104,28 @@
     .overview-card.rate .overview-icon { background: rgba(252, 209, 22, 0.15); color: #B8960E; }
 
     .overview-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-secondary);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      font-weight: 500;
     }
 
     .overview-value {
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 800;
       color: var(--text-primary);
+      line-height: 1.2;
     }
 
     .overview-change {
-      font-size: 10px;
-      margin-top: 6px;
+      font-size: 11px;
+      margin-top: 8px;
       display: flex;
       align-items: center;
       gap: 4px;
+      font-weight: 500;
     }
 
     .overview-change.positive { color: #00a05e; }
@@ -135,8 +139,8 @@
     }
 
     .section-title {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
       color: var(--text-primary);
       display: flex;
       align-items: center;
@@ -146,7 +150,7 @@
     .health-score-container {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 20px;
+      padding: 24px 20px;
       text-align: center;
       margin-bottom: 16px;
       animation: slideUp 0.4s ease-out both;
@@ -216,7 +220,7 @@
     .category-list {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 14px;
+      padding: 16px;
       margin-bottom: 16px;
       animation: slideUp 0.4s ease-out both;
     }
@@ -249,8 +253,8 @@
     }
 
     .category-name {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--text-primary);
     }
 
@@ -274,20 +278,21 @@
     }
 
     .category-value {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text-primary);
     }
 
     .category-percent {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .daily-chart {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 14px;
+      padding: 16px;
       margin-bottom: 16px;
       animation: slideUp 0.4s ease-out both;
     }
@@ -352,7 +357,7 @@
     .top-expenses {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 14px;
+      padding: 16px;
       margin-bottom: 16px;
       animation: slideUp 0.4s ease-out both;
     }
@@ -391,27 +396,27 @@
     }
 
     .expense-title {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--text-primary);
     }
 
     .expense-date {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--text-secondary);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     .expense-amount {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: #dc3545;
     }
 
     .comparison-card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 14px;
+      padding: 16px;
       margin-bottom: 80px;
       animation: slideUp 0.4s ease-out both;
     }
@@ -428,8 +433,9 @@
     }
 
     .comparison-label {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .comparison-values {
@@ -439,8 +445,8 @@
     }
 
     .comparison-current {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text-primary);
     }
 
@@ -761,71 +767,97 @@
     .summary-diff.better { background: rgba(0, 160, 94, 0.15); color: #00a05e; }
     .summary-diff.worse { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
     .summary-diff.neutral { background: rgba(108, 117, 125, 0.15); color: #6c757d; }
+
+    /* ===== Modern Header for Reports ===== */
+    body { padding-top: 0 !important; }
+    .mtn-header { background: linear-gradient(160deg, var(--primary-color) 0%, #004d2c 40%, #003822 80%, #002a19 100%); position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: 24px; overflow: hidden; }
+    .mtn-header::before { content: ''; position: absolute; top: -50%; right: -20%; width: 260px; height: 260px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; }
+    .mtn-header::after { content: ''; position: absolute; bottom: -40%; left: -15%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%); border-radius: 50%; }
+    .mtn-topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 0 16px; position: relative; z-index: 1; }
+    .mtn-back-btn { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); text-decoration: none; }
+    .mtn-back-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.18); }
+    .mtn-back-btn i { width: 18px; height: 18px; }
+    .mtn-page-title { font-size: 17px; font-weight: 700; color: white; letter-spacing: -0.3px; }
+    .mtn-topbar-spacer { width: 38px; }
+    .mtn-info-section { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px 8px 16px; position: relative; z-index: 1; text-align: center; }
+    .mtn-info-icon { width: 42px; height: 42px; border-radius: 14px; background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.12); color: white; }
+    .mtn-info-icon i { width: 20px; height: 20px; }
+    .mtn-info-text { flex: 1; min-width: 0; }
+    .mtn-info-title { font-size: 16px; font-weight: 700; color: white; line-height: 1.2; letter-spacing: -0.2px; }
+    .mtn-info-subtitle { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; font-weight: 500; }
+    .mtn-header-curve { position: absolute; bottom: -1px; left: 0; right: 0; height: 24px; background: var(--bg-primary, #f5f6fa); border-radius: 24px 24px 0 0; }
+    [data-theme="dark"] .mtn-header-curve { background: var(--bg-primary, #0f172a); }
+    .mtn-header::before, .mtn-header::after { pointer-events: none; }
+    .mtn-header-spacer { height: 155px; }
+    .container { padding-top: 30px; }
+
+    /* Spending Insights Cards */
+    .ri-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border-left: 3px solid transparent;
+    }
+    .ri-card.positive {
+      background: rgba(0, 200, 83, 0.08);
+      border-left-color: #00C853;
+    }
+    .ri-card.warning {
+      background: rgba(255, 171, 0, 0.08);
+      border-left-color: #FFAB00;
+    }
+    .ri-card.alert {
+      background: rgba(255, 61, 0, 0.08);
+      border-left-color: #FF3D00;
+    }
+    .ri-card.info {
+      background: var(--bg-secondary);
+      border-left-color: var(--primary);
+    }
+    .ri-icon { flex-shrink: 0; margin-top: 1px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+    .ri-body { flex: 1; min-width: 0; }
+    .ri-title { font-weight: 700; font-size: 12px; color: var(--text-primary); margin-bottom: 2px; }
+    .ri-msg { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
+    .ri-tip {
+      font-size: 10px;
+      color: var(--primary-light, #00C853);
+      margin-top: 4px;
+      padding: 4px 8px;
+      background: rgba(0, 160, 94, 0.06);
+      border-radius: 6px;
+    }
+    .ri-tip::before { content: 'Tip: '; font-weight: 600; }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiSave</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="reports.html" class="nav-link">Reports</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Reports & Analytics</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
+
+    <div class="mtn-info-section">
+      <div class="mtn-info-icon">
+        <i data-lucide="bar-chart-3"></i>
+      </div>
+      <div class="mtn-info-text">
+        <div class="mtn-info-title">Reports & Analytics</div>
+        <div class="mtn-info-subtitle">Track your spending habits & financial health</div>
+      </div>
+    </div>
+
+    <div class="mtn-header-curve"></div>
   </header>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+  <!-- Header Spacer -->
+  <div class="mtn-header-spacer"></div>
 
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="layout-dashboard" class="icon"></i></span>
-      <span>Home</span>
-    </a>
-    <a href="expenses.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="receipt" class="icon"></i></span>
-      <span>Expenses</span>
-    </a>
-    <a href="goals.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="target" class="icon"></i></span>
-      <span>Goals</span>
-    </a>
-    <a href="settings.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="settings" class="icon"></i></span>
-      <span>Settings</span>
-    </a>
-  </nav>
 
   <div class="container">
     <!-- Mode Toggle -->
@@ -941,6 +973,21 @@
       <div class="health-score-rating">
         <i data-lucide="award" style="width:14px;height:14px"></i>
         <span id="healthRating">Calculating...</span>
+      </div>
+    </div>
+
+    <!-- Smart Spending Insights -->
+    <div class="section-header">
+      <div class="section-title">
+        <i data-lucide="lightbulb" style="width:18px;height:18px"></i>
+        Smart Insights
+      </div>
+      <span id="reportInsightCount" style="font-size:10px;color:var(--text-muted);background:var(--bg-secondary);padding:2px 8px;border-radius:10px;"></span>
+    </div>
+    <div id="reportInsights" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+      <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">
+        <div class="spinner" style="margin:0 auto 8px;width:20px;height:20px;border-width:2px;"></div>
+        Analyzing your data...
       </div>
     </div>
 
@@ -1158,7 +1205,7 @@
         loadComparison();
       }
 
-      lucide.createIcons();
+      lucide.createIcons({ node: document.getElementById('compareSection') });
     }
 
     function populatePeriodSelectors() {
@@ -1261,7 +1308,7 @@
           return date >= period1Dates.start && date <= period1Dates.end;
         });
         const period1Income = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= period1Dates.start && date <= period1Dates.end;
         });
 
@@ -1278,7 +1325,7 @@
           return date >= period2Dates.start && date <= period2Dates.end;
         });
         const period2Income = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= period2Dates.start && date <= period2Dates.end;
         });
 
@@ -1298,7 +1345,8 @@
         renderComparisonChart(period1Label, period2Label);
         renderComparisonSummary(period1Label, period2Label);
 
-        lucide.createIcons();
+        const compareSection = document.getElementById('compareSection');
+        if (compareSection) lucide.createIcons({ node: compareSection });
       } catch (error) {
         console.error('Error loading comparison:', error);
         utils.showAlert('Failed to load comparison', 'error');
@@ -1469,13 +1517,17 @@
         const { start, end, prevStart, prevEnd } = getDateRange(currentPeriod);
         document.getElementById('dateRange').textContent = formatDateRange(start, end);
 
-        // Get all expenses and cache
-        const expensesResponse = await api.getExpenses({ limit: 500 });
-        allExpenses = expensesResponse.data.expenses || expensesResponse.data || [];
+        // Only fetch from API if cache is empty
+        if (allExpenses.length === 0) {
+          const expensesResponse = await api.getExpenses({ limit: 500 });
+          const expData = expensesResponse.data || {};
+          allExpenses = Array.isArray(expData.expenses) ? expData.expenses : (Array.isArray(expData) ? expData : []);
+        }
 
-        // Get income and cache
-        const incomeResponse = await api.getIncome();
-        allIncome = incomeResponse.data || [];
+        if (allIncome.length === 0) {
+          const incomeResponse = await api.getIncome();
+          allIncome = Array.isArray(incomeResponse.data) ? incomeResponse.data : [];
+        }
 
         // Filter expenses for current and previous periods
         const currentExpenses = allExpenses.filter(e => {
@@ -1490,12 +1542,12 @@
 
         // Filter income for current and previous periods
         const currentIncome = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= start && date <= end;
         });
 
         const previousIncome = allIncome.filter(i => {
-          const date = new Date(i.date);
+          const date = new Date(i.income_date || i.date);
           return date >= prevStart && date <= prevEnd;
         });
 
@@ -1516,7 +1568,7 @@
         });
 
         reportData.categories = Object.entries(categoryTotals)
-          .map(([name, amount]) => ({ name, amount, percent: (amount / reportData.current.expenses * 100) || 0 }))
+          .map(([name, amount]) => ({ name, amount, percent: reportData.current.expenses > 0 ? (amount / reportData.current.expenses * 100) : 0 }))
           .sort((a, b) => b.amount - a.amount);
 
         // Calculate daily/weekly spending
@@ -1567,15 +1619,44 @@
         // Render all sections
         renderOverview();
         renderHealthScore();
+        loadSmartInsights();
         renderSpendingChart();
         renderCategories();
         renderTopExpenses();
         renderComparison();
 
-        lucide.createIcons();
+        const overviewSection = document.getElementById('overviewSection');
+        if (overviewSection) lucide.createIcons({ node: overviewSection });
       } catch (error) {
         console.error('Error loading reports:', error);
         utils.showAlert('Failed to load reports', 'error');
+      }
+    }
+
+    async function loadSmartInsights() {
+      const container = document.getElementById('reportInsights');
+      const countEl = document.getElementById('reportInsightCount');
+      try {
+        const response = await api.get('/comparisons/insights?limit=30&all=true');
+        if (response.success && response.data.length > 0) {
+          if (countEl) countEl.textContent = response.data.length + ' insights';
+          container.innerHTML = response.data.map(insight => `
+            <div class="ri-card ${insight.type || 'info'}">
+              <span class="ri-icon"><i data-lucide="${insight.icon}" style="width:18px;height:18px;"></i></span>
+              <div class="ri-body">
+                <div class="ri-title">${insight.title}</div>
+                <div class="ri-msg">${insight.message}</div>
+                ${insight.tip ? `<div class="ri-tip">${insight.tip}</div>` : ''}
+              </div>
+            </div>
+          `).join('');
+          if (typeof lucide !== 'undefined') lucide.createIcons({ node: container });
+        } else {
+          container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:12px;">Log more expenses to unlock insights!</div>';
+          if (countEl) countEl.textContent = '';
+        }
+      } catch (e) {
+        container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:12px;">Insights unavailable</div>';
       }
     }
 
@@ -1664,6 +1745,13 @@
 
     function renderSpendingChart() {
       const container = document.getElementById('spendingChart');
+      
+      if (!reportData.daily || reportData.daily.length === 0 || reportData.daily.every(d => d.amount === 0)) {
+        container.innerHTML = '<div class="empty-state" style="text-align:center;color:rgba(255,255,255,0.6);padding:24px;"><i data-lucide="bar-chart-2"></i><p>No spending data for this period</p></div>';
+        if (typeof lucide !== 'undefined') lucide.createIcons({ node: container });
+        return;
+      }
+      
       const maxAmount = Math.max(...reportData.daily.map(d => d.amount), 1);
 
       container.innerHTML = reportData.daily.map(day => {
@@ -1727,7 +1815,7 @@
           <div class="expense-rank ${rankClasses[index]}">${index + 1}</div>
           <div class="expense-details">
             <div class="expense-title">${expense.description || expense.category}</div>
-            <div class="expense-date">${utils.formatDate(expense.expense_date || expense.date)} • ${expense.category}</div>
+            <div class="expense-date">${utils.formatDate(expense.expense_date || expense.date)} ΓÇó ${expense.category}</div>
           </div>
           <div class="expense-amount">${utils.formatCurrency(expense.amount)}</div>
         </div>
@@ -1779,14 +1867,6 @@
       api.logout();
     }
 
-    // Mobile Menu Toggle
-    function toggleMobileMenu() {
-      document.querySelector('.hamburger').classList.toggle('active');
-      document.querySelector('.mobile-menu').classList.toggle('active');
-      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
-      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
-    }
-
     // Initialize currency display with correct symbol
     function initCurrencyDisplay() {
       const symbol = utils.getCurrencySymbol();
@@ -1798,6 +1878,8 @@
         if (el) el.textContent = `${symbol} 0.00`;
       });
     }
+
+    function logout() { api.logout(); }
 
     document.addEventListener('DOMContentLoaded', () => {
       initCurrencyDisplay();

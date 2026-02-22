@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -14,134 +14,192 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* Challenges Header Card */
-    .challenges-header-card {
-      background: linear-gradient(135deg, #006B3F 0%, #00A05E 50%, #FFD700 100%);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      margin-bottom: 16px;
-      position: relative;
+    /* ===== Modern Header for Challenges ===== */
+    .mtn-header {
+      background: linear-gradient(160deg, var(--primary-color) 0%, #004d2c 40%, #003822 80%, #002a19 100%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
       overflow: hidden;
-      text-align: center;
     }
 
-    .challenges-header-card::before {
+    .mtn-header::before {
       content: '';
       position: absolute;
       top: -50%;
       right: -20%;
-      width: 150px;
-      height: 150px;
-      background: rgba(255,255,255,0.1);
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
       border-radius: 50%;
     }
 
-    .challenges-header-card::after {
-      content: '🏆';
+    .mtn-header::after {
+      content: '';
       position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 20px;
-      animation: bounce 2s ease-in-out infinite;
+      bottom: -40%;
+      left: -15%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+      border-radius: 50%;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .mtn-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-back-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+    }
+
+    .mtn-back-btn:active {
+      transform: scale(0.92);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .mtn-back-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .mtn-page-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.3px;
+    }
+
+    .mtn-topbar-spacer {
+      width: 38px;
+    }
+
+    /* Challenge info section inside header */
+    .mtn-challenge-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 16px 12px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-challenge-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 1px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .mtn-challenge-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mtn-challenge-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      line-height: 1.2;
+    }
+
+    .mtn-challenge-xp {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* Stats row inside header */
+    .mtn-stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 12px 16px 20px 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mtn-stat {
+      text-align: center;
+    }
+
+    .mtn-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .mtn-stat-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .mtn-header-curve {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 24px;
+      background: var(--bg-primary, #f5f6fa);
+      border-radius: 24px 24px 0 0;
+    }
+
+    [data-theme="dark"] .mtn-header-curve {
+      background: var(--bg-primary, #0f172a);
+    }
+
+    .mtn-header-spacer {
+      height: 270px;
+    }
+
+    body {
+      padding-top: 0 !important;
     }
 
     @keyframes shimmer {
       0% { background-position: -200% 0; }
       100% { background-position: 200% 0; }
-    }
-
-    .challenges-title {
-      color: white;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .challenges-subtitle {
-      color: rgba(255,255,255,0.8);
-      font-size: 12px;
-      margin-bottom: 16px;
-    }
-
-    .xp-display {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255,255,255,0.2);
-      padding: 12px 24px;
-      border-radius: 30px;
-    }
-
-    .xp-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #FFD700, #FFA000);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .xp-info {
-      text-align: left;
-    }
-
-    .xp-label {
-      font-size: 10px;
-      color: rgba(255,255,255,0.7);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .xp-amount {
-      font-size: 24px;
-      font-weight: 700;
-      color: white;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .stat-item {
-      background: var(--card-bg);
-      padding: 14px 8px;
-      border-radius: 14px;
-      text-align: center;
-      border: 1px solid var(--border-color);
-    }
-
-    .stat-icon {
-      font-size: 20px;
-      margin-bottom: 6px;
-    }
-
-    .stat-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
     }
 
     /* Section Title */
@@ -169,11 +227,31 @@
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
+      cursor: pointer;
+    }
+
+    .challenge-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), #00c853, #FFD700);
+      background-size: 200% 100%;
+      animation: progressGradient 3s ease infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .challenge-card:hover::before {
+      opacity: 1;
     }
 
     .challenge-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      border-color: var(--primary-color);
     }
 
     .challenge-header {
@@ -580,98 +658,59 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-content">
-      <a class="logo" href="dashboard.html" style="text-decoration:none;">
-        <span class="logo-icon"><i data-lucide="landmark" class="icon"></i></span>
-        <span>KudiSave</span>
+  <!-- MTN-Style Header -->
+  <header class="mtn-header">
+    <div class="mtn-topbar">
+      <a href="dashboard.html" class="mtn-back-btn">
+        <i data-lucide="arrow-left"></i>
       </a>
-      <nav class="nav">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="expenses.html" class="nav-link">Expenses</a>
-        <a href="goals.html" class="nav-link">Goals</a>
-        <a href="challenges.html" class="nav-link active">Challenges</a>
-        <button class="btn-logout" onclick="logout()">Logout</button>
-      </nav>
-      <button class="hamburger" onclick="toggleMobileMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <span class="mtn-page-title">Savings Challenges</span>
+      <div class="mtn-topbar-spacer"></div>
     </div>
-  </header>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- Mobile Side Menu -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme"><i data-lucide="sun" class="icon-sm"></i></button>
-      <span style="color: var(--text-primary); font-weight: 500;">Theme</span>
-    </div>
-    <a href="dashboard.html" class="mobile-menu-link"><i data-lucide="layout-dashboard" class="icon-menu"></i> Dashboard</a>
-    <a href="expenses.html" class="mobile-menu-link"><i data-lucide="receipt" class="icon-menu"></i> Expenses</a>
-    <a href="goals.html" class="mobile-menu-link"><i data-lucide="target" class="icon-menu"></i> Goals</a>
-    <a href="bills.html" class="mobile-menu-link"><i data-lucide="calendar-clock" class="icon-menu"></i> Bills</a>
-    <a href="challenges.html" class="mobile-menu-link active"><i data-lucide="trophy" class="icon-menu"></i> Challenges</a>
-    <a href="badges.html" class="mobile-menu-link"><i data-lucide="award" class="icon-menu"></i> Badges</a>
-    <a href="reports.html" class="mobile-menu-link"><i data-lucide="bar-chart-3" class="icon-menu"></i> Reports</a>
-    <a href="settings.html" class="mobile-menu-link"><i data-lucide="settings" class="icon-menu"></i> Settings</a>
-    <div style="border-top: 1px solid var(--border-color); margin: 8px 16px;"></div>
-    <a href="dashboard.html?openCurrency=true" class="mobile-menu-link" style="background: linear-gradient(135deg, rgba(0, 107, 63, 0.1), rgba(0, 160, 94, 0.1)); color: var(--primary-color); border-radius: 10px; margin: 4px 12px; padding: 12px 16px !important;">
-      <i data-lucide="calculator" class="icon-menu"></i> Currency Converter
-    </a>
-    <a href="#" class="mobile-menu-link logout" onclick="logout()"><i data-lucide="log-out" class="icon-menu"></i> Logout</a>
-  </div>
-
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Header Card -->
-    <div class="challenges-header-card">
-      <div class="challenges-title">
-        <i data-lucide="trophy" style="width:22px;height:22px;color:white"></i>
-        Savings Challenges
-      </div>
-      <div class="challenges-subtitle">Complete challenges to earn XP and level up!</div>
-      
-      <div class="xp-display">
-        <div class="xp-icon">⚡</div>
-        <div class="xp-info">
-          <div class="xp-label">Total XP Earned</div>
-          <div class="xp-amount" id="totalXP">0</div>
+    <!-- Challenge Info Section -->
+    <div class="mtn-challenge-section">
+      <div class="mtn-challenge-icon">≡ƒÅå</div>
+      <div class="mtn-challenge-info">
+        <div class="mtn-challenge-title">Challenges</div>
+        <div class="mtn-challenge-xp">
+          ΓÜí <span id="totalXP">0</span> XP Earned
         </div>
       </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-icon">✅</div>
-        <div class="stat-value" id="completedCount">0</div>
-        <div class="stat-label">Completed</div>
+    <!-- Stats Row -->
+    <div class="mtn-stats-row">
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="completedCount">0</div>
+        <div class="mtn-stat-label">Completed</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-icon">🔥</div>
-        <div class="stat-value" id="activeCount">0</div>
-        <div class="stat-label">Active</div>
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="activeCount">0</div>
+        <div class="mtn-stat-label">Active</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-icon">📊</div>
-        <div class="stat-value" id="availableCount">0</div>
-        <div class="stat-label">Available</div>
+      <div class="mtn-stat">
+        <div class="mtn-stat-value" id="availableCount">0</div>
+        <div class="mtn-stat-label">Available</div>
       </div>
     </div>
 
+    <div class="mtn-header-curve"></div>
+  </header>
+
+  <!-- Header Spacer -->
+  <div class="mtn-header-spacer"></div>
+
+  <!-- Main Content -->
+  <main class="main-content">
     <!-- Active Challenges Section -->
-    <div class="section-title">🔥 Active Challenges</div>
+    <div class="section-title">≡ƒöÑ Active Challenges</div>
     <div class="active-challenges" id="activeChallenges">
       <!-- Rendered dynamically -->
     </div>
 
     <!-- Available Challenges Section -->
-    <div class="section-title">✨ Available Challenges</div>
+    <div class="section-title">Γ£¿ Available Challenges</div>
     <div class="available-grid" id="availableChallenges">
       <!-- Rendered dynamically -->
     </div>
@@ -688,7 +727,7 @@
       <div class="modal-header" style="justify-content: flex-end;">
         <button class="close-btn" onclick="closeModal('challengeModal')">&times;</button>
       </div>
-      <div class="modal-icon" id="modalIcon">🎯</div>
+      <div class="modal-icon" id="modalIcon">≡ƒÄ»</div>
       <h2 class="modal-title" id="modalTitle">Challenge Name</h2>
       <p class="modal-desc" id="modalDesc">Challenge description goes here with details about what you need to do.</p>
       
@@ -699,8 +738,8 @@
       
       <div class="challenge-meta" style="justify-content: center; margin-bottom: 16px;">
         <span class="difficulty-badge medium" id="modalDifficulty">Medium</span>
-        <span class="meta-item" id="modalDuration">📅 30 days</span>
-        <span class="meta-item" id="modalTarget">🎯 Target: ₵500</span>
+        <span class="meta-item" id="modalDuration">≡ƒôà 30 days</span>
+        <span class="meta-item" id="modalTarget">≡ƒÄ» Target: Γé╡500</span>
       </div>
       
       <div class="challenge-actions">
@@ -730,11 +769,11 @@
           <div class="form-group">
             <label class="form-label">Type</label>
             <select class="form-select" id="challengeType">
-              <option value="savings">💰 Savings</option>
-              <option value="no-spend">🚫 No-Spend</option>
-              <option value="budget">📊 Budget</option>
-              <option value="streak">🔥 Streak</option>
-              <option value="goal">🎯 Goal</option>
+              <option value="savings">≡ƒÆ░ Savings</option>
+              <option value="no-spend">≡ƒÜ½ No-Spend</option>
+              <option value="budget">≡ƒôè Budget</option>
+              <option value="streak">≡ƒöÑ Streak</option>
+              <option value="goal">≡ƒÄ» Goal</option>
             </select>
           </div>
           <div class="form-group">
@@ -749,7 +788,7 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Target Value (₵)</label>
+            <label class="form-label">Target Value (Γé╡)</label>
             <input type="number" class="form-input" id="challengeTarget" placeholder="500" min="1">
           </div>
           <div class="form-group">
@@ -786,26 +825,6 @@
     </div>
   </div>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="dashboard.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>
-      <span>Home</span>
-    </a>
-    <a href="challenges.html" class="bottom-nav-item active">
-      <span class="nav-icon"><i data-lucide="trophy"></i></span>
-      <span>Challenges</span>
-    </a>
-    <a href="badges.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="award"></i></span>
-      <span>Badges</span>
-    </a>
-    <a href="settings.html" class="bottom-nav-item">
-      <span class="nav-icon"><i data-lucide="settings"></i></span>
-      <span>Settings</span>
-    </a>
-  </nav>
-
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/api.js"></script>
   <script src="../assets/js/utils.js"></script>
@@ -815,25 +834,25 @@
 
     // Challenge icons mapping
     const challengeIcons = {
-      'no-spend': '🚫',
-      'savings': '💰',
-      'budget': '📊',
-      'streak': '🔥',
-      'goal': '🎯',
-      'default': '⭐'
+      'no-spend': '≡ƒÜ½',
+      'savings': '≡ƒÆ░',
+      'budget': '≡ƒôè',
+      'streak': '≡ƒöÑ',
+      'goal': '≡ƒÄ»',
+      'default': 'Γ¡É'
     };
 
     // Default challenges
     const defaultChallenges = [
       { id: 1, name: 'No-Spend Day', type: 'no-spend', description: 'Go 24 hours without spending any money', difficulty: 'easy', target: 1, duration: 1, xp: 50 },
-      { id: 2, name: 'Save ₵100', type: 'savings', description: 'Save at least ₵100 this week', difficulty: 'easy', target: 100, duration: 7, xp: 100 },
+      { id: 2, name: 'Save Γé╡100', type: 'savings', description: 'Save at least Γé╡100 this week', difficulty: 'easy', target: 100, duration: 7, xp: 100 },
       { id: 3, name: 'Budget Master', type: 'budget', description: 'Stay under budget for all categories this month', difficulty: 'medium', target: 30, duration: 30, xp: 300 },
       { id: 4, name: '7-Day Streak', type: 'streak', description: 'Track expenses for 7 days straight', difficulty: 'easy', target: 7, duration: 7, xp: 75 },
       { id: 5, name: 'Weekend Warrior', type: 'no-spend', description: 'No spending on Saturday and Sunday', difficulty: 'medium', target: 2, duration: 2, xp: 150 },
-      { id: 6, name: 'Save ₵500', type: 'savings', description: 'Save ₵500 in one month', difficulty: 'medium', target: 500, duration: 30, xp: 250 },
+      { id: 6, name: 'Save Γé╡500', type: 'savings', description: 'Save Γé╡500 in one month', difficulty: 'medium', target: 500, duration: 30, xp: 250 },
       { id: 7, name: '30-Day Tracker', type: 'streak', description: 'Track every expense for 30 days', difficulty: 'hard', target: 30, duration: 30, xp: 400 },
-      { id: 8, name: 'Save ₵1000', type: 'savings', description: 'Save ₵1000 in two months', difficulty: 'hard', target: 1000, duration: 60, xp: 500 },
-      { id: 9, name: 'Super Saver', type: 'savings', description: 'Save ₵5000 in 6 months', difficulty: 'extreme', target: 5000, duration: 180, xp: 1000 },
+      { id: 8, name: 'Save Γé╡1000', type: 'savings', description: 'Save Γé╡1000 in two months', difficulty: 'hard', target: 1000, duration: 60, xp: 500 },
+      { id: 9, name: 'Super Saver', type: 'savings', description: 'Save Γé╡5000 in 6 months', difficulty: 'extreme', target: 5000, duration: 180, xp: 1000 },
       { id: 10, name: 'No Coffee Week', type: 'no-spend', description: 'Skip buying coffee for a week', difficulty: 'easy', target: 7, duration: 7, xp: 60 }
     ];
 
@@ -848,13 +867,6 @@
       loadChallenges();
       lucide.createIcons();
     });
-
-    function toggleMobileMenu() {
-      document.querySelector('.hamburger').classList.toggle('active');
-      document.querySelector('.mobile-menu').classList.toggle('active');
-      document.querySelector('.mobile-menu-overlay').classList.toggle('active');
-      document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
-    }
 
     function loadChallenges() {
       // Load from localStorage
@@ -902,7 +914,8 @@
             <p>No active challenges.<br>Start one from below!</p>
           </div>
         `;
-        lucide.createIcons();
+        const activeEl = document.getElementById('activeChallenges');
+        if (activeEl) lucide.createIcons({ node: activeEl });
         return;
       }
 
@@ -915,7 +928,7 @@
           <div class="challenge-card">
             <div class="challenge-header">
               <div class="challenge-icon ${challenge.difficulty || 'easy'}">
-                ${challengeIcons[challenge.type] || '⭐'}
+                ${challengeIcons[challenge.type] || 'Γ¡É'}
               </div>
               <div class="challenge-info">
                 <div class="challenge-name">${escapeHtml(challenge.name || 'Unknown')}</div>
@@ -936,7 +949,7 @@
 
             <div class="challenge-meta">
               <span class="difficulty-badge ${challenge.difficulty || 'easy'}">${challenge.difficulty || 'easy'}</span>
-              <span class="meta-item">📅 ${daysLeft} days left</span>
+              <span class="meta-item">≡ƒôà ${daysLeft} days left</span>
             </div>
 
             <div class="challenge-actions">
@@ -950,7 +963,7 @@
           </div>
         `;
       }).join('');
-      lucide.createIcons();
+      lucide.createIcons({ node: container });
     }
 
     function renderAvailableChallenges() {
@@ -965,33 +978,33 @@
             <p>You've joined all available challenges!<br>Create a custom one.</p>
           </div>
         `;
-        lucide.createIcons();
+        lucide.createIcons({ node: container });
         return;
       }
 
       container.innerHTML = available.map(challenge => `
         <div class="available-card" onclick="showChallengeDetail(${challenge.id})">
-          <div class="available-icon">${challengeIcons[challenge.type] || '⭐'}</div>
+          <div class="available-icon">${challengeIcons[challenge.type] || 'Γ¡É'}</div>
           <div class="available-name">${escapeHtml(challenge.name)}</div>
           <div class="available-xp">+${challenge.xp} XP</div>
           <span class="difficulty-badge ${challenge.difficulty}">${challenge.difficulty}</span>
         </div>
       `).join('');
-      lucide.createIcons();
+      lucide.createIcons({ node: container });
     }
 
     function showChallengeDetail(id) {
       selectedChallenge = challenges.find(c => c.id === id);
       if (!selectedChallenge) return;
 
-      document.getElementById('modalIcon').textContent = challengeIcons[selectedChallenge.type] || '⭐';
+      document.getElementById('modalIcon').textContent = challengeIcons[selectedChallenge.type] || 'Γ¡É';
       document.getElementById('modalTitle').textContent = selectedChallenge.name;
       document.getElementById('modalDesc').textContent = selectedChallenge.description;
       document.getElementById('modalXP').textContent = `+${selectedChallenge.xp} XP`;
       document.getElementById('modalDifficulty').textContent = selectedChallenge.difficulty;
       document.getElementById('modalDifficulty').className = `difficulty-badge ${selectedChallenge.difficulty}`;
-      document.getElementById('modalDuration').textContent = `📅 ${selectedChallenge.duration} days`;
-      document.getElementById('modalTarget').textContent = `🎯 Target: ${selectedChallenge.type === 'savings' ? '₵' : ''}${selectedChallenge.target}`;
+      document.getElementById('modalDuration').textContent = `≡ƒôà ${selectedChallenge.duration} days`;
+      document.getElementById('modalTarget').textContent = `≡ƒÄ» Target: ${selectedChallenge.type === 'savings' ? 'Γé╡' : ''}${selectedChallenge.target}`;
 
       document.getElementById('challengeModal').classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -1055,7 +1068,7 @@
         badgesData.xp += challenge?.xp || 0;
         localStorage.setItem('kudisave_badges', JSON.stringify(badgesData));
 
-        showToast(`🎉 Challenge completed! +${challenge?.xp || 0} XP`);
+        showToast(`≡ƒÄë Challenge completed! +${challenge?.xp || 0} XP`);
       } else {
         showToast('Progress updated!');
       }
@@ -1111,6 +1124,13 @@
       selectedChallenge = null;
     }
 
+    // Backdrop click to close modals
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+      });
+    });
+
     function escapeHtml(text) {
       if (!text) return '';
       const div = document.createElement('div');
@@ -1119,24 +1139,7 @@
     }
 
     function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.style.cssText = `
-        position: fixed;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${type === 'success' ? 'var(--primary-color)' : '#dc3545'};
-        color: white;
-        padding: 12px 24px;
-        border-radius: 10px;
-        z-index: 2000;
-        font-size: 13px;
-        font-weight: 500;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      `;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      utils.showAlert(message, type);
     }
 
     function logout() {
@@ -1146,11 +1149,9 @@
     }
 
     // Close modal on overlay click
-    ['challengeModal', 'addModal', 'progressModal'].forEach(id => {
-      document.getElementById(id).addEventListener('click', (e) => {
-        if (e.target === document.getElementById(id)) {
-          closeModal(id);
-        }
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
       });
     });
   </script>

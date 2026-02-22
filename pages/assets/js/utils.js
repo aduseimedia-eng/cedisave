@@ -1,4 +1,4 @@
-// KudiSave - Utility Functions
+﻿// KudiSave - Utility Functions
 
 // Theme Management - Uses localStorage for persistence across all pages
 function initTheme() {
@@ -43,7 +43,7 @@ async function toggleTheme() {
 function updateThemeIcon(theme) {
   const themeButtons = document.querySelectorAll('.theme-toggle');
   themeButtons.forEach(btn => {
-    btn.innerHTML = theme === 'dark' ? '☀️' : '🌙';
+    btn.innerHTML = theme === 'dark' ? 'ΓÿÇ∩╕Å' : '≡ƒîÖ';
     btn.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
   });
 }
@@ -55,11 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Currency configuration
 const CURRENCY_CONFIG = {
-  'GHS': { symbol: 'GH₵', name: 'Ghana Cedi', locale: 'en-GH' },
+  'GHS': { symbol: 'GHΓé╡', name: 'Ghana Cedi', locale: 'en-GH' },
   'USD': { symbol: '$', name: 'US Dollar', locale: 'en-US' },
-  'EUR': { symbol: '€', name: 'Euro', locale: 'de-DE' },
-  'GBP': { symbol: '£', name: 'British Pound', locale: 'en-GB' },
-  'NGN': { symbol: '₦', name: 'Nigerian Naira', locale: 'en-NG' },
+  'EUR': { symbol: 'Γé¼', name: 'Euro', locale: 'de-DE' },
+  'GBP': { symbol: '┬ú', name: 'British Pound', locale: 'en-GB' },
+  'NGN': { symbol: 'Γéª', name: 'Nigerian Naira', locale: 'en-NG' },
   'KES': { symbol: 'KSh', name: 'Kenyan Shilling', locale: 'en-KE' },
   'ZAR': { symbol: 'R', name: 'South African Rand', locale: 'en-ZA' },
   'XOF': { symbol: 'CFA', name: 'West African CFA', locale: 'fr-SN' }
@@ -126,8 +126,8 @@ function showAlert(message, type = 'success') {
   }
 
   const icons = {
-    success: '✓',
-    error: '✕',
+    success: 'Γ£ô',
+    error: 'Γ£ò',
     warning: '!',
     info: 'i'
   };
@@ -180,11 +180,11 @@ function showAlert(message, type = 'success') {
 
 function getAlertIcon(type) {
   const icons = {
-    success: '✅',
-    error: '❌',
-    warning: '⚠️'
+    success: 'Γ£à',
+    error: 'Γ¥î',
+    warning: 'ΓÜá∩╕Å'
   };
-  return icons[type] || '💡';
+  return icons[type] || '≡ƒÆí';
 }
 
 // Show loading overlay
@@ -301,30 +301,30 @@ const INCOME_SOURCES = [
 // Get category icon
 function getCategoryIcon(category) {
   const icons = {
-    'Food / Chop Bar': '🍛',
-    'Transport (Trotro / Bolt)': '🚌',
-    'Data / Airtime': '📱',
-    'Rent / Hostel': '🏠',
-    'Utilities': '💡',
-    'Church / Donations': '⛪',
-    'Betting / Gaming': '🎲',
-    'Entertainment': '🎬',
-    'Shopping': '🛍️',
-    'Miscellaneous': '📦'
+    'Food / Chop Bar': '≡ƒì¢',
+    'Transport (Trotro / Bolt)': '≡ƒÜî',
+    'Data / Airtime': '≡ƒô▒',
+    'Rent / Hostel': '≡ƒÅá',
+    'Utilities': '≡ƒÆí',
+    'Church / Donations': 'Γ¢¬',
+    'Betting / Gaming': '≡ƒÄ▓',
+    'Entertainment': '≡ƒÄ¼',
+    'Shopping': '≡ƒ¢ì∩╕Å',
+    'Miscellaneous': '≡ƒôª'
   };
-  return icons[category] || '💰';
+  return icons[category] || '≡ƒÆ░';
 }
 
 // Get motivational message based on budget usage
 function getMotivationalMessage(budgetUsage) {
   if (budgetUsage <= 50) {
-    return "Chale, you dey do well! 💪";
+    return "Chale, you dey do well! ≡ƒÆ¬";
   } else if (budgetUsage <= 75) {
-    return "You dey on point! Keep pushing 🚀";
+    return "You dey on point! Keep pushing ≡ƒÜÇ";
   } else if (budgetUsage <= 90) {
-    return "Small small ooo, you go reach 😅";
+    return "Small small ooo, you go reach ≡ƒÿà";
   } else {
-    return "Masa, check your spending waa 🤔";
+    return "Masa, check your spending waa ≡ƒñö";
   }
 }
 
@@ -337,14 +337,14 @@ function calculateProgress(current, target) {
 // Get badge emoji
 function getBadgeEmoji(badgeName) {
   const emojis = {
-    'Data King/Queen': '👑',
-    'Chop Saver': '🍽️',
-    'Budget Boss': '💼',
-    'Consistency Champ': '🔥',
-    'Goal Getter': '🎯',
-    'Transport Wise': '🚗'
+    'Data King/Queen': '≡ƒææ',
+    'Chop Saver': '≡ƒì╜∩╕Å',
+    'Budget Boss': '≡ƒÆ╝',
+    'Consistency Champ': '≡ƒöÑ',
+    'Goal Getter': '≡ƒÄ»',
+    'Transport Wise': '≡ƒÜù'
   };
-  return emojis[badgeName] || '🏆';
+  return emojis[badgeName] || '≡ƒÅå';
 }
 
 // Get tier color
@@ -440,7 +440,7 @@ function getDateRange(period) {
 }
 
 // ================================
-// FUN & LIVELY UTILITIES 🎉
+// FUN & LIVELY UTILITIES ≡ƒÄë
 // ================================
 
 // Confetti celebration
@@ -482,7 +482,7 @@ function showConfetti(particleCount = 50) {
 }
 
 // Fun toast notification with emoji
-function showFunToast(message, emoji = '🎉', duration = 3000) {
+function showFunToast(message, emoji = '≡ƒÄë', duration = 3000) {
   // Remove existing toasts
   const existing = document.querySelector('.fun-toast');
   if (existing) existing.remove();
@@ -540,7 +540,7 @@ function showFunToast(message, emoji = '🎉', duration = 3000) {
 // Celebration with sound
 function celebrate(title = 'Great Job!', type = 'success') {
   showConfetti(60);
-  showFunToast(title, type === 'success' ? '🎉' : '🏆', 4000);
+  showFunToast(title, type === 'success' ? '≡ƒÄë' : '≡ƒÅå', 4000);
   
   // Play celebration sound
   try {
@@ -648,14 +648,14 @@ function pulseSuccess(element) {
 // Get random encouraging message
 function getRandomEncouragement() {
   const messages = [
-    { text: "You're doing great! 💪", emoji: "💪" },
-    { text: "Keep up the good work! 🌟", emoji: "🌟" },
-    { text: "Awesome progress! 🚀", emoji: "🚀" },
-    { text: "You're on fire! 🔥", emoji: "🔥" },
-    { text: "Financial ninja! 🥷", emoji: "🥷" },
-    { text: "Money master! 💰", emoji: "💰" },
-    { text: "Saving superstar! ⭐", emoji: "⭐" },
-    { text: "Budget boss! 👑", emoji: "👑" }
+    { text: "You're doing great! ≡ƒÆ¬", emoji: "≡ƒÆ¬" },
+    { text: "Keep up the good work! ≡ƒîƒ", emoji: "≡ƒîƒ" },
+    { text: "Awesome progress! ≡ƒÜÇ", emoji: "≡ƒÜÇ" },
+    { text: "You're on fire! ≡ƒöÑ", emoji: "≡ƒöÑ" },
+    { text: "Financial ninja! ≡ƒÑ╖", emoji: "≡ƒÑ╖" },
+    { text: "Money master! ≡ƒÆ░", emoji: "≡ƒÆ░" },
+    { text: "Saving superstar! Γ¡É", emoji: "Γ¡É" },
+    { text: "Budget boss! ≡ƒææ", emoji: "≡ƒææ" }
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
