@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#006B3F">
@@ -22,55 +23,64 @@
     }
 
     body {
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+      background: linear-gradient(135deg, #006B3F 0%, #004d2c 50%, #003822 100%);
       min-height: 100vh;
       overflow: hidden;
-      font-family: 'Century Gothic', 'CenturyGothic', 'AppleGothic', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     .onboarding-container {
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       padding: 20px;
-      padding-top: calc(40px + env(safe-area-inset-top, 0px));
-      padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+      padding-top: calc(80px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px));
+      position: relative;
     }
 
     .skip-btn {
-      position: absolute;
+      position: fixed;
       top: calc(20px + env(safe-area-inset-top, 0px));
       right: 20px;
-      background: transparent;
-      border: none;
-      color: rgba(255,255,255,0.6);
-      font-size: 12px;
+      z-index: 100;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
-      padding: 6px 14px;
+      padding: 8px 18px;
       border-radius: 20px;
       transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .skip-btn:active {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.3);
+      transform: scale(0.96);
     }
 
     .slides-container {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
+      overflow: visible;
+      position: relative;
     }
 
     .slides-wrapper {
       display: flex;
       transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       width: 300%;
+      height: 100%;
     }
 
     .slide {
       width: 33.333%;
+      flex-shrink: 0;
       padding: 0 20px;
       display: flex;
       flex-direction: column;
@@ -79,14 +89,14 @@
     }
 
     .slide-image-wrap {
+      margin-bottom: 40px;
+      animation: float 3s ease-in-out infinite;
       width: 100%;
       max-width: 300px;
       height: 240px;
-      margin-bottom: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: float 3s ease-in-out infinite;
     }
 
     .slide-image-wrap img {
@@ -94,58 +104,69 @@
       height: 100%;
       object-fit: contain;
       border-radius: 20px;
-      filter: drop-shadow(0 12px 32px rgba(0,107,63,0.35));
+      filter: drop-shadow(0 12px 32px rgba(0,0,0,0.3));
     }
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+      50% { transform: translateY(-15px); }
     }
 
     .slide-title {
-      font-size: 20px;
+      font-size: 26px;
       font-weight: 700;
-      color: white;
-      margin-bottom: 12px;
-      line-height: 1.3;
+      color: #ffffff;
+      margin-bottom: 16px;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
     }
 
     .slide-description {
-      font-size: 13px;
-      color: rgba(255,255,255,0.7);
+      font-size: 15px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.9);
       line-height: 1.6;
-      max-width: 280px;
+      max-width: 320px;
     }
 
     .slide-highlight {
       color: #ffffff;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* Navigation */
     .nav-section {
-      padding-top: 40px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to top, rgba(0, 61, 34, 0.95) 0%, rgba(0, 61, 34, 0.8) 70%, transparent 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 100;
     }
 
     .dots-container {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 30px;
+      margin-bottom: 16px;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.4);
       transition: all 0.3s ease;
       cursor: pointer;
     }
 
     .dot.active {
-      width: 30px;
-      border-radius: 5px;
+      width: 24px;
+      border-radius: 4px;
       background: #ffffff;
     }
 
@@ -156,13 +177,16 @@
 
     .btn-onboard {
       flex: 1;
-      padding: 14px 20px;
+      padding: 18px 24px;
       border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
       border: none;
+      min-height: 56px;
+      letter-spacing: -0.2px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .btn-onboard:active {
@@ -170,19 +194,25 @@
     }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.2);
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #006B3F 0%, #004d2c 100%);
+      background: #006B3F;
       color: white;
+      box-shadow: 0 4px 20px rgba(0, 107, 63, 0.4);
+      font-weight: 700;
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, #00a05e 0%, #006B3F 100%);
-      color: #ffffff;
+      background: #006B3F;
+      color: white;
+      box-shadow: 0 4px 20px rgba(0, 107, 63, 0.4);
+      font-weight: 800;
     }
 
     /* Ghana colors bar */
@@ -199,38 +229,12 @@
       flex: 1;
     }
 
-    .ghana-colors span:nth-child(1) { background: #006B3F; }
-    .ghana-colors span:nth-child(2) { background: #ffffff; }
-    .ghana-colors span:nth-child(3) { background: #004d2c; }
-
-    /* Decorative elements */
-    .decoration {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.1;
-    }
-
-    .decoration-1 {
-      width: 200px;
-      height: 200px;
-      background: #ffffff;
-      top: -50px;
-      right: -50px;
-    }
-
-    .decoration-2 {
-      width: 150px;
-      height: 150px;
-      background: #006B3F;
-      bottom: 100px;
-      left: -50px;
-    }
+    .ghana-colors span:nth-child(1) { background: #CE1126; }
+    .ghana-colors span:nth-child(2) { background: #FCD116; }
+    .ghana-colors span:nth-child(3) { background: #006B3F; }
   </style>
 </head>
 <body>
-  <div class="decoration decoration-1"></div>
-  <div class="decoration decoration-2"></div>
-
   <div class="onboarding-container">
     <button class="skip-btn" onclick="skipOnboarding()">Skip</button>
 
@@ -344,7 +348,7 @@
 
     function completeOnboarding() {
       localStorage.setItem('onboardingComplete', 'true');
-      window.location.href = '../index.html';
+      window.location.href = 'index.html';
     }
 
     // Touch/Swipe support
@@ -371,13 +375,113 @@
       }
     }
 
-    // In demo mode, always show onboarding (don't auto-redirect)
-    // Check is now skipped to allow viewing
-    
-    // Images are used directly — no Lottie needed
-    
+    // Images are used directly ΓÇö no Lottie needed
+
+    function _unused_initLottieAnimations() {
+      try {
+        // Animation 1: Wallet
+        const container1 = document.querySelector('#lottie-1 .lottie-container');
+        if (container1) {
+          console.log('Container 1 found, loading wallet animation...');
+          
+          animationInstances.anim1 = lottie.loadAnimation({
+            container: container1,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/wallet.json'
+          });
+          
+          animationInstances.anim1.addEventListener('DOMLoaded', () => {
+            console.log('Γ£ô Wallet animation loaded successfully');
+          });
+          
+          animationInstances.anim1.addEventListener('data_failed', () => {
+            console.error('Γ£ù Wallet animation failed to load');
+          });
+        }
+
+        // Animation 2: Target
+        const container2 = document.querySelector('#lottie-2 .lottie-container');
+        if (container2) {
+          console.log('Container 2 found, loading target animation...');
+          
+          animationInstances.anim2 = lottie.loadAnimation({
+            container: container2,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/target.json'
+          });
+          
+          animationInstances.anim2.addEventListener('DOMLoaded', () => {
+            console.log('Γ£ô Target animation loaded successfully');
+          });
+          
+          animationInstances.anim2.addEventListener('data_failed', () => {
+            console.error('Γ£ù Target animation failed to load');
+          });
+        }
+
+        // Animation 3: Growth
+        const container3 = document.querySelector('#lottie-3 .lottie-container');
+        if (container3) {
+          console.log('Container 3 found, loading growth animation...');
+          
+          animationInstances.anim3 = lottie.loadAnimation({
+            container: container3,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'assets/animations/growth.json'
+          });
+          
+          animationInstances.anim3.addEventListener('DOMLoaded', () => {
+            console.log('Γ£ô Growth animation loaded successfully');
+          });
+          
+          animationInstances.anim3.addEventListener('data_failed', () => {
+            console.error('Γ£ù Growth animation failed to load');
+          });
+        }
+        
+        console.log('Lottie initialization complete');
+      } catch (error) {
+        console.error('Error initializing Lottie:', error);
+      }
+    }
+
+    function showFallbackIcons() {
+      console.log('Using fallback Lucide icons');
+      const containers = [
+        document.querySelector('#lottie-1 .lottie-container'),
+        document.querySelector('#lottie-2 .lottie-container'),
+        document.querySelector('#lottie-3 .lottie-container')
+      ];
+      
+      const icons = [
+        '<i data-lucide="wallet" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>',
+        '<i data-lucide="target" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>',
+        '<i data-lucide="trending-up" style="width:140px;height:140px;stroke-width:1.5;color:white"></i>'
+      ];
+      
+      containers.forEach((container, index) => {
+        if (container && !container.querySelector('i[data-lucide]')) {
+          container.innerHTML = icons[index];
+        }
+      });
+      
+      lucide.createIcons();
+    }
+
     // Initialize Lucide icons
-    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+
+    window.addEventListener('load', () => {
+      lucide.createIcons();
+    });
   </script>
 </body>
 </html>
