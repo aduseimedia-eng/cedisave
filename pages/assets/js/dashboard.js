@@ -618,7 +618,7 @@ async function loadWidgets() {
       if (billsResponse.success) {
         const dueBills = (billsResponse.data.overdue || 0) + (billsResponse.data.due_soon || 0);
         const billsCountEl = document.getElementById('billsDueCount');
-        if (billsCountEl) billsCountEl.textContent = dueBills;
+        if (billsCountEl) billsCountEl.textContent = dueBills > 0 ? dueBills : '–';
       }
     } catch (e) { /* Bills API not available */ }
 
@@ -627,7 +627,8 @@ async function loadWidgets() {
       const challengesResponse = await api.get('/challenges/stats');
       if (challengesResponse.success) {
         const challengesEl = document.getElementById('activeChallenges');
-        if (challengesEl) challengesEl.textContent = challengesResponse.data.active_challenges || 0;
+        const n = challengesResponse.data.active_challenges || 0;
+        if (challengesEl) challengesEl.textContent = n > 0 ? n : '–';
       }
     } catch (e) { /* Challenges API not available */ }
 
@@ -636,7 +637,8 @@ async function loadWidgets() {
       const achievementsResponse = await api.get('/achievements/stats');
       if (achievementsResponse.success) {
         const achievementsEl = document.getElementById('achievementsEarned');
-        if (achievementsEl) achievementsEl.textContent = achievementsResponse.data.earned_achievements || 0;
+        const n = achievementsResponse.data.earned_achievements || 0;
+        if (achievementsEl) achievementsEl.textContent = n > 0 ? n : '–';
       }
     } catch (e) { /* Achievements API not available */ }
 
